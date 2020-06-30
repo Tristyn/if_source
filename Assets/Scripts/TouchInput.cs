@@ -27,11 +27,11 @@ public class TouchInput : Singleton<TouchInput>
     /// Is touch API supported. It's notably not supported on WebGL,
     /// mobile browsers will use the simulated mouse.
     /// </summary>
-    public static bool supported;
+    public static bool supported = Application.isMobilePlatform;
     /// <summary>
     /// Returns true if the platform is WebGL and the host is a mobile browser.
     /// </summary>
-    public static bool webGLMobile;
+    public static bool webGLMobile = Application.platform == RuntimePlatform.WebGLPlayer && GetWebGLMobileHost();
 
     public Action<TouchInfo[]> Touch = touches => { };
 
@@ -40,7 +40,6 @@ public class TouchInput : Singleton<TouchInput>
 
     public TouchInfo[] touches = new TouchInfo[1];
     List<int> invalidate = new List<int>(1);
-    bool firstTouchNotBegan = false;
     Vector3 lastMousePosition;
 
     [DllImport("__Internal")]
@@ -50,64 +49,16 @@ public class TouchInput : Singleton<TouchInput>
     {
         base.Awake();
         Input.simulateMouseWithTouches = false;
-        enabled = supported = Application.isMobilePlatform;
-        webGLMobile = Application.platform == RuntimePlatform.WebGLPlayer && GetWebGLMobileHost();
-    }
-
-    private void OnGUI()
-    {
-        string debug = "Touch debug. mobile: " + Application.isMobilePlatform + " webgl mobile: " + (Application.platform == RuntimePlatform.WebGLPlayer && GetWebGLMobileHost());
-        debug += " firstTouchNotBegan: " + firstTouchNotBegan;
-        for (int i = 0; i < Input.touchCount; i++)
-        {
-            Touch touch = Input.GetTouch(i);
-            debug += "\nfinger: " + touch.fingerId;
-            debug += "\nposition: " + touch.position;
-            debug += "\nphase: " + touch.phase;
-            debug += "\n";
-        }
-        debug += "\n";
-        debug += "\n";
-        debug += "\n";
-
-        for (int i = 0; i < touches.Length; i++)
-        {
-            TouchInfo touch = touches[i];
-            if (!touch.valid)
-            {
-                continue;
-            }
-            debug += "\nfinger: " + touch.now.fingerId;
-            debug += "\nposition: " + touch.now.position;
-            debug += "\nphase: " + touch.now.phase;
-            debug += "\ncanvas: " + touch.canvas;
-            debug += "\n";
-        }
-        GUI.Label(new Rect(0, 0, 500, 500), debug);
+        enabled = supported;
     }
 
     void Update()
     {
-        if (webGLMobile)
-        {
-            TouchMobile();
-        }
-        else
-        {
-            TouchMobile();
-        }
+        InputTouch();
     }
 
-    void TouchMobile()
+    void InputTouch()
     {
-        if (firstTouchNotBegan && touches.Length==0 && Input.touchCount > 0)
-        {
-            if(Input.GetTouch(0).phase != TouchPhase.Began)
-            {
-                firstTouchNotBegan = true;
-            }
-        }
-
         int validTouches = 0;
         for (int i = 0, len = Input.touchCount; i < len; i++)
         {
@@ -128,10 +79,9 @@ public class TouchInput : Singleton<TouchInput>
                         continue;
                     }
 
-                    validTouches++;
-
                     if (touches[j].press.fingerId == touch.fingerId)
                     {
+                        validTouches++;
                         touchFound = true;
                         touches[j].now = touch;
 
@@ -149,7 +99,6 @@ public class TouchInput : Singleton<TouchInput>
                 }
                 if (!touchFound)
                 {
-                    firstTouchNotBegan = true;
                     // WebGL touch can insert new touches that do not start in the 'began' phase
                     validTouches++;
                     AddTouch(touch);

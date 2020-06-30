@@ -4,26 +4,24 @@
 [RequireComponent(typeof(MachinePlacer))]
 public class MachinePurchaser : MonoBehaviour
 {
-    ItemInfo itemInfo;
-    public MachinePlacer machinePlacer;
+    public Machine machine;
+
+    MachineInfo machineInfo;
+    MachinePlacer machinePlacer;
 
     float nextPlaceTime = -1f;
 
-    private void Awake()
+    public void Initialize()
     {
         machinePlacer = GetComponent<MachinePlacer>();
-        Machine machine = GetComponent<Machine>();
-        if (machine)
-        {
-            itemInfo = machine.itemInfo;
-        }
+        machineInfo = machine.machineInfo;
     }
 
     void Update()
     {
         if (nextPlaceTime >= Time.time)
         {
-            nextPlaceTime += itemInfo.placeInterval;
+            nextPlaceTime += machineInfo.placeInterval;
             if (machinePlacer.PlaceItem())
             {
 

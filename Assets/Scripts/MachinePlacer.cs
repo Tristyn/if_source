@@ -6,38 +6,34 @@ using UnityEngine;
 [RequireComponent(typeof(Machine))]
 public class MachinePlacer : MonoBehaviour
 {
-    public ItemInfo itemInfo;
-    public List<Conveyor> conveyors;
-
-    Machine machine;
+    public Machine machine;
+    ItemInfo itemInfo;
     int lastPlaceConveyorIndex;
 
-    private void Awake()
+    public void Initialize()
     {
-        machine = GetComponent<Machine>();
-        if (machine)
-        {
-            itemInfo = machine.itemInfo;
-        }
+        itemInfo = machine.itemInfo;
     }
 
     public bool PlaceItem()
     {
-        List<Conveyor> conveyors = machine.conveyors;
-        for (int i = lastPlaceConveyorIndex, len = conveyors.Count; i <= len; i++)
+        Conveyor[] conveyors = machine.conveyors;
+        for (int i = lastPlaceConveyorIndex + 1, len = conveyors.Length; i < len; i++)
         {
-            if (PlaceItem(conveyors[i]))
+            Conveyor conveyor = conveyors[i];
+            if (PlaceItem(conveyor))
             {
                 lastPlaceConveyorIndex = i;
                 return true;
             }
         }
-        for(int i = 0, len = lastPlaceConveyorIndex; i <= len; i++)
+        for (int i = 0, len = lastPlaceConveyorIndex; i <= len; i++)
         {
-            if (PlaceItem(conveyors[i]))
+            Conveyor conveyor = conveyors[i];
+            if (PlaceItem(conveyor))
             {
                 lastPlaceConveyorIndex = i;
-                return true ;
+                return true;
             }
         }
         return false;

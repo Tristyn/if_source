@@ -1,4 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+
+[Serializable]
+public struct ZoomIncrement
+{
+    public float height;
+    public float pitch;
+}
 
 public class OverviewCameraController : MonoBehaviour
 {
@@ -43,6 +51,7 @@ public class OverviewCameraController : MonoBehaviour
 
     CameraState targetCameraState = new CameraState();
     CameraState interpolatingCameraState = new CameraState();
+    float accumulatedScroll;
 
     public float panSpeed = 5f;
 
@@ -61,6 +70,10 @@ public class OverviewCameraController : MonoBehaviour
     public float zoomHeightMax = 6.5f;
     public float pitch = 45;
     public float zoomInPitch = 30;
+
+    public ZoomIncrement[] zoomIncrements;
+    [SerializeField]
+    public int zoomIncrement;
 
     void OnEnable()
     {
@@ -127,6 +140,14 @@ public class OverviewCameraController : MonoBehaviour
         currentRotationLerpTime = rotationLerpTime * 2;
     }
 
+    public void SetZoomIncrement(int zoomIncrement)
+    {
+        this.zoomIncrement = Mathf.Clamp(zoomIncrement, 0, zoomIncrements.Length - 1);
+
+        targetCameraState.position.y = zoomIncrements[this.zoomIncrement].height;
+        targetCameraState.eulerAngles.x = zoomIncrements[this.zoomIncrement].pitch;
+    }
+
     void Update()
     {
         // Exit Sample
@@ -148,27 +169,17 @@ public class OverviewCameraController : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.T))
         {
-            targetCameraState.position.y = Mathf.Clamp(targetCameraState.position.y + zoomHeightIncrement, zoomHeightMin, zoomHeightMax);
-            if (targetCameraState.position.y == zoomHeightMin)
-            {
-                targetCameraState.eulerAngles.x = zoomInPitch;
-            }
-            else
-            {
-                targetCameraState.eulerAngles.x = pitch;
-            }
+            SetZoomIncrement(zoomIncrement + 1);
         }
         if (Input.GetKeyDown(KeyCode.G))
         {
-            targetCameraState.position.y = Mathf.Clamp(targetCameraState.position.y - zoomHeightIncrement, zoomHeightMin, zoomHeightMax);
-            if (targetCameraState.position.y == zoomHeightMin)
-            {
-                targetCameraState.eulerAngles.x = zoomInPitch;
-            }
-            else
-            {
-                targetCameraState.eulerAngles.x = pitch;
-            }
+            SetZoomIncrement(zoomIncrement - 1);
+        }
+        int scrolldelta = Mathf.FloorToInt(Input.mouseScrollDelta.y + accumulatedScroll) - Mathf.FloorToInt(accumulatedScroll);
+        accumulatedScroll += Input.mouseScrollDelta.y;
+        if (scrolldelta != 0)
+        {
+            SetZoomIncrement(zoomIncrement + scrolldelta);
         }
 
         // Translation

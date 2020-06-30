@@ -5,6 +5,7 @@ using UnityEngine.Assertions;
 public class ConveyorSystem : Singleton<ConveyorSystem>
 {
     public Dictionary<Vector3Int, Conveyor> conveyors = new Dictionary<Vector3Int, Conveyor>();
+    public static float itemSpacing;
 
     public void Add(Conveyor conveyor)
     {

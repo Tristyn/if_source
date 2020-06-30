@@ -31,23 +31,9 @@ public class TouchPan : MonoBehaviour
         }
     }
 
-    private void OnGUI()
-    {
-        string debug = "pans: ";
-        for (int i = 0; i < pans.Count; i++)
-        {
-            Pan pan = pans[i];
-            debug += "\nfinger: " + pan.fingerId;
-            debug += "\nposition: " + pan.startingPixelCoordinate;
-            debug += "\nphase: " + pan.panningBegan;
-            debug += "\n";
-        }
-        GUI.Label(new Rect(0, 500, 500, 500), debug);
-    }
-
     bool ConsumeTouch(TouchInfo touch)
     {
-        if (touch.now.phase == TouchPhase.Began && !touch.canvas && Picker.instance.GetPickerPosition(touch.now.position, PickMask.Floor, out Vector3Int pickerPosition))
+        if (touch.now.phase == TouchPhase.Began && !touch.canvas && Picker.instance.GetPickerTile(touch.now.position, PickMask.Floor, out Vector3Int pickerPosition))
         {
             pans.Add(new Pan
             {
@@ -63,7 +49,7 @@ public class TouchPan : MonoBehaviour
             for (int i = 0, len = pans.Count; i < len; i++)
             {
                 Pan pan = pans[i];
-                if (!pan.panningBegan && Picker.instance.GetPickerPosition(touch.now.position, PickMask.Floor, out pickerPosition) && pickerPosition != pan.startingTile)
+                if (!pan.panningBegan && Picker.instance.GetPickerTile(touch.now.position, PickMask.Floor, out pickerPosition) && pickerPosition != pan.startingTile)
                 {
                     pan.panningBegan = true;
                     pans[i] = pan;
@@ -90,11 +76,16 @@ public class TouchPan : MonoBehaviour
                         {
                             CameraPan(touch.now.deltaPosition);
                         }
-                        else if(Picker.instance.GetPickerPosition(touch.now.position, PickMask.Floor, out Vector3Int pickerPosition) && pickerPosition != pan.startingTile)
+                        else if(Picker.instance.GetPickerTile(touch.now.position, PickMask.Floor, out Vector3Int pickerPosition) && pickerPosition != pan.startingTile)
                         {
                             pan.panningBegan = true;
                             pans[panIndex] = pan;
                             Vector2 deltaPosition = touch.now.position - pan.startingPixelCoordinate;
+                            if(Application.platform == RuntimePlatform.WebGLPlayer)
+                            {
+                                // coordinates are inverse on WebGL
+                                deltaPosition = -deltaPosition;
+                            }
                             CameraPan(deltaPosition);
                         }
                     }

@@ -9,8 +9,6 @@ using UnityEngine;
 public class ItemInfo : ScriptableObject
 {
     public string itemName => name;
-    public float cost;
-    public float placeInterval;
     public Color color = Color.white;
     public GameObject prefab;
 
@@ -27,6 +25,15 @@ public class ItemInfo : ScriptableObject
             {
                 prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
             }
+        }
+
+        ScriptableObjectMasterList masterList = AssetDatabase.LoadAssetAtPath<ScriptableObjectMasterList>(
+            AssetDatabase.FindAssets("ObjectMasterList t:ScriptableObjectMasterList", new[] { "Assets/Objects" })
+            .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
+            .SingleOrDefault());
+        if (!masterList.allItems.Contains(this))
+        {
+            masterList.allItems = masterList.allItems.Append(this).ToArray();
         }
     }
 #endif

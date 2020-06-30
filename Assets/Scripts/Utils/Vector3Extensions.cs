@@ -19,4 +19,11 @@ public static class Vector3Extensions
         point = dir + pivot; // calculate rotated point
         return point; // return it
     }
+
+    public static Bounds3Int PositionToBounds(this Vector3 tileCenter, Vector3Int size)
+    {
+        Vector3Int min = (tileCenter - (Vector3)size/2).RoundToTile();
+        Bounds3Int bounds = new Bounds3Int(min, min + size);
+        return bounds;
+    }
 }

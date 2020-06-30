@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public struct Bounds3Int 
+public struct Bounds3Int
 {
     public Vector3Int min;
     public Vector3Int max;
@@ -13,6 +13,8 @@ public struct Bounds3Int
     }
 
     public Vector3 center => min + ((Vector3)(max - min)) / 2;
+
+    public Vector3 size => max - min + Vector3Int.one;
 
     public bool Contains(Vector3Int position)
     {

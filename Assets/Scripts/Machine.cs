@@ -1,24 +1,141 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.Assertions;
 
 public class Machine : MonoBehaviour
 {
     public Bounds3Int bounds;
-    public List<Conveyor> conveyors;
+    [ReadOnly(true)]
+    public Collider[] colliders;
+    [NonSerialized]
+    public Conveyor[] conveyors;
+    [NonSerialized]
+    public MachineInfo machineInfo;
+    [NonSerialized]
     public ItemInfo itemInfo;
 
-    void Awake()
+    public MachinePurchaser machinePurchaser;
+    public MachineSeller machineSeller;
+    public MachineAssembler machineAssembler;
+    public MachinePlacer machinePlacer;
+
+    public GameObject instance;
+
+    public void Initialize()
     {
-        MachineSystem.instance.machines.Add(this);
+        if (machineInfo.prefab)
+        {
+            instance = Instantiate(machineInfo.prefab, transform);
+        }
+        else
+        {
+            instance = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            instance.transform.SetParent(transform, false);
+            Destroy(instance.GetComponent<BoxCollider>());
+            Transform instanceTransform = instance.transform;
+            instanceTransform.localPosition = (Vector3)machineInfo.size * 0.5f;
+            instanceTransform.localScale = machineInfo.size;
+        }
+
+        gameObject.SetAllLayers(Layer.machine);
+
+        if (machineInfo.purchaseItem)
+        {
+            machinePurchaser = gameObject.AddComponent<MachinePurchaser>();
+            machinePurchaser.machine = this;
+            if (!machinePlacer)
+            {
+                machinePlacer = gameObject.AddComponent<MachinePlacer>();
+                machinePlacer.machine = this;
+            }
+        }
+        if (machineInfo.sellItem)
+        {
+            machineSeller = gameObject.AddComponent<MachineSeller>();
+            machineSeller.machine = this;
+        }
+        if (machineInfo.assembler)
+        {
+            machineAssembler = gameObject.AddComponent<MachineAssembler>();
+            machineAssembler.machine = this;
+            if (!machinePlacer)
+            {
+                machinePlacer = gameObject.AddComponent<MachinePlacer>();
+                machinePlacer.machine = this;
+            }
+        }
+
+        Color color = machineInfo.color;
+        if (color != Color.white)
+        {
+            Renderer[] renderers = GetComponentsInChildren<Renderer>();
+            for (int i = 0, len = renderers.Length; i < len; i++)
+            {
+                Material[] materials = renderers[i].materials;
+                for (int j = 0, lenJ = materials.Length; j < lenJ; j++)
+                {
+                    materials[j].color = color;
+                }
+            }
+        }
+
+        BoxCollider collider = gameObject.AddComponent<BoxCollider>();
+        collider.center = bounds.size * 0.5f;
+        collider.size = bounds.size;
+        colliders = new[] { collider };
+
+        if (machinePurchaser)
+        {
+            machinePurchaser.Initialize();
+        }
+        if (machineSeller)
+        {
+            machineSeller.Initialize();
+        }
+        if (machineAssembler)
+        {
+            machineAssembler.Initialize();
+        }
+        if (machinePlacer)
+        {
+            machinePlacer.Initialize();
+        }
+
+        MachineSystem.instance.Add(this);
     }
 
-    private void OnDestroy()
+    public void Delete()
     {
-        if (MachineSystem.instance)
+        for (int i = 0, len = conveyors.Length; i < len; i++)
         {
-            MachineSystem.instance.machines.Remove(this);
+            Conveyor conveyor = conveyors[i];
+            RemoveConveyor(conveyor);
+            conveyor.Recycle();
         }
+
+        MachineSystem.instance.Remove(this);
+
+        Destroy(gameObject);
+    }
+
+    public static Machine CreateMachine(MachineInfo machineInfo, Vector3 center)
+    {
+        Vector3Int boundsMin = center.PositionToBounds(machineInfo.size).min;
+        boundsMin.y = Mathf.FloorToInt(center.y);
+        Bounds3Int bounds = new Bounds3Int(boundsMin, boundsMin + machineInfo.size - Vector3Int.one);
+        if (MachineSystem.instance.GetMachines(bounds, out Machine[] machines) > 0)
+        {
+            return null;
+        }
+
+        GameObject gameObject = new GameObject(machineInfo.machineName);
+        gameObject.transform.position = bounds.min;
+        Machine machine = gameObject.AddComponent<Machine>();
+        machine.bounds = bounds;
+        machine.machineInfo = machineInfo;
+        machine.Initialize();
+        return machine;
     }
 
     public void AddConveyor(Conveyor conveyor)
@@ -27,7 +144,7 @@ public class Machine : MonoBehaviour
         Assert.IsTrue(bounds.Contains(conveyor.position));
         Assert.IsTrue(bounds.Perimeter(conveyor.position));
         Assert.IsNull(GetConveyor(conveyor.position));
-        conveyors.Add(conveyor);
+        conveyors = conveyors.Append(conveyor);
         conveyor.machine = this;
     }
 
@@ -43,7 +160,7 @@ public class Machine : MonoBehaviour
 
     public Conveyor GetConveyor(Vector3Int position)
     {
-        for (int i = 0, len = conveyors.Count; i < len; i++)
+        for (int i = 0, len = conveyors.Length; i < len; i++)
         {
             Conveyor conveyor = conveyors[i];
             if (conveyor.position == position)
@@ -54,15 +171,8 @@ public class Machine : MonoBehaviour
         return null;
     }
 
-    public void Delete()
+    private void OnValidate()
     {
-        for(int i = 0, len = conveyors.Count; i < len; i++)
-        {
-            Conveyor conveyor = conveyors[i];
-            RemoveConveyor(conveyor);
-            conveyor.Recycle();
-        }
-        
-        Destroy(gameObject);
+        colliders = GetComponentsInChildren<Collider>(true);
     }
 }

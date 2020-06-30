@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
 using UnityTemplateProjects;
 
-public class TouchRotate : MonoBehaviour
+public class UIRotate : MonoBehaviour
 {
     OverviewCameraController cameraController;
-    
 
     void Awake()
     {

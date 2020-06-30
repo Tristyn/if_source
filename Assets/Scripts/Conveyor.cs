@@ -1,14 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Assertions;
 
 public struct ConveyorItem
 {
-    Transform itemTransform;
-    float distance;
-    int frameOfLastMove;
+    public Transform itemTransform;
+    public float distance;
+    public int frameOfLastMove;
+
+    public ConveyorItem(Item item)
+    {
+        itemTransform = item.transform;
+        distance = 0;
+        frameOfLastMove = 0;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Item GetItem()
@@ -29,12 +35,12 @@ public class Conveyor : MonoBehaviour
     [NonSerialized]
     public ConveyorLink[] outputLinks = new ConveyorLink[EnumUtils<Directions>.values.Length];
     [NonSerialized]
-    public Queue<ConveyorItem>[] items = new Queue<ConveyorItem>[EnumUtils<Directions>.values.Length];
+    public OpenQueue<ConveyorItem>[] itemQueues = new OpenQueue<ConveyorItem>[EnumUtils<Directions>.values.Length];
     [NonSerialized]
     public Machine machine;
 
-    public static float itemDistance;
-    int lastOutputIndex;
+    [NonSerialized]
+    public int lastOutputIndex;
 
     public static Conveyor CreateConveyor(Vector3Int position)
     {
@@ -44,7 +50,7 @@ public class Conveyor : MonoBehaviour
         }
 
         conveyor = ObjectPooler.instance.Get<Conveyor>();
-        conveyor.transform.position = position;
+        conveyor.transform.position = position.RoundToTileCenter();
         conveyor.Initialize();
         return conveyor;
     }
@@ -164,7 +170,7 @@ public class Conveyor : MonoBehaviour
 
     public bool PlaceItem(ItemInfo itemInfo)
     {
-        for (int i = lastOutputIndex, len = outputs.Length; i <= len; i++)
+        for (int i = lastOutputIndex + 1, len = outputs.Length; i < len; i++)
         {
             if (PlaceItem(i, itemInfo))
             {
@@ -180,25 +186,27 @@ public class Conveyor : MonoBehaviour
                 return true;
             }
         }
-        Item item = ItemPooler.instance.Get(itemInfo);
-
         return false;
     }
 
     bool PlaceItem(int outputIndex, ItemInfo itemInfo)
     {
+        if (outputs[outputIndex])
+        {
+            OpenQueue<ConveyorItem> items = itemQueues[outputIndex];
+
+            // it is intentional to not check distance of other queues because items are only placed
+            // inside machines and there we only care about the singular machine output.
+            // When items transfer between conveyor queues we check distance on every queue.
+            if (items.Count == 0 || items.PeekTail().distance >= ConveyorSystem.itemSpacing)
+            {
+                lastOutputIndex = outputIndex;
+                Item item = ItemPooler.instance.Get(itemInfo);
+                ConveyorItem conveyorItem = new ConveyorItem(item);
+                items.Enqueue(conveyorItem);
+                return true;
+            }
+        }
         return false;
-        //Conveyor conveyor = outputs[outputIndex];
-        //if (conveyor)
-        //{
-        //    Queue<ConveyorItem> queue = null;
-            
-        //    ConveyorItem[] conveyorItems = items[outputIndex];
-        //    if (PlaceItem(conveyors[i]))
-        //    {
-        //        lastPlaceConveyorIndex = i;
-        //        return true;
-        //    }
-        //}
     }
 }

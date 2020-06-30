@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Security.Permissions;
 
 // A simple Queue of generic objects.  Internally it is implemented as a 
@@ -35,17 +36,15 @@ using System.Security.Permissions;
 [Serializable()]
 #endif
 [System.Runtime.InteropServices.ComVisible(false)]
-public class Queue<T> : IEnumerable<T>,
+public class OpenQueue<T> : IEnumerable<T>,
     System.Collections.ICollection,
     IReadOnlyCollection<T>
 {
-    // BEGIN CHANGES
     private T[] _array;
     private int _head;       // First valid element in the queue
     private int _tail;       // Last valid element in the queue
     private int _size;       // Number of elements.
     private int _version;
-    // END CHANGES
 #if !SILVERLIGHT
     [NonSerialized]
 #endif
@@ -60,7 +59,7 @@ public class Queue<T> : IEnumerable<T>,
     // Creates a queue with room for capacity objects. The default initial
     // capacity and grow factor are used.
     /// <include file='doc\Queue.uex' path='docs/doc[@for="Queue.Queue"]/*' />
-    public Queue()
+    public OpenQueue()
     {
         _array = _emptyArray;
     }
@@ -69,7 +68,7 @@ public class Queue<T> : IEnumerable<T>,
     // is used.
     //
     /// <include file='doc\Queue.uex' path='docs/doc[@for="Queue.Queue1"]/*' />
-    public Queue(int capacity)
+    public OpenQueue(int capacity)
     {
         if (capacity < 0)
             throw new ArgumentOutOfRangeException();
@@ -84,7 +83,7 @@ public class Queue<T> : IEnumerable<T>,
     // to get each of the elements.
     //
     /// <include file='doc\Queue.uex' path='docs/doc[@for="Queue.Queue3"]/*' />
-    public Queue(IEnumerable<T> collection)
+    public OpenQueue(IEnumerable<T> collection)
     {
         if (collection == null)
             throw new ArgumentNullException();
@@ -106,6 +105,9 @@ public class Queue<T> : IEnumerable<T>,
     /// <include file='doc\Queue.uex' path='docs/doc[@for="Queue.Count"]/*' />
     public int Count
     {
+        // BEGIN CHANGES
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        // END CHANGES
         get { return _size; }
     }
 
@@ -297,6 +299,16 @@ public class Queue<T> : IEnumerable<T>,
         return _array[_head];
     }
 
+    // BEGIN CHANGES
+    public T PeekTail()
+    {
+        if (_size == 0)
+            throw new InvalidOperationException();
+
+        return _array[_tail];
+    }
+    // END CHANGES
+
     // Returns true if the queue contains at least one object equal to item.
     // Equality is determined using item.Equals().
     //
@@ -399,12 +411,12 @@ public class Queue<T> : IEnumerable<T>,
     public struct Enumerator : IEnumerator<T>,
         System.Collections.IEnumerator
     {
-        private Queue<T> _q;
+        private OpenQueue<T> _q;
         private int _index;   // -1 = not started, -2 = ended/disposed
         private int _version;
         private T _currentElement;
 
-        internal Enumerator(Queue<T> q)
+        internal Enumerator(OpenQueue<T> q)
         {
             _q = q;
             _version = _q._version;

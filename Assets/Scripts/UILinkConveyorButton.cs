@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using UnityTemplateProjects;
 
-public class ConveyorButton : MonoBehaviour
+public class UILinkConveyorButton : MonoBehaviour
 {
     public Sprite MachineOutputMaterial;
     public Sprite MachineInputMaterial;
@@ -42,8 +42,8 @@ public class ConveyorButton : MonoBehaviour
         if (conveyor)
         {
             Vector3 deltaPosition = (position - sourcePosition);
-            SelectionManager.instance.PanTo(conveyor);
-            SelectionManager.instance.SetSelection(conveyor);
+            TileSelectionManager.instance.PanTo(conveyor);
+            TileSelectionManager.instance.SetSelection(conveyor);
             // Calculate deltaposition first because after SetSelection is called this button is likely recycled.
         }
     }
