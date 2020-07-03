@@ -1,49 +1,46 @@
-﻿using JetBrains.Annotations;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
-[RequireComponent(typeof(Machine))]
 public class MachinePlacer : MonoBehaviour
 {
     public Machine machine;
+
     ItemInfo itemInfo;
-    int lastPlaceConveyorIndex;
+    int lastOutputIndex;
 
     public void Initialize()
     {
-        itemInfo = machine.itemInfo;
+        if (machine.machinePurchaser)
+        {
+            itemInfo = machine.machineInfo.purchaseItem;
+        }
+        else if (machine.machineInfo.assembler)
+        {
+            itemInfo = machine.machineInfo.assembleOutput.itemInfo;
+        }
     }
 
     public bool PlaceItem()
     {
-        Conveyor[] conveyors = machine.conveyors;
-        for (int i = lastPlaceConveyorIndex + 1, len = conveyors.Length; i < len; i++)
+        MachineConveyorLink[] conveyorLinks = machine.conveyorLinks;
+        int lastOutputIndex = Mathf.Min(this.lastOutputIndex, conveyorLinks.Length-1);
+        for (int i = lastOutputIndex + 1, len = conveyorLinks.Length; i < len; i++)
         {
-            Conveyor conveyor = conveyors[i];
-            if (PlaceItem(conveyor))
+            MachineConveyorLink conveyorLink = conveyorLinks[i];
+            if (conveyorLink.isOutput && conveyorLink.innerConveyor.PlaceItem(itemInfo, conveyorLink.direction))
             {
-                lastPlaceConveyorIndex = i;
+                this.lastOutputIndex = i;
                 return true;
             }
         }
-        for (int i = 0, len = lastPlaceConveyorIndex; i <= len; i++)
+        for (int i = 0, len = lastOutputIndex + 1; i < len; i++)
         {
-            Conveyor conveyor = conveyors[i];
-            if (PlaceItem(conveyor))
+            MachineConveyorLink conveyorLink = conveyorLinks[i];
+            if (conveyorLink.isOutput && conveyorLink.innerConveyor.PlaceItem(itemInfo, conveyorLink.direction))
             {
-                lastPlaceConveyorIndex = i;
+                this.lastOutputIndex = i;
                 return true;
             }
-        }
-        return false;
-    }
-
-    bool PlaceItem(Conveyor conveyor)
-    {
-        if (conveyor && conveyor.PlaceItem(itemInfo))
-        {
-            return true;
         }
         return false;
     }

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityTemplateProjects;
 
 public class UIRotate : MonoBehaviour
 {

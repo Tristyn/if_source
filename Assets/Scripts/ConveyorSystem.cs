@@ -5,7 +5,6 @@ using UnityEngine.Assertions;
 public class ConveyorSystem : Singleton<ConveyorSystem>
 {
     public Dictionary<Vector3Int, Conveyor> conveyors = new Dictionary<Vector3Int, Conveyor>();
-    public static float itemSpacing;
 
     public void Add(Conveyor conveyor)
     {
@@ -17,7 +16,7 @@ public class ConveyorSystem : Singleton<ConveyorSystem>
         for(int i = 0, len = directions.Length; i < len; i++)
         {
             Directions direction = directions[i];
-            if (conveyors.TryGetValue(position + direction.ToOffset(), out Conveyor neighbor))
+            if (conveyors.TryGetValue(position + direction.ToOffsetInt(), out Conveyor neighbor))
             {
                 // Use ReferenceEquals to sidestep Unity overloading comparisons to null
                 Assert.IsTrue(ReferenceEquals(conveyor.neighbors[(int)direction], null));

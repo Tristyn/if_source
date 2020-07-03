@@ -50,7 +50,9 @@ public class MachineSystem : Singleton<MachineSystem>
 
     public bool GetMachine(Vector3Int position, out Machine machine)
     {
-        if (Physics.OverlapBoxNonAlloc(position.RoundToTileCenter(), new Vector3(0.5f, 0.5f, 0.5f), oneColliderBuffer, Quaternion.identity, Layer.machine) > 0)
+        Vector3 center= position.RoundToTileCenter();
+        center.y += 0.5f;
+        if (Physics.OverlapBoxNonAlloc(center, new Vector3(0.5f, 0.5f, 0.5f), oneColliderBuffer, Quaternion.identity, Layer.GetMask(Layer.machines).value) > 0)
         {
             if (machines.TryGetValue(oneColliderBuffer[0], out machine))
             {
@@ -67,7 +69,7 @@ public class MachineSystem : Singleton<MachineSystem>
     public int GetMachines(Bounds3Int position, out Machine[] machinesBuffer)
     {
         machinesBuffer = manyMachinesBuffer;
-        int count = Physics.OverlapBoxNonAlloc(position.center, position.size * 0.5f, manyColliderBuffer, Quaternion.identity, Layer.machine);
+        int count = Physics.OverlapBoxNonAlloc(position.center, position.size * 0.5f, manyColliderBuffer, Quaternion.identity, Layer.GetMask(Layer.machines).value);
         int machinesCount = 0;
         for (int i = 0; i < count; i++)
         {

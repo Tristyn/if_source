@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using System.Security.Permissions;
 
 // A simple Queue of generic objects.  Internally it is implemented as a 
 // circular buffer, so Enqueue can be O(n).  Dequeue is O(1).
@@ -40,9 +39,11 @@ public class OpenQueue<T> : IEnumerable<T>,
     System.Collections.ICollection,
     IReadOnlyCollection<T>
 {
-    private T[] _array;
-    private int _head;       // First valid element in the queue
-    private int _tail;       // Last valid element in the queue
+    // BEGIN CHANGES
+    public T[] array;
+    public int head;       // First valid element in the queue
+    public int tail;       // Last valid element in the queue
+    // END CHANGES
     private int _size;       // Number of elements.
     private int _version;
 #if !SILVERLIGHT
@@ -61,7 +62,7 @@ public class OpenQueue<T> : IEnumerable<T>,
     /// <include file='doc\Queue.uex' path='docs/doc[@for="Queue.Queue"]/*' />
     public OpenQueue()
     {
-        _array = _emptyArray;
+        array = _emptyArray;
     }
 
     // Creates a queue with room for capacity objects. The default grow factor
@@ -73,9 +74,9 @@ public class OpenQueue<T> : IEnumerable<T>,
         if (capacity < 0)
             throw new ArgumentOutOfRangeException();
 
-        _array = new T[capacity];
-        _head = 0;
-        _tail = 0;
+        array = new T[capacity];
+        head = 0;
+        tail = 0;
         _size = 0;
     }
 
@@ -88,7 +89,7 @@ public class OpenQueue<T> : IEnumerable<T>,
         if (collection == null)
             throw new ArgumentNullException();
 
-        _array = new T[_DefaultCapacity];
+        array = new T[_DefaultCapacity];
         _size = 0;
         _version = 0;
 
@@ -133,16 +134,16 @@ public class OpenQueue<T> : IEnumerable<T>,
     /// <include file='doc\Queue.uex' path='docs/doc[@for="Queue.Clear"]/*' />
     public void Clear()
     {
-        if (_head < _tail)
-            Array.Clear(_array, _head, _size);
+        if (head < tail)
+            Array.Clear(array, head, _size);
         else
         {
-            Array.Clear(_array, _head, _array.Length - _head);
-            Array.Clear(_array, 0, _tail);
+            Array.Clear(array, head, array.Length - head);
+            Array.Clear(array, 0, tail);
         }
 
-        _head = 0;
-        _tail = 0;
+        head = 0;
+        tail = 0;
         _size = 0;
         _version++;
     }
@@ -172,12 +173,12 @@ public class OpenQueue<T> : IEnumerable<T>,
         int numToCopy = (arrayLen - arrayIndex < _size) ? (arrayLen - arrayIndex) : _size;
         if (numToCopy == 0) return;
 
-        int firstPart = (_array.Length - _head < numToCopy) ? _array.Length - _head : numToCopy;
-        Array.Copy(_array, _head, array, arrayIndex, firstPart);
+        int firstPart = (this.array.Length - head < numToCopy) ? this.array.Length - head : numToCopy;
+        Array.Copy(this.array, head, array, arrayIndex, firstPart);
         numToCopy -= firstPart;
         if (numToCopy > 0)
         {
-            Array.Copy(_array, 0, array, arrayIndex + _array.Length - _head, numToCopy);
+            Array.Copy(this.array, 0, array, arrayIndex + this.array.Length - head, numToCopy);
         }
     }
 
@@ -214,13 +215,13 @@ public class OpenQueue<T> : IEnumerable<T>,
 
         try
         {
-            int firstPart = (_array.Length - _head < numToCopy) ? _array.Length - _head : numToCopy;
-            Array.Copy(_array, _head, array, index, firstPart);
+            int firstPart = (this.array.Length - head < numToCopy) ? this.array.Length - head : numToCopy;
+            Array.Copy(this.array, head, array, index, firstPart);
             numToCopy -= firstPart;
 
             if (numToCopy > 0)
             {
-                Array.Copy(_array, 0, array, index + _array.Length - _head, numToCopy);
+                Array.Copy(this.array, 0, array, index + this.array.Length - head, numToCopy);
             }
         }
         catch (ArrayTypeMismatchException)
@@ -234,18 +235,18 @@ public class OpenQueue<T> : IEnumerable<T>,
     /// <include file='doc\Queue.uex' path='docs/doc[@for="Queue.Enqueue"]/*' />
     public void Enqueue(T item)
     {
-        if (_size == _array.Length)
+        if (_size == array.Length)
         {
-            int newcapacity = (int)((long)_array.Length * (long)_GrowFactor / 100);
-            if (newcapacity < _array.Length + _MinimumGrow)
+            int newcapacity = (int)((long)array.Length * (long)_GrowFactor / 100);
+            if (newcapacity < array.Length + _MinimumGrow)
             {
-                newcapacity = _array.Length + _MinimumGrow;
+                newcapacity = array.Length + _MinimumGrow;
             }
             SetCapacity(newcapacity);
         }
 
-        _array[_tail] = item;
-        _tail = (_tail + 1) % _array.Length;
+        array[tail] = item;
+        tail = (tail + 1) % array.Length;
         _size++;
         _version++;
     }
@@ -279,9 +280,9 @@ public class OpenQueue<T> : IEnumerable<T>,
         if (_size == 0)
             throw new InvalidOperationException();
 
-        T removed = _array[_head];
-        _array[_head] = default(T);
-        _head = (_head + 1) % _array.Length;
+        T removed = array[head];
+        array[head] = default(T);
+        head = (head + 1) % array.Length;
         _size--;
         _version++;
         return removed;
@@ -296,7 +297,7 @@ public class OpenQueue<T> : IEnumerable<T>,
         if (_size == 0)
             throw new InvalidOperationException();
 
-        return _array[_head];
+        return array[head];
     }
 
     // BEGIN CHANGES
@@ -305,7 +306,7 @@ public class OpenQueue<T> : IEnumerable<T>,
         if (_size == 0)
             throw new InvalidOperationException();
 
-        return _array[_tail];
+        return array[tail];
     }
     // END CHANGES
 
@@ -316,7 +317,7 @@ public class OpenQueue<T> : IEnumerable<T>,
     /// <include file='doc\Queue.uex' path='docs/doc[@for="Queue.Contains"]/*' />
     public bool Contains(T item)
     {
-        int index = _head;
+        int index = head;
         int count = _size;
 
         EqualityComparer<T> c = EqualityComparer<T>.Default;
@@ -324,23 +325,31 @@ public class OpenQueue<T> : IEnumerable<T>,
         {
             if (((Object)item) == null)
             {
-                if (((Object)_array[index]) == null)
+                if (((Object)array[index]) == null)
                     return true;
             }
-            else if (_array[index] != null && c.Equals(_array[index], item))
+            else if (array[index] != null && c.Equals(array[index], item))
             {
                 return true;
             }
-            index = (index + 1) % _array.Length;
+            index = (index + 1) % array.Length;
         }
 
         return false;
     }
 
-    internal T GetElement(int i)
+    // BEGIN CHANGES
+    public T GetElement(int i)
     {
-        return _array[(_head + i) % _array.Length];
+        return array[GetElementIndex(i)];
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public int GetElementIndex(int i)
+    {
+        return (head + i) % array.Length;
+    }
+    //END CHANGES
 
     // Iterates over the objects in the queue, returning an array of the
     // objects in the Queue, or an empty array if the queue is empty.
@@ -353,14 +362,14 @@ public class OpenQueue<T> : IEnumerable<T>,
         if (_size == 0)
             return arr;
 
-        if (_head < _tail)
+        if (head < tail)
         {
-            Array.Copy(_array, _head, arr, 0, _size);
+            Array.Copy(array, head, arr, 0, _size);
         }
         else
         {
-            Array.Copy(_array, _head, arr, 0, _array.Length - _head);
-            Array.Copy(_array, 0, arr, _array.Length - _head, _tail);
+            Array.Copy(array, head, arr, 0, array.Length - head);
+            Array.Copy(array, 0, arr, array.Length - head, tail);
         }
 
         return arr;
@@ -374,26 +383,26 @@ public class OpenQueue<T> : IEnumerable<T>,
         T[] newarray = new T[capacity];
         if (_size > 0)
         {
-            if (_head < _tail)
+            if (head < tail)
             {
-                Array.Copy(_array, _head, newarray, 0, _size);
+                Array.Copy(array, head, newarray, 0, _size);
             }
             else
             {
-                Array.Copy(_array, _head, newarray, 0, _array.Length - _head);
-                Array.Copy(_array, 0, newarray, _array.Length - _head, _tail);
+                Array.Copy(array, head, newarray, 0, array.Length - head);
+                Array.Copy(array, 0, newarray, array.Length - head, tail);
             }
         }
 
-        _array = newarray;
-        _head = 0;
-        _tail = (_size == capacity) ? 0 : _size;
+        array = newarray;
+        head = 0;
+        tail = (_size == capacity) ? 0 : _size;
         _version++;
     }
 
     public void TrimExcess()
     {
-        int threshold = (int)(((double)_array.Length) * 0.9);
+        int threshold = (int)(((double)array.Length) * 0.9);
         if (_size < threshold)
         {
             SetCapacity(_size);

@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityTemplateProjects;
 
 public class UILinkConveyorButton : MonoBehaviour
 {
@@ -13,11 +12,13 @@ public class UILinkConveyorButton : MonoBehaviour
     public Vector3Int sourcePosition;
 
     Button button;
+    RectTransform rectTransform;
 
     void Awake()
     {
         button = GetComponent<Button>();
         button.onClick.AddListener(OnClick);
+        rectTransform = (RectTransform)transform; // Casting this early probably has no performance benefit
     }
 
     void Update()
@@ -32,8 +33,7 @@ public class UILinkConveyorButton : MonoBehaviour
 
     void UpdatePosition()
     {
-        RectTransform rectTransform = (RectTransform)transform;
-        rectTransform.position = cameraController.mainCamera.WorldToScreenPoint(position);
+        rectTransform.position = cameraController.mainCamera.WorldToScreenPoint(position.RoundToTileCenter());
     }
 
     void OnClick()
@@ -41,10 +41,8 @@ public class UILinkConveyorButton : MonoBehaviour
         Conveyor conveyor = Conveyor.CreateConveyor(sourcePosition, position);
         if (conveyor)
         {
-            Vector3 deltaPosition = (position - sourcePosition);
             TileSelectionManager.instance.PanTo(conveyor);
             TileSelectionManager.instance.SetSelection(conveyor);
-            // Calculate deltaposition first because after SetSelection is called this button is likely recycled.
         }
     }
 

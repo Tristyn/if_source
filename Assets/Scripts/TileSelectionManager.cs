@@ -99,10 +99,10 @@ public class TileSelectionManager : Singleton<TileSelectionManager>
         else if (state.machine)
         {
             Conveyor[] conveyors = state.machine.conveyors;
-            for(int i = 0, len = conveyors.Length; i < len; i++)
+            for (int i = 0, len = conveyors.Length; i < len; i++)
             {
                 Conveyor[] inputs = conveyors[i].inputs;
-                for(int j = 1, jLen=inputs.Length; j < jLen; j++)
+                for (int j = 1, jLen = inputs.Length; j < jLen; j++)
                 {
                     Conveyor input = inputs[j];
                     if (input)

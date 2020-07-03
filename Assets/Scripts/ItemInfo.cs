@@ -1,5 +1,4 @@
 ﻿#if UNITY_EDITOR
-using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 #endif
@@ -10,7 +9,7 @@ public class ItemInfo : ScriptableObject
 {
     public string itemName => name;
     public Color color = Color.white;
-    public GameObject prefab;
+    public Item prefab;
 
 #if UNITY_EDITOR
     void OnValidate()
@@ -23,7 +22,7 @@ public class ItemInfo : ScriptableObject
             string path = guids.FirstOrDefault();
             if (path != null)
             {
-                prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                prefab = AssetDatabase.LoadAssetAtPath<Item>(path);
             }
         }
 

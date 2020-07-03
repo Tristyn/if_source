@@ -8,7 +8,40 @@ public enum Directions
 
 public static class DirectionsExtensions
 {
-    public static Vector3Int ToOffset(this Directions direction)
+    public static Vector3 ToOffset(this Directions direction)
+    {
+        switch (direction)
+        {
+            case Directions.North:
+                return new Vector3(1, 0, 0);
+            case Directions.East:
+                return new Vector3(0, 0, -1);
+            case Directions.South:
+                return new Vector3(-1, 0, 0);
+            case Directions.West:
+                return new Vector3(0, 0, 1);
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+    public static Vector3 ToOffset(this Directions direction, float scale)
+    {
+        switch (direction)
+        {
+            case Directions.North:
+                return new Vector3(scale, 0, 0);
+            case Directions.East:
+                return new Vector3(0, 0, -scale);
+            case Directions.South:
+                return new Vector3(-scale, 0, 0);
+            case Directions.West:
+                return new Vector3(0, 0, scale);
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    public static Vector3Int ToOffsetInt(this Directions direction)
     {
         switch (direction)
         {

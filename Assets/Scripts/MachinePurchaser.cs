@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
 
-[RequireComponent(typeof(MachinePlacer))]
 public class MachinePurchaser : MonoBehaviour
 {
     public Machine machine;
@@ -19,7 +18,7 @@ public class MachinePurchaser : MonoBehaviour
 
     void Update()
     {
-        if (nextPlaceTime >= Time.time)
+        if (nextPlaceTime <= Time.time)
         {
             nextPlaceTime += machineInfo.placeInterval;
             if (machinePlacer.PlaceItem())

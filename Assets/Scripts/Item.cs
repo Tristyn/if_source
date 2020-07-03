@@ -19,4 +19,19 @@ public class Item : MonoBehaviour
             }
         }
     }
+
+    public void Recycle()
+    {
+        ItemPooler.instance.Recycle(this);
+    }
+
+    public void ConsumedByMachine()
+    {
+        Recycle();
+    }
+
+    public void EvictedFromConveyor()
+    {
+        Recycle();
+    }
 }

@@ -1,10 +1,10 @@
 ﻿#if UNITY_EDITOR
 using UnityEditor;
 #endif
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 [Serializable]
 public struct AssembleInfo
@@ -21,11 +21,13 @@ public class MachineInfo : ScriptableObject
     public float groupOrder;
     public float cost;
     public float placeInterval;
-    public Vector3Int size = new Vector3Int(2,1,2);
+    public Vector3Int size = new Vector3Int(2, 1, 2);
     public GameObject prefab;
     public Color color = Color.white;
     public Sprite sprite;
     public Color spriteColor = Color.white;
+
+    public Inventory inventory = new Inventory { slots = new InventorySlot[0] };
 
     public ItemInfo purchaseItem;
     public ItemInfo sellItem;
@@ -33,7 +35,7 @@ public class MachineInfo : ScriptableObject
     public bool assembler;
 
     public AssembleInfo[] assembleInputs;
-    public AssembleInfo[] assembleOutputs;
+    public AssembleInfo assembleOutput;
 #if UNITY_EDITOR
     void OnValidate()
     {
@@ -78,6 +80,27 @@ public class MachineInfo : ScriptableObject
                 }
             }
         }
+
+        // inventory order is purchase item, sell item, assemble inputs, assemble outputs, anything else
+        List<InventorySlot> inventorySlots = new List<InventorySlot>();
+        if (purchaseItem)
+        {
+            inventorySlots.Add(InventorySlot.Defaults(purchaseItem));
+        }
+        if (sellItem)
+        {
+            inventorySlots.Add(InventorySlot.Defaults(sellItem));
+        }
+        if (assembler)
+        {
+            inventorySlots.AddRange(assembleInputs.Select(item => InventorySlot.Defaults(item.itemInfo)));
+            inventorySlots.Add(InventorySlot.Defaults(assembleOutput.itemInfo));
+        }
+        inventorySlots.AddRange(inventory.slots.Except(inventorySlots.ToArray()));
+        inventory = new Inventory
+        {
+            slots = inventorySlots.ToArray()
+        };
     }
 #endif
 }

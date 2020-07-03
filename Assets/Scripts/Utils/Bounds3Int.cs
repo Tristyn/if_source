@@ -50,4 +50,24 @@ public struct Bounds3Int
             yield return (new Vector3Int(max.x + 1, min.y, z), new Vector3Int(max.x, min.y, z));
         }
     }
+
+    public IEnumerable<(Vector3Int outerTile, Vector3Int innerTile, Directions direction)> EnumeratePerimeterClockwise()
+    {
+        for (int z = min.z; z <= max.z; z++)
+        {
+            yield return (new Vector3Int(max.x + 1, min.y, z), new Vector3Int(max.x, min.y, z), Directions.North);
+        }
+        for (int x = min.x; x <= max.x; x++)
+        {
+            yield return (new Vector3Int(x, min.y, min.z - 1), new Vector3Int(x, min.y, min.z), Directions.East);
+        }
+        for (int z = min.z; z <= max.z; z++)
+        {
+            yield return (new Vector3Int(min.x - 1, min.y, z), new Vector3Int(min.x, min.y, z), Directions.South);
+        }
+        for (int x = min.x; x <= max.x; x++)
+        {
+            yield return (new Vector3Int(x, min.y, max.z + 1), new Vector3Int(x, min.y, max.z), Directions.West);
+        }
+    }
 }

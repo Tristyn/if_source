@@ -5,7 +5,6 @@ public class ItemPooler : Singleton<ItemPooler>
 {
     const int MAX_POOL_COUNT = 64;
 
-    public Item prefab;
     private Dictionary<ItemInfo, List<Item>> pools = new Dictionary<ItemInfo, List<Item>>();
 
     public Item Get(ItemInfo itemInfo)
@@ -25,8 +24,10 @@ public class ItemPooler : Singleton<ItemPooler>
             item.gameObject.SetActive(true);
             return item;
         }
-        GameObject obj = Instantiate(itemInfo.prefab);
-        return obj.GetComponent<Item>();
+        Item newItem = Instantiate(itemInfo.prefab);
+        newItem.itemInfo = itemInfo;
+        newItem.Initialize();
+        return newItem;
     }
 
     public void Recycle(Item item)

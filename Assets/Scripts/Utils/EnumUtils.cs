@@ -4,7 +4,9 @@ using System.Collections.Generic;
 public static class EnumUtils<T> where T : Enum
 {
     public static T[] values;
+    public static int valuesLength;
     public static T[] nonZeroValues;
+    public static int nonZeroValuesLength;
     public static string[] names;
     public static string[] nonZeroNames;
 
@@ -26,5 +28,7 @@ public static class EnumUtils<T> where T : Enum
         }
         nonZeroNames = nonZeroNames1.ToArray();
         nonZeroValues = nonZeroValues1.ToArray();
+        nonZeroValuesLength = nonZeroValues.Length;
+        valuesLength = values.Length;
     }
 }
