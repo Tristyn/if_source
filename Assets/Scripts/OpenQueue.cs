@@ -20,6 +20,7 @@
  * - Major changes are between BEGIN CHANGES and END CHANGES comments
  * - Renamed to OpenQueue, removed namespace
  * - Removed/replaced code referencing .NET internal symbols. Such as ThrowHelper
+ * - Tail now actually points to the last valid element in the queue. Before tail-1 points to the last valid element. When queue is empty tail = (head - 1) % capacity
  */
 
 using System;
@@ -27,6 +28,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using UnityEngine.Assertions;
 
 // A simple Queue of generic objects.  Internally it is implemented as a 
 // circular buffer, so Enqueue can be O(n).  Dequeue is O(1).
@@ -63,6 +65,7 @@ public class OpenQueue<T> : IEnumerable<T>,
     public OpenQueue()
     {
         array = _emptyArray;
+        tail = -1;
     }
 
     // Creates a queue with room for capacity objects. The default grow factor
@@ -76,7 +79,7 @@ public class OpenQueue<T> : IEnumerable<T>,
 
         array = new T[capacity];
         head = 0;
-        tail = 0;
+        tail = -1;
         _size = 0;
     }
 
@@ -130,23 +133,25 @@ public class OpenQueue<T> : IEnumerable<T>,
         }
     }
 
+    // BEGIN CHANGES
     // Removes all Objects from the queue.
     /// <include file='doc\Queue.uex' path='docs/doc[@for="Queue.Clear"]/*' />
     public void Clear()
     {
-        if (head < tail)
+        if (head <= tail)
             Array.Clear(array, head, _size);
         else
         {
             Array.Clear(array, head, array.Length - head);
-            Array.Clear(array, 0, tail);
+            Array.Clear(array, 0, tail + 1);
         }
 
         head = 0;
-        tail = 0;
+        tail = -1;
         _size = 0;
         _version++;
     }
+    //END CHANGES
 
     // CopyTo copies a collection into an Array, starting at a particular
     // index into the array.
@@ -245,8 +250,10 @@ public class OpenQueue<T> : IEnumerable<T>,
             SetCapacity(newcapacity);
         }
 
-        array[tail] = item;
+        // BEGIN CHANGES
         tail = (tail + 1) % array.Length;
+        array[tail] = item;
+        // END CHANGES
         _size++;
         _version++;
     }
@@ -351,6 +358,7 @@ public class OpenQueue<T> : IEnumerable<T>,
     }
     //END CHANGES
 
+    // BEGIN CHANGES
     // Iterates over the objects in the queue, returning an array of the
     // objects in the Queue, or an empty array if the queue is empty.
     // The order of elements in the array is first in to last in, the same
@@ -362,20 +370,22 @@ public class OpenQueue<T> : IEnumerable<T>,
         if (_size == 0)
             return arr;
 
-        if (head < tail)
+        if (head <= tail)
         {
             Array.Copy(array, head, arr, 0, _size);
         }
         else
         {
             Array.Copy(array, head, arr, 0, array.Length - head);
-            Array.Copy(array, 0, arr, array.Length - head, tail);
+            Array.Copy(array, 0, arr, array.Length - head, tail + 1);
         }
 
         return arr;
     }
+    //END CHANGES
 
 
+    // BEGIN CHANGES
     // PRIVATE Grows or shrinks the buffer to hold capacity objects. Capacity
     // must be >= _size.
     private void SetCapacity(int capacity)
@@ -383,22 +393,23 @@ public class OpenQueue<T> : IEnumerable<T>,
         T[] newarray = new T[capacity];
         if (_size > 0)
         {
-            if (head < tail)
+            if (head <= tail)
             {
                 Array.Copy(array, head, newarray, 0, _size);
             }
             else
             {
                 Array.Copy(array, head, newarray, 0, array.Length - head);
-                Array.Copy(array, 0, newarray, array.Length - head, tail);
+                Array.Copy(array, 0, newarray, array.Length - head, tail + 1);
             }
         }
 
         array = newarray;
         head = 0;
-        tail = (_size == capacity) ? 0 : _size;
+        tail = _size - 1;
         _version++;
     }
+    // END CHANGES
 
     public void TrimExcess()
     {

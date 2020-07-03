@@ -81,6 +81,7 @@ public class MachineInfo : ScriptableObject
             }
         }
 
+
         // inventory order is purchase item, sell item, assemble inputs, assemble outputs, anything else
         List<InventorySlot> inventorySlots = new List<InventorySlot>();
         if (purchaseItem)
@@ -101,6 +102,9 @@ public class MachineInfo : ScriptableObject
         {
             slots = inventorySlots.ToArray()
         };
+
+        EditorUtility.SetDirty(this);
+        EditorUtility.SetDirty(masterList);
     }
 #endif
 }

@@ -26,4 +26,9 @@ public static class Vector3Extensions
         Bounds3Int bounds = new Bounds3Int(min, min + size);
         return bounds;
     }
+
+    public static Vector3 Subtract(this Vector3 vector, float value)
+    {
+        return new Vector3(vector.x - value, vector.y - value, vector.z - value);
+    }
 }

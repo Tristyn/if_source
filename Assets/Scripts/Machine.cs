@@ -95,7 +95,8 @@ public class Machine : MonoBehaviour
 
         BoxCollider collider = gameObject.AddComponent<BoxCollider>();
         collider.center = bounds.size * 0.5f;
-        collider.size = bounds.size;
+        // Shrink 0.1f so it doesn't collide with things on the very edge of the tile
+        collider.size = bounds.size.Subtract(0.1f);
         colliders = new[] { collider };
 
         FindConveyors();

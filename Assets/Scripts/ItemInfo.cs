@@ -34,6 +34,9 @@ public class ItemInfo : ScriptableObject
         {
             masterList.allItems = masterList.allItems.Append(this).ToArray();
         }
+
+        EditorUtility.SetDirty(this);
+        EditorUtility.SetDirty(masterList);
     }
 #endif
 }

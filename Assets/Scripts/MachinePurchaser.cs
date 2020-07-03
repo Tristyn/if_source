@@ -16,9 +16,9 @@ public class MachinePurchaser : MonoBehaviour
         machineInfo = machine.machineInfo;
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        if (nextPlaceTime <= Time.time)
+        if (nextPlaceTime <= Time.fixedTime)
         {
             nextPlaceTime += machineInfo.placeInterval;
             if (machinePlacer.PlaceItem())

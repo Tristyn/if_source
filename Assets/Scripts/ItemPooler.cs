@@ -1,25 +1,23 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 public class ItemPooler : Singleton<ItemPooler>
 {
     const int MAX_POOL_COUNT = 64;
 
-    private Dictionary<ItemInfo, List<Item>> pools = new Dictionary<ItemInfo, List<Item>>();
+    private Dictionary<ItemInfo, Stack<Item>> pools = new Dictionary<ItemInfo, Stack<Item>>();
 
     public Item Get(ItemInfo itemInfo)
     {
-        if (!pools.TryGetValue(itemInfo, out List<Item> pool))
+        if (!pools.TryGetValue(itemInfo, out Stack<Item> pool))
         {
-            pool = new List<Item>();
+            pool = new Stack<Item>();
             pools.Add(itemInfo, pool);
         }
 
         int count = pool.Count;
         if (count > 0)
         {
-            Item item = pool[count - 1];
-            pool.RemoveAt(count - 1);
+            Item item = pool.Pop();
             item.transform.SetParent(null, false);
             item.gameObject.SetActive(true);
             return item;
@@ -35,16 +33,16 @@ public class ItemPooler : Singleton<ItemPooler>
         item.gameObject.SetActive(false);
         item.transform.SetParent(transform, false);
 
-        if (!pools.TryGetValue(item.itemInfo, out List<Item> pool))
+        if (!pools.TryGetValue(item.itemInfo, out Stack<Item> pool))
         {
-            pool = new List<Item>();
+            pool = new Stack<Item>();
             pools.Add(item.itemInfo, pool);
         }
 
         if (pool.Count < MAX_POOL_COUNT)
         {
             item.gameObject.SetActive(false);
-            pool.Add(item);
+            pool.Push(item);
         }
         else
         {

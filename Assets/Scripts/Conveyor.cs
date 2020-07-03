@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -35,25 +36,19 @@ public struct ConveyorItem
 public class Conveyor : MonoBehaviour
 {
     public Vector3Int position;
-    [NonSerialized]
-    public Conveyor[] neighbors = new Conveyor[EnumUtils<Directions>.valuesLength];
-    [NonSerialized]
-    public Conveyor[] inputs = new Conveyor[EnumUtils<Directions>.valuesLength];
-    [NonSerialized]
-    public Conveyor[] outputs = new Conveyor[EnumUtils<Directions>.valuesLength];
-    [NonSerialized]
-    public ConveyorLink[] outputLinks = new ConveyorLink[EnumUtils<Directions>.valuesLength];
-    [NonSerialized]
-    public OpenQueue<ConveyorItem>[] itemQueues = new OpenQueue<ConveyorItem>[EnumUtils<Directions>.valuesLength];
-    [NonSerialized]
     public Machine machine;
+    public Conveyor[] neighbors = new Conveyor[EnumUtils<Directions>.valuesLength];
+    public Conveyor[] inputs = new Conveyor[EnumUtils<Directions>.valuesLength];
+    public Conveyor[] outputs = new Conveyor[EnumUtils<Directions>.valuesLength];
+    public OpenQueue<ConveyorItem>[] outputQueues = new OpenQueue<ConveyorItem>[EnumUtils<Directions>.valuesLength];
+    public ConveyorLink[] outputLinks = new ConveyorLink[EnumUtils<Directions>.valuesLength];
 
     Directions currentRouterInput = Directions.None;
     Directions lastRoutedDirection = Directions.None;
 
-    const float minItemDistance = 0.2f;
-    const float queueDistance = 0.5f;
-    const float itemSpeed = 1f / 30f;
+    const float minItemDistance = 0.51f;
+    const float queueDistance = 1f;
+    const float itemSpeed = 1f / 20f;
 
     public static Conveyor CreateConveyor(Vector3Int position)
     {
@@ -105,6 +100,8 @@ public class Conveyor : MonoBehaviour
     public void Recycle()
     {
         Directions[] directions = EnumUtils<Directions>.nonZeroValues;
+        currentRouterInput = Directions.None;
+        lastRoutedDirection = Directions.None;
 
         // Remove neighbors
         for (int i = 0, len = directions.Length; i < len; i++)
@@ -152,11 +149,10 @@ public class Conveyor : MonoBehaviour
 
             outputs[(int)direction] = to;
             inputs[(int)direction] = null;
-            itemQueues[(int)direction] = new OpenQueue<ConveyorItem>();
+            outputQueues[(int)direction] = new OpenQueue<ConveyorItem>();
             Directions inverseDirection = direction.Inverse();
             to.inputs[(int)inverseDirection] = this;
             to.outputs[(int)inverseDirection] = null;
-            to.itemQueues[(int)inverseDirection] = new OpenQueue<ConveyorItem>();
 
             ConveyorLink link = ObjectPooler.instance.Get<ConveyorLink>();
             outputLinks[(int)direction] = link;
@@ -185,16 +181,17 @@ public class Conveyor : MonoBehaviour
             Assert.IsNull(inputs[(int)direction]);
             Assert.IsNull(to.outputs[(int)inverseDirection]);
 
+            ClearItemQueue(outputQueues[(int)direction]);
+            outputQueues[(int)direction] = null;
             outputs[(int)direction] = null;
-            ClearItemQueue(itemQueues[(int)direction]);
-            itemQueues[(int)direction] = null;
-
-            to.inputs[(int)inverseDirection] = null;
-            ClearItemQueue(to.itemQueues[(int)inverseDirection]);
-            to.itemQueues[(int)inverseDirection] = null;
 
             outputLinks[(int)direction].Recycle();
             outputLinks[(int)direction] = null;
+
+            if(to.currentRouterInput == direction)
+            {
+                to.currentRouterInput = Directions.None;
+            }
 
             if (machine)
             {
@@ -218,7 +215,7 @@ public class Conveyor : MonoBehaviour
     public bool PlaceItem(ItemInfo itemInfo, Directions direction)
     {
         Assert.IsNotNull(outputs[(int)direction]);
-        OpenQueue<ConveyorItem> items = itemQueues[(int)direction];
+        OpenQueue<ConveyorItem> items = outputQueues[(int)direction];
 
         // it is intentional to not check distance of other queues because items are only placed
         // inside machines and there we only care about the singular machine output.
@@ -235,16 +232,45 @@ public class Conveyor : MonoBehaviour
         return false;
     }
 
-    bool GetRoute(out Directions direction, out OpenQueue<ConveyorItem> destination, out float routedItemDistance)
+    /// <summary>
+    /// Find the next route direction in the sequence
+    /// </summary>
+    public OpenQueue<ConveyorItem> GetRouteDirection(out Directions direction)
     {
-        direction = default;
-        destination = null;
-        bool routeFound = false;
-        routedItemDistance = queueDistance;
+        OpenQueue<ConveyorItem>[] queues = outputQueues;
+        for (int i = (int)lastRoutedDirection + 1, len = queues.Length; i < len; i++)
+        {
+            OpenQueue<ConveyorItem> queue = queues[i];
+            if (queue == null)
+            {
+                continue;
+            }
+            direction = (Directions)i;
+            return queue;
+        }
+        for (int i = 1, len = (int)lastRoutedDirection + 1; i < len; i++)
+        {
+            OpenQueue<ConveyorItem> queue = queues[i];
+            if (queue == null)
+            {
+                continue;
+            }
+            direction = (Directions)i;
+            return queue;
+        }
 
+        direction = default;
+        return null;
+    }
+
+    /// <summary>
+    /// Find the next route direction in the sequence that has space to insert another item
+    /// </summary>
+    bool GetRouteDirection(out Directions direction, out OpenQueue<ConveyorItem> destination, out float routedItemDistance)
+    {
         // These 2 loops checks every output queue to find the destination queue,
         // and also make sure there is some space on every queue
-        OpenQueue<ConveyorItem>[] queues = itemQueues;
+        OpenQueue<ConveyorItem>[] queues = outputQueues;
         for (int i = (int)lastRoutedDirection + 1, len = queues.Length; i < len; i++)
         {
             if (!outputs[i])
@@ -255,17 +281,22 @@ public class Conveyor : MonoBehaviour
             Assert.IsNotNull(queue);
             ConveyorItem[] queueArray = queue.array;
             int queueTail = queue.tail;
-            if (queue.Count == 0 || queueArray[queueTail].distance - minItemDistance >= 0)
+            if (queue.Count == 0)
             {
-                return false;
-            }
-            routedItemDistance = Mathf.Min(routedItemDistance, queueArray[queueTail].distance);
-            if (!routeFound)
-            {
-                routeFound = true;
+                routedItemDistance = queueDistance;
                 direction = (Directions)i;
                 destination = queue;
+                return true;
             }
+            else if (queueArray[queueTail].distance - minItemDistance < 0)
+            {
+                continue;
+            }
+
+            routedItemDistance = queueArray[queueTail].distance;
+            direction = (Directions)i;
+            destination = queue;
+            return true;
         }
         for (int i = 1, len = (int)lastRoutedDirection + 1; i < len; i++)
         {
@@ -277,20 +308,28 @@ public class Conveyor : MonoBehaviour
             Assert.IsNotNull(queue);
             ConveyorItem[] queueArray = queue.array;
             int queueTail = queue.tail;
-            if (queue.Count == 0 || queueArray[queueTail].distance - minItemDistance >= 0)
+            if (queue.Count == 0)
             {
-                return false;
-            }
-            routedItemDistance = Mathf.Min(routedItemDistance, queueArray[queueTail].distance);
-            if (!routeFound)
-            {
-                routeFound = true;
+                routedItemDistance = queueDistance;
                 direction = (Directions)i;
                 destination = queue;
+                return true;
             }
+            else if (queueArray[queueTail].distance - minItemDistance < 0)
+            {
+                continue;
+            }
+
+            routedItemDistance = queueArray[queueTail].distance;
+            direction = (Directions)i;
+            destination = queue;
+            return true;
         }
 
-        return routeFound;
+        direction = default;
+        destination = null;
+        routedItemDistance = queueDistance;
+        return false;
     }
 
     /// <summary>
@@ -299,28 +338,69 @@ public class Conveyor : MonoBehaviour
     float RoutedItemDistance()
     {
         float distance = queueDistance;
-        OpenQueue<ConveyorItem>[] queues = itemQueues;
+        if (machine)
+        {
+            return distance;
+        }
+        OpenQueue<ConveyorItem>[] queues = outputQueues;
         for (int i = 1, len = queues.Length; i < len; i++)
         {
-            if (!outputs[i])
-            {
-                continue;
-            }
             OpenQueue<ConveyorItem> queue = queues[i];
-            Assert.IsNotNull(queue);
-            if (queue.Count == 0)
+            if (queue == null || queue.Count == 0)
             {
                 continue;
             }
-            distance = Mathf.Min(distance, queue.PeekTail().distance);
+            distance = Mathf.Min(distance, queue.array[queue.tail].distance);
         }
         return distance;
+    }
+
+    public bool BeginTransferIn(Directions outputDirection)
+    {
+        if (currentRouterInput == outputDirection)
+        {
+            return true;
+        }
+        if (currentRouterInput == Directions.None)
+        {
+            currentRouterInput = outputDirection;
+            return true;
+        }
+        return false;
+    }
+
+    public bool TransferIn(ConveyorItem conveyorItem)
+    {
+        if (machine)
+        {
+            if (machine.inventory.TryIncrement(conveyorItem.GetItem().itemInfo))
+            {
+                conveyorItem.GetItem().ConsumedByMachine();
+                return true;
+            }
+            return false;
+        }
+        else
+        {
+            if (GetRouteDirection(out Directions direction, out OpenQueue<ConveyorItem> destination, out float routedItemDistance) && routedItemDistance >= minItemDistance)
+            {
+                lastRoutedDirection = direction;
+                currentRouterInput = Directions.None;
+                conveyorItem.direction = direction;
+                conveyorItem.distance = Mathf.Max(0f, Mathf.Min(itemSpeed, routedItemDistance - minItemDistance));
+                conveyorItem.conveyorQueueOrigin = transform.position;
+                conveyorItem.UpdateTransform();
+                destination.Enqueue(conveyorItem);
+                return true;
+            }
+            return false;
+        }
     }
 
     void FixedUpdate()
     {
         /* Updating a conveyor queue updates 4 types of items
-         * - The outgoing item transitioning to another conveyor
+         * - The outgoing item transitioning to the machine, the router or another conveyor
          * - Other outgoing items
          * - The incoming item entering the machine or the router, the head item
          * - Other incoming items
@@ -330,9 +410,10 @@ public class Conveyor : MonoBehaviour
 
         for (int i = 1, len = outputs.Length; i < len; i++)
         {
-            if (outputs[i])
+            Conveyor outputConveyor = outputs[i];
+            if (outputConveyor)
             {
-                OpenQueue<ConveyorItem> queue = itemQueues[i];
+                OpenQueue<ConveyorItem> queue = outputQueues[i];
                 Assert.IsNotNull(queue);
                 int queueHead = queue.head;
                 ConveyorItem[] queueArray = queue.array;
@@ -349,45 +430,37 @@ public class Conveyor : MonoBehaviour
                 }
                 else
                 {
-                    Directions transferDirection = (Directions)i;
-                    Directions inverseDirection = transferDirection.Inverse();
-                    Conveyor transferConveyor = outputs[(int)transferDirection];
-                    OpenQueue<ConveyorItem> transferQueue = transferConveyor.itemQueues[(int)inverseDirection];
-                    float transferItemDistance;
-                    if (transferQueue.Count == 0)
+                    if (outputConveyor.BeginTransferIn((Directions)i))
                     {
-                        transferItemDistance = queueDistance;
-                    }
-                    else
-                    {
-                        transferItemDistance = transferQueue.array[transferQueue.tail].distance;
-                    }
-
-                    if (headDistance + itemSpeed < queueDistance)
-                    {
-                        headDistance = Mathf.Min(headDistance + itemSpeed, Mathf.Max(headDistance, transferItemDistance + queueDistance - minItemDistance));
-                        queueArray[queueHead].distance = headDistance;
-                        queueArray[queueHead].UpdateTransform();
-                    }
-                    else
-                    {
-                        float headDistanceTransferred = Mathf.Min(headDistance - queueDistance + itemSpeed, Mathf.Max(headDistance - queueDistance, transferItemDistance - minItemDistance));
-                        if (headDistanceTransferred >= 0f)
+                        headDistance = Mathf.Min(headDistance + itemSpeed, queueDistance);
+                        if (headDistance == queueDistance)
                         {
-                            headDistance = headDistanceTransferred - queueDistance;
-                            ConveyorItem head = queue.Dequeue();
-                            Assert.IsTrue(headDistanceTransferred >= 0f);
-                            head.distance = headDistanceTransferred;
-                            head.conveyorQueueOrigin = transferConveyor.transform.position;
-                            head.UpdateTransform();
-                            transferQueue.Enqueue(head);
+                            // We only transfer when all queues have enough space
+                            // That's why it doesn't need to check for space on each route once it's transferred and routed
+                            ConveyorItem head = queueArray[queueHead];
+                            if (outputConveyor.TransferIn(head))
+                            {
+                                queue.Dequeue();
+                            }
+                            else
+                            {
+                                queueArray[queueHead].distance = headDistance;
+                                queueArray[queueHead].UpdateTransform();
+                            }
                         }
                         else
                         {
-                            headDistance = headDistanceTransferred - queueDistance;
                             queueArray[queueHead].distance = headDistance;
                             queueArray[queueHead].UpdateTransform();
                         }
+                    }
+                    else
+                    {
+                        Assert.IsTrue(queueDistance - minItemDistance >= headDistance);
+                        Assert.IsTrue(queueDistance - minItemDistance <= headDistance + itemSpeed);
+                        headDistance = Mathf.Min(headDistance, queueDistance - minItemDistance);
+                        queueArray[queueHead].distance = headDistance;
+                        queueArray[queueHead].UpdateTransform();
                     }
                 }
 
@@ -400,98 +473,6 @@ public class Conveyor : MonoBehaviour
                     itemDistance = Mathf.Min(itemDistance + itemSpeed, Mathf.Max(itemDistance, lookAheadItemDistance - minItemDistance));
                     queueArray[itemIndex].distance = itemDistance;
                     queueArray[itemIndex].UpdateTransform();
-                    lookAheadItemDistance = itemDistance;
-                }
-            }
-        }
-
-        for (int i = 1, len = inputs.Length; i < len; i++)
-        {
-            if (inputs[i])
-            {
-                OpenQueue<ConveyorItem> queue = itemQueues[i];
-                Assert.IsNotNull(queue);
-                int queueHead = queue.head;
-                ConveyorItem[] queueArray = queue.array;
-                if (queue.Count == 0)
-                {
-                    continue;
-                }
-                float headDistance = queueArray[queueHead].distance;
-                if (headDistance + itemSpeed + minItemDistance < queueDistance)
-                {
-                    headDistance = headDistance + itemSpeed;
-                    queueArray[queueHead].distance = headDistance;
-                    queueArray[queueHead].UpdateTransform();
-                }
-                else
-                {
-                    if (currentRouterInput == Directions.None)
-                    {
-                        currentRouterInput = (Directions)i;
-                    }
-                    else if (currentRouterInput != (Directions)i)
-                    {
-                        Assert.IsTrue(queueDistance - minItemDistance >= headDistance);
-                        Assert.IsTrue(queueDistance - minItemDistance <= headDistance + itemSpeed);
-                        headDistance = Mathf.Min(headDistance, Mathf.Max(headDistance, queueDistance - minItemDistance));
-                        queueArray[queueHead].distance = headDistance;
-                        queueArray[queueHead].UpdateTransform();
-                    }
-
-                    if (currentRouterInput == (Directions)i)
-                    {
-                        if (headDistance + itemSpeed < queueDistance)
-                        {
-                            float routerItemDistance = RoutedItemDistance();
-                            headDistance = Mathf.Min(headDistance + itemSpeed, Mathf.Max(headDistance, routerItemDistance + queueDistance - minItemDistance));
-                            queueArray[queueHead].distance = headDistance;
-                            queueArray[queueHead].UpdateTransform();
-                        }
-                        else
-                        {
-                            if (machine)
-                            {
-                                if (machine.inventory.TryIncrement(queueArray[queueHead].GetItem().itemInfo))
-                                {
-                                    queue.Dequeue().GetItem().ConsumedByMachine();
-                                }
-                            }
-                            else
-                            {
-                                bool routeAvailable = GetRoute(out Directions direction, out OpenQueue<ConveyorItem> destination, out float routedItemDistance);
-                                float headDistanceTransferred = Mathf.Min(headDistance - queueDistance + itemSpeed, Mathf.Max(headDistance - queueDistance, routedItemDistance - minItemDistance));
-                                if (routeAvailable && headDistanceTransferred >= 0f)
-                                {
-                                    lastRoutedDirection = direction;
-                                    currentRouterInput = Directions.None;
-                                    ConveyorItem head = queue.Dequeue();
-                                    head.direction = direction;
-                                    head.distance = headDistanceTransferred;
-                                    head.UpdateTransform();
-                                    destination.Enqueue(head);
-                                }
-                                else
-                                {
-                                    headDistance = headDistanceTransferred + queueDistance;
-                                    Assert.IsTrue(headDistance < queueDistance);
-                                    Assert.IsTrue(headDistance + itemSpeed >= queueDistance);
-                                    queueArray[queueHead].distance = headDistance;
-                                    queueArray[queueHead].UpdateTransform();
-                                }
-                            }
-                        }
-                    }
-                }
-
-                float lookAheadItemDistance = headDistance;
-
-                for (int j = 1, lenJ = queue.Count; j < lenJ; j++)
-                {
-                    int itemIndex = queue.GetElementIndex(j);
-                    float itemDistance = queueArray[itemIndex].distance;
-                    itemDistance = Mathf.Min(itemDistance + itemSpeed, Mathf.Max(itemDistance, lookAheadItemDistance - minItemDistance));
-                    queueArray[itemIndex].distance = itemDistance;
                     lookAheadItemDistance = itemDistance;
                 }
             }
