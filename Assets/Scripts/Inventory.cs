@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine.Assertions;
 
 [Serializable]
 public struct InventorySlot
@@ -52,6 +53,16 @@ public struct InventorySlot
         return new InventorySlot
         {
             itemInfo = itemInfo,
+            count = 0,
+            capacity = 10
+        };
+    }
+
+    public static InventorySlot Defaults(AssembleSlot assembleSlot)
+    {
+        return new InventorySlot
+        {
+            itemInfo = assembleSlot.itemInfo,
             count = 0,
             capacity = 10
         };
@@ -128,6 +139,118 @@ public struct Inventory
         {
             slots = destinationSlots
         };
+    }
+
+    public bool HasItem(ItemInfo itemInfo)
+    {
+        for (int i = 0, len = slots.Length; i < len; i++)
+        {
+            if (itemInfo == slots[i].itemInfo)
+            {
+                if (slots[i].count < 1)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+
+        Assert.IsTrue(false, "Inventory is missing the item slot");
+        return false;
+    }
+
+    public bool HasItem(AssembleSlot item)
+    {
+        for (int i = 0, len = slots.Length; i < len; i++)
+        {
+            if (item.itemInfo == slots[i].itemInfo)
+            {
+                if (slots[i].count < item.count)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+
+        Assert.IsTrue(false, "Inventory is missing the item slot");
+        return false;
+    }
+
+    public bool HasItems(AssembleSlot[] items)
+    {
+        // Why are we doing an O(n*m) algorithm here instead of keep inputs and inventory as dictionarys?
+        // Arrays are faster than dictionaries roughly when count < 10, and these collections don't get bigger than 5
+        for (int i = 0, len = items.Length; i < len; i++)
+        {
+            AssembleSlot item = items[i];
+            for (int j = 0, lenj = slots.Length; j < lenj; j++)
+            {
+                if (item.itemInfo == slots[j].itemInfo)
+                {
+                    if (slots[j].count < items[i].count)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        goto nextInput;
+                    }
+                }
+            }
+            Assert.IsTrue(false, "Inventory is missing the item slot");
+            return false;
+
+        nextInput:;
+        }
+
+        return true;
+    }
+
+    public void DeductItem(ItemInfo itemInfo)
+    {
+        for (int i = 0, len = slots.Length; i < len; i++)
+        {
+            if (itemInfo == slots[i].itemInfo)
+            {
+                slots[i].count -= 1;
+                Assert.IsTrue(slots[i].count >= 0);
+            }
+        }
+    }
+
+    public void DeductItem(AssembleSlot item)
+    {
+        for (int i = 0, len = slots.Length; i < len; i++)
+        {
+            if (item.itemInfo == slots[i].itemInfo)
+            {
+                slots[i].count -= item.count;
+                Assert.IsTrue(slots[i].count >= 0);
+            }
+        }
+    }
+
+    public void DeductItems(AssembleSlot[] items)
+    {
+        for (int i = 0, len = items.Length; i < len; i++)
+        {
+            AssembleSlot item = items[i];
+            for (int j = 0, lenj = slots.Length; j < lenj; j++)
+            {
+                if (item.itemInfo == slots[j].itemInfo)
+                {
+                    slots[j].count -= item.count;
+                    Assert.IsTrue(slots[j].count >= 0);
+                }
+            }
+        }
     }
 }
 

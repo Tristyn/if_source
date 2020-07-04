@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using UnityEngine.Assertions;
 
 // A simple Queue of generic objects.  Internally it is implemented as a 
 // circular buffer, so Enqueue can be O(n).  Dequeue is O(1).

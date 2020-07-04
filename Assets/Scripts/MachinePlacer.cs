@@ -1,18 +1,22 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MachinePlacer : MonoBehaviour
 {
     public Machine machine;
 
+    Inventory inventory;
     ItemInfo itemInfo;
     int lastOutputIndex;
 
+    const float placeInterval = 1 / Conveyor.itemSpeed;
+    float nextPlaceTime = -1f;
+
     public void Initialize()
     {
+        inventory = machine.inventory;
         if (machine.machinePurchaser)
         {
-            itemInfo = machine.machineInfo.purchaseItem;
+            itemInfo = machine.machineInfo.purchaseItem.itemInfo;
         }
         else if (machine.machineInfo.assembler)
         {
@@ -20,10 +24,25 @@ public class MachinePlacer : MonoBehaviour
         }
     }
 
-    public bool PlaceItem()
+    void FixedUpdate()
+    {
+        if (nextPlaceTime <= Time.fixedTime)
+        {
+            nextPlaceTime += placeInterval;
+            if (inventory.HasItem(itemInfo))
+            {
+                if (PlaceItem())
+                {
+                    inventory.DeductItem(itemInfo);
+                }
+            }
+        }
+    }
+
+    bool PlaceItem()
     {
         MachineConveyorLink[] conveyorLinks = machine.conveyorLinks;
-        int lastOutputIndex = Mathf.Min(this.lastOutputIndex, conveyorLinks.Length-1);
+        int lastOutputIndex = Mathf.Min(this.lastOutputIndex, conveyorLinks.Length - 1);
         for (int i = lastOutputIndex + 1, len = conveyorLinks.Length; i < len; i++)
         {
             MachineConveyorLink conveyorLink = conveyorLinks[i];

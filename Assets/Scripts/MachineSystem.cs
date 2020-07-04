@@ -8,7 +8,7 @@ public class MachineSystem : Singleton<MachineSystem>
     public int queryMaxResults = 24;
 
     [NonSerialized]
-    public Dictionary<Collider, Machine> machines = new Dictionary<Collider, Machine>();
+    public Dictionary<Collider, Machine> machineColliders = new Dictionary<Collider, Machine>();
     private Collider[] oneColliderBuffer = new Collider[1];
     private Collider[] manyColliderBuffer;
     private Machine[] manyMachinesBuffer;
@@ -25,7 +25,7 @@ public class MachineSystem : Singleton<MachineSystem>
         Collider[] colliders = machine.colliders;
         for (int i = 0, len = colliders.Length; i < len; i++)
         {
-            machines.Add(colliders[i], machine);
+            machineColliders.Add(colliders[i], machine);
         }
     }
 
@@ -34,7 +34,7 @@ public class MachineSystem : Singleton<MachineSystem>
         Collider[] colliders = machine.colliders;
         for (int i = 0, len = colliders.Length; i < len; i++)
         {
-            bool removed = machines.Remove(colliders[i]);
+            bool removed = machineColliders.Remove(colliders[i]);
             Assert.IsTrue(removed);
         }
     }
@@ -54,7 +54,7 @@ public class MachineSystem : Singleton<MachineSystem>
         center.y += 0.5f;
         if (Physics.OverlapBoxNonAlloc(center, new Vector3(0.5f, 0.5f, 0.5f), oneColliderBuffer, Quaternion.identity, Layer.GetMask(Layer.machines).value) > 0)
         {
-            if (machines.TryGetValue(oneColliderBuffer[0], out machine))
+            if (machineColliders.TryGetValue(oneColliderBuffer[0], out machine))
             {
                 return true;
             }
@@ -73,7 +73,7 @@ public class MachineSystem : Singleton<MachineSystem>
         int machinesCount = 0;
         for (int i = 0; i < count; i++)
         {
-            if (machines.TryGetValue(manyColliderBuffer[i], out Machine machine))
+            if (machineColliders.TryGetValue(manyColliderBuffer[i], out Machine machine))
             {
                 for (int j = 0; j < machinesCount; j++)
                 {

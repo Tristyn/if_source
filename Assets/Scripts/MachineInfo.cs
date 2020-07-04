@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 
 [Serializable]
-public struct AssembleInfo
+public struct AssembleSlot
 {
     public ItemInfo itemInfo;
     public int count;
@@ -29,13 +29,13 @@ public class MachineInfo : ScriptableObject
 
     public Inventory inventory = new Inventory { slots = new InventorySlot[0] };
 
-    public ItemInfo purchaseItem;
-    public ItemInfo sellItem;
+    public AssembleSlot purchaseItem;
+    public AssembleSlot sellItem;
 
     public bool assembler;
 
-    public AssembleInfo[] assembleInputs;
-    public AssembleInfo assembleOutput;
+    public AssembleSlot[] assembleInputs;
+    public AssembleSlot assembleOutput;
 #if UNITY_EDITOR
     void OnValidate()
     {
@@ -84,11 +84,11 @@ public class MachineInfo : ScriptableObject
 
         // inventory order is purchase item, sell item, assemble inputs, assemble outputs, anything else
         List<InventorySlot> inventorySlots = new List<InventorySlot>();
-        if (purchaseItem)
+        if (purchaseItem.itemInfo != null)
         {
             inventorySlots.Add(InventorySlot.Defaults(purchaseItem));
         }
-        if (sellItem)
+        if (sellItem.itemInfo != null)
         {
             inventorySlots.Add(InventorySlot.Defaults(sellItem));
         }

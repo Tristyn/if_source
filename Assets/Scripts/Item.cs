@@ -6,10 +6,6 @@ public class Item : MonoBehaviour
     
     public void Initialize()
     {
-        if (itemInfo.prefab)
-        {
-            Instantiate(itemInfo.prefab, transform);
-        }
         if (itemInfo.color != Color.white)
         {
             Renderer[] renderers = GetComponentsInChildren<Renderer>();

@@ -53,7 +53,7 @@ public class Machine : MonoBehaviour
 
         machineInfo.inventory.Clone(out inventory);
 
-        if (machineInfo.purchaseItem)
+        if (machineInfo.purchaseItem.itemInfo != null)
         {
             machinePurchaser = gameObject.AddComponent<MachinePurchaser>();
             machinePurchaser.machine = this;
@@ -63,7 +63,7 @@ public class Machine : MonoBehaviour
                 machinePlacer.machine = this;
             }
         }
-        if (machineInfo.sellItem)
+        if (machineInfo.sellItem.itemInfo != null)
         {
             machineSeller = gameObject.AddComponent<MachineSeller>();
             machineSeller.machine = this;
@@ -123,9 +123,10 @@ public class Machine : MonoBehaviour
 
     public void Delete()
     {
-        for (int i = 0, len = conveyors.Length; i < len; i++)
+        Conveyor[] conv = (Conveyor[])conveyors.Clone();
+        for (int i = 0, len = conv.Length; i < len; i++)
         {
-            conveyors[i].Recycle();
+            conv[i].Recycle();
         }
 
         MachineSystem.instance.Remove(this);

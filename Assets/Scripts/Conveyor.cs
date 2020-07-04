@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.Consts;
 using System.Runtime.CompilerServices;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -46,9 +45,10 @@ public class Conveyor : MonoBehaviour
     Directions currentRouterInput = Directions.None;
     Directions lastRoutedDirection = Directions.None;
 
-    const float minItemDistance = 0.51f;
-    const float queueDistance = 1f;
-    const float itemSpeed = 1f / 20f;
+    public const float minItemDistance = 0.5000001f;
+    public const float queueDistance = 1f;
+    public const float itemSpeed = 1f;
+    public const float fixedItemSpeed = itemSpeed / TimeHelper.fixedFrameRate;
 
     public static Conveyor CreateConveyor(Vector3Int position)
     {
@@ -387,7 +387,7 @@ public class Conveyor : MonoBehaviour
                 lastRoutedDirection = direction;
                 currentRouterInput = Directions.None;
                 conveyorItem.direction = direction;
-                conveyorItem.distance = Mathf.Max(0f, Mathf.Min(itemSpeed, routedItemDistance - minItemDistance));
+                conveyorItem.distance = Mathf.Max(0f, Mathf.Min(fixedItemSpeed, routedItemDistance - minItemDistance));
                 conveyorItem.conveyorQueueOrigin = transform.position;
                 conveyorItem.UpdateTransform();
                 destination.Enqueue(conveyorItem);
@@ -422,9 +422,9 @@ public class Conveyor : MonoBehaviour
                     continue;
                 }
                 float headDistance = queueArray[queueHead].distance;
-                if (headDistance + itemSpeed + minItemDistance < queueDistance)
+                if (headDistance + fixedItemSpeed + minItemDistance < queueDistance)
                 {
-                    headDistance = headDistance + itemSpeed;
+                    headDistance = headDistance + fixedItemSpeed;
                     queueArray[queueHead].distance = headDistance;
                     queueArray[queueHead].UpdateTransform();
                 }
@@ -432,7 +432,7 @@ public class Conveyor : MonoBehaviour
                 {
                     if (outputConveyor.BeginTransferIn((Directions)i))
                     {
-                        headDistance = Mathf.Min(headDistance + itemSpeed, queueDistance);
+                        headDistance = Mathf.Min(headDistance + fixedItemSpeed, queueDistance);
                         if (headDistance == queueDistance)
                         {
                             // We only transfer when all queues have enough space
@@ -457,7 +457,7 @@ public class Conveyor : MonoBehaviour
                     else
                     {
                         Assert.IsTrue(queueDistance - minItemDistance >= headDistance);
-                        Assert.IsTrue(queueDistance - minItemDistance <= headDistance + itemSpeed);
+                        Assert.IsTrue(queueDistance - minItemDistance <= headDistance + fixedItemSpeed);
                         headDistance = Mathf.Min(headDistance, queueDistance - minItemDistance);
                         queueArray[queueHead].distance = headDistance;
                         queueArray[queueHead].UpdateTransform();
@@ -470,7 +470,7 @@ public class Conveyor : MonoBehaviour
                 {
                     int itemIndex = queue.GetElementIndex(j);
                     float itemDistance = queueArray[itemIndex].distance;
-                    itemDistance = Mathf.Min(itemDistance + itemSpeed, Mathf.Max(itemDistance, lookAheadItemDistance - minItemDistance));
+                    itemDistance = Mathf.Min(itemDistance + fixedItemSpeed, Mathf.Max(itemDistance, lookAheadItemDistance - minItemDistance));
                     queueArray[itemIndex].distance = itemDistance;
                     queueArray[itemIndex].UpdateTransform();
                     lookAheadItemDistance = itemDistance;

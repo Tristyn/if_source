@@ -33,11 +33,11 @@ public class UISelectMachineButton : MonoBehaviour
             {
                 machineTypeIcon.sprite = spriteAssembler;
             }
-            else if (machineInfo.purchaseItem)
+            else if (machineInfo.purchaseItem.itemInfo != null)
             {
                 machineTypeIcon.sprite = spritePurchaser;
             }
-            else if (machineInfo.sellItem)
+            else if (machineInfo.sellItem.itemInfo != null)
             {
                 machineTypeIcon.sprite = spriteSeller;
             }

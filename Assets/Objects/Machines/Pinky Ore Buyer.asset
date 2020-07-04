@@ -16,8 +16,8 @@ MonoBehaviour:
   groupOrder: 10
   cost: 10
   placeInterval: 1
-  size: {x: 2, y: 1, z: 3}
-  prefab: {fileID: 0}
+  size: {x: 2, y: 1, z: 2}
+  prefab: {fileID: 8655708367724185701, guid: 9e7937c17ae78fd4bac37d41b44ddbbd, type: 3}
   color: {r: 1, g: 1, b: 1, a: 1}
   sprite: {fileID: 21300000, guid: 7d934cb7e6ce1424db4bd1108ada779d, type: 3}
   spriteColor: {r: 1, g: 1, b: 1, a: 1}
@@ -26,8 +26,12 @@ MonoBehaviour:
     - itemInfo: {fileID: 11400000, guid: aac787e0f59938d48a4e31166b8a60d1, type: 2}
       count: 0
       capacity: 10
-  purchaseItem: {fileID: 11400000, guid: aac787e0f59938d48a4e31166b8a60d1, type: 2}
-  sellItem: {fileID: 0}
+  purchaseItem:
+    itemInfo: {fileID: 11400000, guid: aac787e0f59938d48a4e31166b8a60d1, type: 2}
+    count: 1
+  sellItem:
+    itemInfo: {fileID: 0}
+    count: 0
   assembler: 0
   assembleInputs: []
   assembleOutput:

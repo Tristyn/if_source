@@ -47,11 +47,11 @@ public class ScriptableObjectMasterList : ScriptableObject
             {
                 group.assemblers = group.assemblers.Append(machineInfo).ToArray();
             }
-            if (machineInfo.purchaseItem)
+            if (machineInfo.purchaseItem.itemInfo != null)
             {
                 group.purchasers = group.purchasers.Append(machineInfo).ToArray();
             }
-            if (machineInfo.sellItem)
+            if (machineInfo.sellItem.itemInfo != null)
             {
                 group.sellers = group.sellers.Append(machineInfo).ToArray();
             }

@@ -12,7 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f102ce4e83fa2654ab75741b210d3a6c, type: 3}
   m_Name: Item
   m_EditorClassIdentifier: 
-  cost: 0
-  placeInterval: 0
   color: {r: 1, g: 1, b: 1, a: 1}
-  prefab: {fileID: 8606679459348534440, guid: 22c08dcb62ca21747a865b67f45d7fec, type: 3}
+  prefab: {fileID: 175188181554914003, guid: 22c08dcb62ca21747a865b67f45d7fec, type: 3}
