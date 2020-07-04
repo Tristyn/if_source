@@ -13,11 +13,17 @@ public class UIDemolishButton : MonoBehaviour
 
     void OnClick()
     {
+        bool audioPlayed = false;
         if(MachineSystem.instance.GetMachine(bounds.center.RoundToTile(), out Machine machine))
         {
             if (TileSelectionManager.instance.state.machine == machine)
             {
                 TileSelectionManager.instance.SelectInput(true);
+            }
+            if (!audioPlayed)
+            {
+                audioPlayed = true;
+                machine.PlayDemolishAudio();
             }
             machine.Delete();
         }
@@ -26,6 +32,11 @@ public class UIDemolishButton : MonoBehaviour
             if (TileSelectionManager.instance.state.conveyor == conveyor)
             {
                 TileSelectionManager.instance.SelectInput(true);
+            }
+            if (!audioPlayed)
+            {
+                audioPlayed = true;
+                conveyor.PlayDemolishAudio();
             }
             conveyor.Recycle();
         }

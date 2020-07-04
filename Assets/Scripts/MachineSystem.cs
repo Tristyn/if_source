@@ -6,6 +6,8 @@ using UnityEngine.Assertions;
 public class MachineSystem : Singleton<MachineSystem>
 {
     public int queryMaxResults = 24;
+    public AudioClip createMachineClip;
+    public AudioClip demolishMachineClip;
 
     [NonSerialized]
     public Dictionary<Collider, Machine> machineColliders = new Dictionary<Collider, Machine>();

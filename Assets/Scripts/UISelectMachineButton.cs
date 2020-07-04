@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class UISelectMachineButton : MonoBehaviour
@@ -9,8 +10,8 @@ public class UISelectMachineButton : MonoBehaviour
     public Sprite spriteConveyor;
 
     public Image machineImage;
-    public Image machineTypeIcon;
-    public Text machineName;
+    public Image machineCategory;
+    public TextMeshProUGUI machineName;
 
     public bool isConveyor;
     public MachineInfo machineInfo;
@@ -22,6 +23,7 @@ public class UISelectMachineButton : MonoBehaviour
             machineImage.sprite = spriteConveyor;
             machineImage.color = Color.white;
             machineName.text = "Conveyor";
+            machineCategory.sprite = null;
         }
         else if (machineInfo)
         {
@@ -31,15 +33,15 @@ public class UISelectMachineButton : MonoBehaviour
 
             if (machineInfo.assembler)
             {
-                machineTypeIcon.sprite = spriteAssembler;
+                machineCategory.sprite = spriteAssembler;
             }
             else if (machineInfo.purchaseItem.itemInfo != null)
             {
-                machineTypeIcon.sprite = spritePurchaser;
+                machineCategory.sprite = spritePurchaser;
             }
             else if (machineInfo.sellItem.itemInfo != null)
             {
-                machineTypeIcon.sprite = spriteSeller;
+                machineCategory.sprite = spriteSeller;
             }
         }
     }

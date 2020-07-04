@@ -116,6 +116,7 @@ public class Picker : Singleton<Picker>
                     {
                         TileSelectionManager.instance.SelectInput(false);
                     }
+                    conveyor.PlayDemolishAudio();
                     conveyor.Recycle();
                 }
             }

@@ -52,6 +52,12 @@ public class Conveyor : MonoBehaviour
 
     public static Conveyor CreateConveyor(Vector3Int position)
     {
+        return DoCreateConveyor(position);
+    }
+
+
+    private static Conveyor DoCreateConveyor(Vector3Int position)
+    {
         if (ConveyorSystem.instance.conveyors.TryGetValue(position, out Conveyor conveyor))
         {
             return conveyor;
@@ -60,6 +66,9 @@ public class Conveyor : MonoBehaviour
         conveyor = ObjectPooler.instance.Get<Conveyor>();
         conveyor.transform.position = position.RoundToTileCenter();
         conveyor.Initialize();
+
+        AudioSystem.instance.PlayOneShot(ConveyorSystem.instance.createConveyorClip, AudioCategory.Effect);
+
         return conveyor;
     }
 
@@ -70,18 +79,26 @@ public class Conveyor : MonoBehaviour
             Debug.LogWarning("Can't link conveyors that aren't neighbors.");
             return null;
         }
+        bool playAudio = false;
 
         if (!ConveyorSystem.instance.conveyors.TryGetValue(toTile, out Conveyor conveyor))
         {
             conveyor = CreateConveyor(toTile);
+            playAudio = playAudio || conveyor;
         }
         if (!ConveyorSystem.instance.conveyors.TryGetValue(fromTile, out Conveyor sourceConveyor))
         {
             sourceConveyor = CreateConveyor(fromTile);
+            playAudio = playAudio || sourceConveyor;
         }
-        if (conveyor && sourceConveyor)
+        if (conveyor && sourceConveyor && !sourceConveyor.IsLinked(conveyor))
         {
             sourceConveyor.Link(conveyor);
+            playAudio = true;
+        }
+        if (playAudio)
+        {
+            AudioSystem.instance.PlayOneShot(ConveyorSystem.instance.createConveyorClip, AudioCategory.Effect);
         }
         return conveyor;
     }
@@ -140,6 +157,11 @@ public class Conveyor : MonoBehaviour
         ObjectPooler.instance.Recycle(this);
     }
 
+    public void PlayDemolishAudio()
+    {
+        AudioSystem.instance.PlayOneShot(ConveyorSystem.instance.demolishConveyorClip, AudioCategory.Effect);
+    }
+
     public void Link(Conveyor to)
     {
         Directions direction = (to.position - position).ToDirection();
@@ -184,6 +206,7 @@ public class Conveyor : MonoBehaviour
             ClearItemQueue(outputQueues[(int)direction]);
             outputQueues[(int)direction] = null;
             outputs[(int)direction] = null;
+            to.inputs[(int)inverseDirection] = null;
 
             outputLinks[(int)direction].Recycle();
             outputLinks[(int)direction] = null;
@@ -192,7 +215,7 @@ public class Conveyor : MonoBehaviour
             {
                 to.currentRouterInput = Directions.None;
             }
-
+            
             if (machine)
             {
                 machine.FindConveyors();
@@ -202,6 +225,23 @@ public class Conveyor : MonoBehaviour
                 to.machine.FindConveyors();
             }
         }
+    }
+
+    public bool IsLinked(Conveyor to)
+    {
+        Assert.IsNotNull(to);
+        if (!to)
+        {
+            return false;
+        }
+        for(int i = 1, len = outputs.Length; i < len; i++)
+        {
+            if(outputs[i] == to)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     void ClearItemQueue(OpenQueue<ConveyorItem> itemQueue)

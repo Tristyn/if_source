@@ -38,5 +38,6 @@ public class InterfaceSelectionManager : Singleton<InterfaceSelectionManager>
     {
         selectMachinesButton.CollapseList();
         selectMachinesButton.OnSelectionChanged();
+        selectMachinesButton.PlaySelectMachineAudio();
     }
 }

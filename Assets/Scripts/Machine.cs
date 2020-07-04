@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 [Serializable]
 public struct MachineConveyorLink
 {
     public Conveyor innerConveyor;
     public Conveyor outerConveyor;
-    public Directions direction;
+    public Directions machineDirection;
     public bool isOutput;
 }
 
@@ -79,20 +80,6 @@ public class Machine : MonoBehaviour
             }
         }
 
-        Color color = machineInfo.color;
-        if (color != Color.white)
-        {
-            Renderer[] renderers = GetComponentsInChildren<Renderer>();
-            for (int i = 0, len = renderers.Length; i < len; i++)
-            {
-                Material[] materials = renderers[i].materials;
-                for (int j = 0, lenJ = materials.Length; j < lenJ; j++)
-                {
-                    materials[j].color = color;
-                }
-            }
-        }
-
         BoxCollider collider = gameObject.AddComponent<BoxCollider>();
         collider.center = bounds.size * 0.5f;
         // Shrink 0.1f so it doesn't collide with things on the very edge of the tile
@@ -134,6 +121,11 @@ public class Machine : MonoBehaviour
         Destroy(gameObject);
     }
 
+    public void PlayDemolishAudio()
+    {
+        AudioSystem.instance.PlayOneShot(MachineSystem.instance.demolishMachineClip, AudioCategory.Effect);
+    }
+
     public static Machine CreateMachine(MachineInfo machineInfo, Vector3 center)
     {
         Vector3Int boundsMin = center.PositionToBounds(machineInfo.size).min;
@@ -150,6 +142,9 @@ public class Machine : MonoBehaviour
         machine.bounds = bounds;
         machine.machineInfo = machineInfo;
         machine.Initialize();
+
+        AudioSystem.instance.PlayOneShot(MachineSystem.instance.createMachineClip, AudioCategory.Effect);
+
         return machine;
     }
 
@@ -176,39 +171,33 @@ public class Machine : MonoBehaviour
             return;
         }
 
-        this.conveyors = conveyors.ToArray();
         List<MachineConveyorLink> conveyorLinks = new List<MachineConveyorLink>();
 
         foreach ((Vector3Int outerTile, Vector3Int innerTile, Directions direction) in bounds.EnumeratePerimeterClockwise())
         {
-            if (conveyorDict.TryGetValue(innerTile, out Conveyor innerConveyor))
+            if (conveyorDict.TryGetValue(innerTile, out Conveyor innerConveyor) &&
+                conveyorDict.TryGetValue(outerTile, out Conveyor outerConveyor))
             {
                 MachineConveyorLink link = new MachineConveyorLink
                 {
                     innerConveyor = innerConveyor,
-                    direction = direction
+                    outerConveyor = outerConveyor,
+                    machineDirection = direction
                 };
-                Conveyor output = innerConveyor.outputs[(int)direction];
-                if (output)
+                if (innerConveyor.IsLinked(outerConveyor))
                 {
-                    link.outerConveyor = output;
                     link.isOutput = true;
                     conveyorLinks.Add(link);
-                    continue;
                 }
-                else
+                else if (outerConveyor.IsLinked(innerConveyor))
                 {
-                    Conveyor input = innerConveyor.inputs[(int)direction];
-                    if (input)
-                    {
-                        link.outerConveyor = input;
-                        link.isOutput = false;
-                        conveyorLinks.Add(link);
-                    }
+                    link.isOutput = false;
+                    conveyorLinks.Add(link);
                 }
             }
         }
 
+        this.conveyors = conveyors.ToArray();
         this.conveyorLinks = conveyorLinks.ToArray();
     }
 }
