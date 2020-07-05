@@ -34,4 +34,38 @@ public class ConveyorSystem : Singleton<ConveyorSystem>
         bool exists = conveyors.Remove(position);
         Assert.IsTrue(exists);
     }
+
+    public bool CanCreate(Vector3Int position)
+    {
+        if (MachineSystem.instance.GetMachine(position, out Machine machine))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public bool CanLink(Vector3Int from, Vector3Int to)
+    {
+        if(MachineSystem.instance.GetMachine(to, out Machine toMachine))
+        {
+            if (!toMachine.canInput)
+            {
+                return false;
+            }
+        }
+        if (MachineSystem.instance.GetMachine(from, out Machine fromMachine))
+        {
+            if (!fromMachine.canOutput)
+            {
+                return false;
+            }
+        }
+
+        // Cannot link from machine to machine, or within the same machine
+        if(toMachine && fromMachine)
+        {
+            return false;
+        }
+        return true;
+    }
 }

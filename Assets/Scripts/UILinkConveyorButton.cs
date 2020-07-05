@@ -7,7 +7,6 @@ public class UILinkConveyorButton : MonoBehaviour
     public Sprite MachineInputMaterial;
     public Sprite ConveyorLinkMaterial;
 
-    public OverviewCameraController cameraController;
     public Vector3Int position;
     public Vector3Int sourcePosition;
 
@@ -33,7 +32,7 @@ public class UILinkConveyorButton : MonoBehaviour
 
     void UpdatePosition()
     {
-        rectTransform.position = cameraController.mainCamera.WorldToScreenPoint(position.RoundToTileCenter());
+        rectTransform.position = OverviewCameraController.instance.mainCamera.WorldToScreenPoint(position.RoundToTileCenter());
     }
 
     void OnClick()
@@ -41,14 +40,14 @@ public class UILinkConveyorButton : MonoBehaviour
         Conveyor conveyor = Conveyor.CreateConveyor(sourcePosition, position);
         if (conveyor)
         {
-            TileSelectionManager.instance.PanTo(conveyor);
+            Vector3 deltaposition = position - sourcePosition;
+            OverviewCameraController.instance.MoveWorld(deltaposition);
             TileSelectionManager.instance.SetSelection(conveyor);
         }
     }
 
     public void Recycle()
     {
-        cameraController = null;
         ObjectPooler.instance.Recycle(this);
     }
 }

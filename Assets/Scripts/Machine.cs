@@ -24,9 +24,10 @@ public class Machine : MonoBehaviour
     [NonSerialized]
     public MachineInfo machineInfo;
     [NonSerialized]
-    public ItemInfo itemInfo;
     public Inventory inventory = Inventory.empty;
 
+    public bool canOutput;
+    public bool canInput;
     public MachinePurchaser machinePurchaser;
     public MachineSeller machineSeller;
     public MachineAssembler machineAssembler;
@@ -56,6 +57,7 @@ public class Machine : MonoBehaviour
 
         if (machineInfo.purchaseItem.itemInfo != null)
         {
+            canOutput = true;
             machinePurchaser = gameObject.AddComponent<MachinePurchaser>();
             machinePurchaser.machine = this;
             if (!machinePlacer)
@@ -66,11 +68,14 @@ public class Machine : MonoBehaviour
         }
         if (machineInfo.sellItem.itemInfo != null)
         {
+            canInput = true;
             machineSeller = gameObject.AddComponent<MachineSeller>();
             machineSeller.machine = this;
         }
         if (machineInfo.assembler)
         {
+            canInput = true;
+            canOutput = true;
             machineAssembler = gameObject.AddComponent<MachineAssembler>();
             machineAssembler.machine = this;
             if (!machinePlacer)
@@ -86,7 +91,7 @@ public class Machine : MonoBehaviour
         collider.size = bounds.size.Subtract(0.1f);
         colliders = new[] { collider };
 
-        FindConveyors();
+        MachineSystem.instance.Add(this);
 
         if (machinePurchaser)
         {
@@ -105,7 +110,24 @@ public class Machine : MonoBehaviour
             machinePlacer.Initialize();
         }
 
-        MachineSystem.instance.Add(this);
+        Dictionary<Vector3Int, Conveyor> conveyors = ConveyorSystem.instance.conveyors;
+        for (int x = bounds.min.x, lenx = bounds.max.x + 1; x < lenx; x++)
+        {
+            for (int y = bounds.min.y, leny = bounds.max.y + 1; y < leny; y++)
+            {
+                for (int z = bounds.min.z, lenz = bounds.max.z + 1; z < lenz; z++)
+                {
+                    if (conveyors.TryGetValue(new Vector3Int(x, y, z), out Conveyor conveyor))
+                    {
+                        Assert.IsNull(conveyor.machine);
+                        conveyor.machine = this;
+                    }
+                }
+            }
+        }
+
+        FindConveyors();
+        RecycleInvalidConveyors();
     }
 
     public void Delete()
@@ -199,5 +221,62 @@ public class Machine : MonoBehaviour
 
         this.conveyors = conveyors.ToArray();
         this.conveyorLinks = conveyorLinks.ToArray();
+    }
+
+    /// <summary>
+    /// Recycles conveyors that are inside the machine in invalid formations. Returns if any are unlinked, recycled or otherwise modified.
+    /// </summary>
+    public bool RecycleInvalidConveyors()
+    {
+        bool conveyorsRecycled = false;
+        for (int i = conveyors.Length - 1; i >= 0; i--)
+        {
+            Conveyor conveyor = conveyors[i];
+            if (conveyor)
+            {
+                Conveyor[] inputs = conveyor.inputs;
+                Conveyor[] outputs = conveyor.outputs;
+                for (int j = 1, lenj = inputs.Length; j < lenj; j++)
+                {
+                    Conveyor output = outputs[j];
+                    if (output)
+                    {
+                        if (!ConveyorSystem.instance.CanLink(conveyor.position, output.position))
+                        {
+                            conveyorsRecycled = true;
+                            conveyor.Unlink(output);
+                            if (!output.IsLinked() && output.machine != this)
+                            {
+                                Assert.IsNotNull(output.machine);
+                                output.Recycle();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Conveyor input = inputs[j];
+                        if (input)
+                        {
+                            if (!ConveyorSystem.instance.CanLink(input.position, conveyor.position))
+                            {
+                                conveyorsRecycled = true;
+                                input.Unlink(conveyor);
+                                if (!input.IsLinked() && input.machine != this)
+                                {
+                                    Assert.IsNotNull(input.machine);
+                                    input.Recycle();
+                                }
+                            }
+                        }
+                    }
+                }
+                if (!conveyor.IsLinked())
+                {
+                    conveyorsRecycled = true;
+                    conveyor.Recycle();
+                }
+            }
+        }
+        return conveyorsRecycled;
     }
 }

@@ -1,22 +1,30 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class SelectionHighlighter : MonoBehaviour
 {
+    GameObject[] selectionHighlighters;
+    Material material;
+
     private void Awake()
     {
-        Highlight(null);
+        material = GetComponentInChildren<Renderer>().material;
     }
 
-    public void Highlight(Conveyor selection)
+    public void Initialize(Bounds3Int bounds)
     {
-        if (selection)
-        {
-            transform.position = selection.transform.position;
-            gameObject.SetActive(true);
-        }
-        else
-        {
-            gameObject.SetActive(false);
-        }
+        Vector3 center = bounds.center;
+        Vector3 size = bounds.size;
+        center.y = bounds.min.y;
+        material.mainTextureScale = new Vector2(size.x, size.z);
+        transform.position = center;
+        transform.localScale = size;
+    }
+
+    public void Recycle()
+    {
+        ObjectPooler.instance.Recycle(this);
     }
 }

@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class UIDemolishButton : MonoBehaviour
 {
-    public Bounds3Int bounds;
+    public Vector3Int demolishTile;
 
     void Awake()
     {
@@ -13,31 +13,22 @@ public class UIDemolishButton : MonoBehaviour
 
     void OnClick()
     {
-        bool audioPlayed = false;
-        if(MachineSystem.instance.GetMachine(bounds.center.RoundToTile(), out Machine machine))
+        if (MachineSystem.instance.GetMachine(demolishTile, out Machine machine))
         {
             if (TileSelectionManager.instance.state.machine == machine)
             {
                 TileSelectionManager.instance.SelectInput(true);
             }
-            if (!audioPlayed)
-            {
-                audioPlayed = true;
-                machine.PlayDemolishAudio();
-            }
+            machine.PlayDemolishAudio();
             machine.Delete();
         }
-        else if(ConveyorSystem.instance.conveyors.TryGetValue(bounds.center.RoundToTile(), out Conveyor conveyor))
+        else if (ConveyorSystem.instance.conveyors.TryGetValue(demolishTile, out Conveyor conveyor))
         {
             if (TileSelectionManager.instance.state.conveyor == conveyor)
             {
                 TileSelectionManager.instance.SelectInput(true);
             }
-            if (!audioPlayed)
-            {
-                audioPlayed = true;
-                conveyor.PlayDemolishAudio();
-            }
+            conveyor.PlayDemolishAudio();
             conveyor.Recycle();
         }
     }

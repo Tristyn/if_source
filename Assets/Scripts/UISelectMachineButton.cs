@@ -23,7 +23,7 @@ public class UISelectMachineButton : MonoBehaviour
             machineImage.sprite = spriteConveyor;
             machineImage.color = Color.white;
             machineName.text = "Conveyor";
-            machineCategory.sprite = null;
+            machineCategory.enabled = false;
         }
         else if (machineInfo)
         {
@@ -34,14 +34,17 @@ public class UISelectMachineButton : MonoBehaviour
             if (machineInfo.assembler)
             {
                 machineCategory.sprite = spriteAssembler;
+                machineCategory.enabled = true;
             }
             else if (machineInfo.purchaseItem.itemInfo != null)
             {
                 machineCategory.sprite = spritePurchaser;
+                machineCategory.enabled = true;
             }
             else if (machineInfo.sellItem.itemInfo != null)
             {
                 machineCategory.sprite = spriteSeller;
+                machineCategory.enabled = true;
             }
         }
     }

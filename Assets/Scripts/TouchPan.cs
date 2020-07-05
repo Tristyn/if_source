@@ -11,12 +11,10 @@ public class TouchPan : MonoBehaviour
         public bool panningBegan;
     }
 
-    OverviewCameraController cameraController;
     List<Pan> pans = new List<Pan>(1);
 
     void Awake()
     {
-        cameraController = GetComponentInParent<OverviewCameraController>();
         TouchInput.instance.IsTouchConsumedByPan = ConsumeTouch;
         TouchInput.instance.Touch += OnTouch;
     }
@@ -102,7 +100,7 @@ public class TouchPan : MonoBehaviour
     {
         float minScreenDimension = -Mathf.Min(Screen.width, Screen.height);
         Vector3 panAmount = new Vector2(translation_local.x / minScreenDimension, translation_local.y / minScreenDimension);
-        cameraController.PanLocal(panAmount);
+        OverviewCameraController.instance.PanLocal(panAmount);
     }
 
     bool PansContain(int fingerId, out int panIndex)

@@ -7,7 +7,7 @@ public class BackgroundMusic : MonoBehaviour
 
     AudioSource audioSource;
 
-//#if !UNITY_EDITOR
+#if !UNITY_EDITOR
     private void Awake()
     {
         audioSource = GetComponent<AudioSource>();
@@ -37,5 +37,5 @@ public class BackgroundMusic : MonoBehaviour
         audioSource.clip = clip;
         audioSource.Play();
     }
-//#endif 
+#endif
 }

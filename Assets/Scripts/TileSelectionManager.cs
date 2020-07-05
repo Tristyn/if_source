@@ -1,22 +1,24 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
 using UnityEngine;
 
 public class TileSelectionState
 {
-    public Bounds3Int? bounds;
+    public Bounds3Int bounds;
     public Conveyor conveyor;
     public Machine machine;
+
+    public bool isSelected => conveyor || machine;
 }
 
 public class TileSelectionManager : Singleton<TileSelectionManager>
 {
     public TileSelectionState state = new TileSelectionState();
-    public SelectionHighlighter selectionHighlighter;
     public UIDemolishButton demolishButton;
     public Canvas canvas;
-    public OverviewCameraController cameraController;
 
     private List<UILinkConveyorButton> conveyorButtons = new List<UILinkConveyorButton>(16);
+    private SelectionHighlighter selectionHighlighter;
 
     protected override void Awake()
     {
@@ -30,13 +32,39 @@ public class TileSelectionManager : Singleton<TileSelectionManager>
         UpdateSelection();
     }
 
+    public bool SetSelection(Vector3Int tile)
+    {
+        if(MachineSystem.instance.GetMachine(tile, out Machine machine))
+        {
+            SetSelection(machine);
+            return true;
+        }
+        else if(ConveyorSystem.instance.conveyors.TryGetValue(tile, out Conveyor conveyor))
+        {
+            SetSelection(conveyor);
+            return true;
+        }
+        return false;
+    }
+
     public void SetSelection(Conveyor selection)
     {
-        state = new TileSelectionState
+        if (selection.machine)
         {
-            conveyor = selection,
-            bounds = selection.position.ToBounds()
-        };
+            state = new TileSelectionState
+            {
+                machine = selection.machine,
+                bounds = selection.machine.bounds
+            };
+        }
+        else
+        {
+            state = new TileSelectionState
+            {
+                conveyor = selection,
+                bounds = selection.position.ToBounds()
+            };
+        }
         UpdateSelection();
     }
 
@@ -57,51 +85,42 @@ public class TileSelectionManager : Singleton<TileSelectionManager>
             conveyorButtons[i].Recycle();
         }
         conveyorButtons.Clear();
-
-        demolishButton.bounds = state.bounds ?? default;
-        demolishButton.gameObject.SetActive(state.bounds.HasValue);
-        selectionHighlighter.Highlight(state.conveyor);
-
-        if (state.bounds.HasValue)
+        if (selectionHighlighter)
         {
-            foreach ((Vector3Int outerTile, Vector3Int innerTile) in state.bounds.Value.EnumeratePerimeter())
+            selectionHighlighter.Recycle();
+            selectionHighlighter = null;
+        }
+
+        demolishButton.demolishTile = state.bounds.min;
+        demolishButton.gameObject.SetActive(state.isSelected);
+        if (state.isSelected)
+        {
+            selectionHighlighter = ObjectPooler.instance.Get<SelectionHighlighter>();
+            selectionHighlighter.Initialize(state.bounds);
+            foreach ((Vector3Int outerTile, Vector3Int innerTile) in state.bounds.EnumeratePerimeter())
             {
-                UILinkConveyorButton conveyorButton = ObjectPooler.instance.Get<UILinkConveyorButton>();
-                conveyorButton.position = outerTile;
-                conveyorButton.sourcePosition = innerTile;
-                conveyorButton.cameraController = cameraController;
-                conveyorButton.transform.SetParent(canvas.transform, false);
-                conveyorButton.Initialize();
-                conveyorButtons.Add(conveyorButton);
+                if (ConveyorSystem.instance.CanLink(innerTile, outerTile))
+                {
+                    UILinkConveyorButton conveyorButton = ObjectPooler.instance.Get<UILinkConveyorButton>();
+                    conveyorButton.position = outerTile;
+                    conveyorButton.sourcePosition = innerTile;
+                    conveyorButton.transform.SetParent(canvas.transform, false);
+                    conveyorButton.Initialize();
+                    conveyorButtons.Add(conveyorButton);
+                }
             }
         }
     }
 
     public void SelectInput(bool pan)
     {
-        if (state.conveyor)
-        {
-            Conveyor[] inputs = state.conveyor.inputs;
-            for (int i = 0, len = inputs.Length; i < len; i++)
-            {
-                Conveyor conveyor = inputs[i];
-                if (conveyor)
-                {
-                    if (pan)
-                    {
-                        PanTo(conveyor);
-                    }
-                    SetSelection(conveyor);
-                    return;
-                }
-            }
-        }
-        else if (state.machine)
+        if (state.machine)
         {
             Conveyor[] conveyors = state.machine.conveyors;
             for (int i = 0, len = conveyors.Length; i < len; i++)
             {
-                Conveyor[] inputs = conveyors[i].inputs;
+                Conveyor conveyor = conveyors[i];
+                Conveyor[] inputs = conveyor.inputs;
                 for (int j = 1, jLen = inputs.Length; j < jLen; j++)
                 {
                     Conveyor input = inputs[j];
@@ -109,7 +128,8 @@ public class TileSelectionManager : Singleton<TileSelectionManager>
                     {
                         if (pan)
                         {
-                            PanTo(input);
+                            Vector3 deltaPosition = input.position - conveyor.position;
+                            OverviewCameraController.instance.MoveWorld(deltaPosition);
                         }
                         SetSelection(input);
                         return;
@@ -117,15 +137,24 @@ public class TileSelectionManager : Singleton<TileSelectionManager>
                 }
             }
         }
-        SetSelection();
-    }
-
-    public void PanTo(Conveyor selection)
-    {
-        if (selection && state.conveyor)
+        else if (state.conveyor)
         {
-            Vector3 deltaPosition = selection.position - state.conveyor.position;
-            cameraController.MoveWorld(deltaPosition);
+            Conveyor[] inputs = state.conveyor.inputs;
+            for (int i = 0, len = inputs.Length; i < len; i++)
+            {
+                Conveyor input = inputs[i];
+                if (input)
+                {
+                    if (pan)
+                    {
+                        Vector3 deltaPosition = input.position - state.conveyor.position;
+                        OverviewCameraController.instance.MoveWorld(deltaPosition);
+                    }
+                    SetSelection(input);
+                    return;
+                }
+            }
         }
+        SetSelection();
     }
 }

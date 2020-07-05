@@ -52,43 +52,53 @@ public class Conveyor : MonoBehaviour
 
     public static Conveyor CreateConveyor(Vector3Int position)
     {
-        return DoCreateConveyor(position);
-    }
-
-
-    private static Conveyor DoCreateConveyor(Vector3Int position)
-    {
+        if (!ConveyorSystem.instance.CanCreate(position))
+        {
+            return null;
+        }
         if (ConveyorSystem.instance.conveyors.TryGetValue(position, out Conveyor conveyor))
         {
             return conveyor;
         }
 
-        conveyor = ObjectPooler.instance.Get<Conveyor>();
-        conveyor.transform.position = position.RoundToTileCenter();
-        conveyor.Initialize();
-
-        AudioSystem.instance.PlayOneShot(ConveyorSystem.instance.createConveyorClip, AudioCategory.Effect);
-
+        conveyor =  DoCreateConveyor(position);
+        if (conveyor)
+        {
+            AudioSystem.instance.PlayOneShot(ConveyorSystem.instance.createConveyorClip, AudioCategory.Effect);
+        }
         return conveyor;
     }
 
-    public static Conveyor CreateConveyor(Vector3Int fromTile, Vector3Int toTile)
+    private static Conveyor DoCreateConveyor(Vector3Int position)
     {
-        if ((fromTile - toTile).ToDirection() == Directions.None)
+        Conveyor conveyor = ObjectPooler.instance.Get<Conveyor>();
+        conveyor.transform.position = position.RoundToTileCenter();
+        conveyor.Initialize();
+        return conveyor;
+    }
+
+    public static Conveyor CreateConveyor(Vector3Int from, Vector3Int to)
+    {
+        if(!ConveyorSystem.instance.CanLink(from, to))
+        {
+            return null;
+        }
+
+        if ((from - to).ToDirection() == Directions.None)
         {
             Debug.LogWarning("Can't link conveyors that aren't neighbors.");
             return null;
         }
         bool playAudio = false;
 
-        if (!ConveyorSystem.instance.conveyors.TryGetValue(toTile, out Conveyor conveyor))
+        if (!ConveyorSystem.instance.conveyors.TryGetValue(to, out Conveyor conveyor))
         {
-            conveyor = CreateConveyor(toTile);
+            conveyor = DoCreateConveyor(to);
             playAudio = playAudio || conveyor;
         }
-        if (!ConveyorSystem.instance.conveyors.TryGetValue(fromTile, out Conveyor sourceConveyor))
+        if (!ConveyorSystem.instance.conveyors.TryGetValue(from, out Conveyor sourceConveyor))
         {
-            sourceConveyor = CreateConveyor(fromTile);
+            sourceConveyor = DoCreateConveyor(from);
             playAudio = playAudio || sourceConveyor;
         }
         if (conveyor && sourceConveyor && !sourceConveyor.IsLinked(conveyor))
@@ -211,11 +221,11 @@ public class Conveyor : MonoBehaviour
             outputLinks[(int)direction].Recycle();
             outputLinks[(int)direction] = null;
 
-            if(to.currentRouterInput == direction)
+            if (to.currentRouterInput == direction)
             {
                 to.currentRouterInput = Directions.None;
             }
-            
+
             if (machine)
             {
                 machine.FindConveyors();
@@ -227,6 +237,18 @@ public class Conveyor : MonoBehaviour
         }
     }
 
+    public bool IsLinked()
+    {
+        for(int i = 1, len = outputs.Length; i < len; i++)
+        {
+            if(outputs[i] || inputs[i])
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public bool IsLinked(Conveyor to)
     {
         Assert.IsNotNull(to);
@@ -234,9 +256,9 @@ public class Conveyor : MonoBehaviour
         {
             return false;
         }
-        for(int i = 1, len = outputs.Length; i < len; i++)
+        for (int i = 1, len = outputs.Length; i < len; i++)
         {
-            if(outputs[i] == to)
+            if (outputs[i] == to)
             {
                 return true;
             }

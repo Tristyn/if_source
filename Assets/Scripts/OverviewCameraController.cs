@@ -8,7 +8,7 @@ public struct ZoomIncrement
     public float pitch;
 }
 
-public class OverviewCameraController : MonoBehaviour
+public class OverviewCameraController : Singleton<OverviewCameraController>
 {
     class CameraState
     {
@@ -179,7 +179,7 @@ public class OverviewCameraController : MonoBehaviour
         accumulatedScroll += Input.mouseScrollDelta.y;
         if (scrolldelta != 0)
         {
-            SetZoomIncrement(zoomIncrement + scrolldelta);
+            SetZoomIncrement(zoomIncrement - scrolldelta);
         }
 
         // Translation

@@ -50,11 +50,11 @@ public class MachineSystem : Singleton<MachineSystem>
         return false;
     }
 
-    public bool GetMachine(Vector3Int position, out Machine machine)
+    public bool GetMachine(Vector3Int tile, out Machine machine)
     {
-        Vector3 center= position.RoundToTileCenter();
+        Vector3 center = tile.RoundToTileCenter();
         center.y += 0.5f;
-        if (Physics.OverlapBoxNonAlloc(center, new Vector3(0.5f, 0.5f, 0.5f), oneColliderBuffer, Quaternion.identity, Layer.GetMask(Layer.machines).value) > 0)
+        if (Physics.OverlapBoxNonAlloc(center, new Vector3(0.4f, 0.4f, 0.4f), oneColliderBuffer, Quaternion.identity, Layer.GetMask(Layer.machines).value) > 0)
         {
             if (machineColliders.TryGetValue(oneColliderBuffer[0], out machine))
             {
