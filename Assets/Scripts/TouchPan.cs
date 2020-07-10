@@ -15,8 +15,11 @@ public class TouchPan : MonoBehaviour
 
     void Awake()
     {
-        TouchInput.instance.IsTouchConsumedByPan = ConsumeTouch;
-        TouchInput.instance.Touch += OnTouch;
+        Init.Bind += () =>
+        {
+            TouchInput.instance.IsTouchConsumedByPan = ConsumeTouch;
+            TouchInput.instance.Touch += OnTouch;
+        };
     }
 
     void OnDestroy()

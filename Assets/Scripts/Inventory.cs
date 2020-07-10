@@ -130,12 +130,12 @@ public struct Inventory
         return false;
     }
 
-    public void Clone(out Inventory destination)
+    public Inventory Clone()
     {
         int slotsLength = slots.Length;
         InventorySlot[] destinationSlots = new InventorySlot[slotsLength];
         Array.Copy(slots, destinationSlots, slotsLength);
-        destination = new Inventory
+        return new Inventory
         {
             slots = destinationSlots
         };

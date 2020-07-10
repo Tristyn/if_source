@@ -22,7 +22,7 @@ public class MachineInfo : ScriptableObject
     public float cost;
     public float placeInterval;
     public Vector3Int size = new Vector3Int(2, 1, 2);
-    public GameObject prefab;
+    public MachineVisual prefab;
     public Sprite sprite;
     public Color spriteColor = Color.white;
 

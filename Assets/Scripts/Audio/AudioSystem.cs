@@ -23,7 +23,7 @@ public class AudioSystem : Singleton<AudioSystem>
         }
     }
 
-    AudioSource GetAudioSource(AudioCategory category)
+    public AudioSource GetAudioSource(AudioCategory category)
     {
         switch (category)
         {

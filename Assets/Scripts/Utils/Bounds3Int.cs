@@ -14,7 +14,17 @@ public struct Bounds3Int
         this.max = max;
     }
 
-    public Vector3 center => min + ((Vector3)(max - min) * 0.5f) + new Vector3(0.5f,0.5f,0.5f);
+    public Vector3 center => min + ((Vector3)(max - min) * 0.5f) + new Vector3(0.5f, 0.5f, 0.5f);
+
+    public Vector3 bottomCenter
+    {
+        get
+        {
+            Vector3 center = this.center;
+            center.y = min.y;
+            return center;
+        }
+    }
 
     public Vector3 size => max - min + Vector3Int.one;
 

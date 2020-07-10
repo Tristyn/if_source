@@ -1,16 +1,16 @@
 ﻿using UnityEngine;
 
-public class Singleton<T> : MonoBehaviour where T : Singleton<T>
+public class Singleton<T> : MonoBehaviour
 {
     public static T instance;
 
     protected virtual void Awake()
     {
-        instance = (T)this;
+        instance = (T)(object)this;
     }
 
     protected virtual void OnDestroy()
     {
-        instance = null;
+        instance = (T)(object)null;
     }
 }

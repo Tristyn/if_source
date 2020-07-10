@@ -1,7 +1,10 @@
+- Add placement hologram
+- Add machine drop effect
+
 tristyn.github.io/if 0.1.7.4
 - Machines
 - Items
 - Machine Picker
 - 10 Music Tracks
 - 6 Sounds
-- Improved Phone, PC controls
+- Improved Phone, PC controls, layout

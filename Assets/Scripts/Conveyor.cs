@@ -7,14 +7,14 @@ public struct ConveyorItem
 {
     public Transform itemTransform;
     public float distance;
-    public Vector3 conveyorQueueOrigin;
+    public Vector3 conveyorQueueOrigin_local;
     public Directions direction;
 
     public ConveyorItem(Item item, Vector3 conveyorQueueOrigin, Directions direction)
     {
         itemTransform = item.transform;
         distance = 0;
-        this.conveyorQueueOrigin = conveyorQueueOrigin;
+        this.conveyorQueueOrigin_local = conveyorQueueOrigin;
         this.direction = direction;
     }
 
@@ -27,14 +27,14 @@ public struct ConveyorItem
     public void UpdateTransform()
     {
         Vector3 offset = direction.ToOffset(distance);
-        Vector3 position = conveyorQueueOrigin + offset;
-        itemTransform.position = position;
+        Vector3 position_local = conveyorQueueOrigin_local + offset;
+        itemTransform.localPosition = position_local;
     }
 }
 
 public class Conveyor : MonoBehaviour
 {
-    public Vector3Int position;
+    public Vector3Int position_local;
     public Machine machine;
     public Conveyor[] neighbors = new Conveyor[EnumUtils<Directions>.valuesLength];
     public Conveyor[] inputs = new Conveyor[EnumUtils<Directions>.valuesLength];
@@ -61,7 +61,7 @@ public class Conveyor : MonoBehaviour
             return conveyor;
         }
 
-        conveyor =  DoCreateConveyor(position);
+        conveyor = DoCreateConveyor(position);
         if (conveyor)
         {
             AudioSystem.instance.PlayOneShot(ConveyorSystem.instance.createConveyorClip, AudioCategory.Effect);
@@ -72,14 +72,14 @@ public class Conveyor : MonoBehaviour
     private static Conveyor DoCreateConveyor(Vector3Int position)
     {
         Conveyor conveyor = ObjectPooler.instance.Get<Conveyor>();
-        conveyor.transform.position = position.RoundToTileCenter();
+        conveyor.transform.localPosition = position.RoundToTileCenter();
         conveyor.Initialize();
         return conveyor;
     }
 
     public static Conveyor CreateConveyor(Vector3Int from, Vector3Int to)
     {
-        if(!ConveyorSystem.instance.CanLink(from, to))
+        if (!ConveyorSystem.instance.CanLink(from, to))
         {
             return null;
         }
@@ -115,9 +115,9 @@ public class Conveyor : MonoBehaviour
 
     public void Initialize()
     {
-        position = transform.position.RoundToTile();
+        position_local = transform.localPosition.RoundToTile();
         ConveyorSystem.instance.Add(this);
-        if (MachineSystem.instance.GetMachine(position, out Machine machine))
+        if (MachineSystem.instance.GetMachine(position_local, out Machine machine))
         {
             this.machine = machine;
             machine.FindConveyors();
@@ -159,7 +159,7 @@ public class Conveyor : MonoBehaviour
             }
         }
 
-        ConveyorSystem.instance.Remove(position);
+        ConveyorSystem.instance.Remove(position_local);
         if (machine)
         {
             machine.FindConveyors();
@@ -174,7 +174,7 @@ public class Conveyor : MonoBehaviour
 
     public void Link(Conveyor to)
     {
-        Directions direction = (to.position - position).ToDirection();
+        Directions direction = (to.position_local - position_local).ToDirection();
         if (direction != Directions.None && !outputs[(int)direction])
         {
             to.Unlink(this);
@@ -188,8 +188,8 @@ public class Conveyor : MonoBehaviour
 
             ConveyorLink link = ObjectPooler.instance.Get<ConveyorLink>();
             outputLinks[(int)direction] = link;
-            link.transform.SetParent(transform);
-            link.transform.position = transform.position;
+            link.transform.SetParent(transform, worldPositionStays: false);
+            Assert.IsTrue(link.transform.localPosition == Vector3.zero);
             link.direction = direction;
             link.Initialize();
 
@@ -206,7 +206,7 @@ public class Conveyor : MonoBehaviour
 
     public void Unlink(Conveyor to)
     {
-        Directions direction = (to.position - position).ToDirection();
+        Directions direction = (to.position_local - position_local).ToDirection();
         if (direction != Directions.None && outputs[(int)direction])
         {
             Directions inverseDirection = direction.Inverse();
@@ -239,9 +239,9 @@ public class Conveyor : MonoBehaviour
 
     public bool IsLinked()
     {
-        for(int i = 1, len = outputs.Length; i < len; i++)
+        for (int i = 1, len = outputs.Length; i < len; i++)
         {
-            if(outputs[i] || inputs[i])
+            if (outputs[i] || inputs[i])
             {
                 return true;
             }
@@ -285,7 +285,7 @@ public class Conveyor : MonoBehaviour
         if (items.Count == 0 || items.array[items.tail].distance >= minItemDistance)
         {
             Item item = ItemPooler.instance.Get(itemInfo);
-            ConveyorItem conveyorItem = new ConveyorItem(item, transform.position, direction);
+            ConveyorItem conveyorItem = new ConveyorItem(item, transform.localPosition, direction);
             conveyorItem.UpdateTransform();
             items.Enqueue(conveyorItem);
             return true;
@@ -450,7 +450,7 @@ public class Conveyor : MonoBehaviour
                 currentRouterInput = Directions.None;
                 conveyorItem.direction = direction;
                 conveyorItem.distance = Mathf.Max(0f, Mathf.Min(fixedItemSpeed, routedItemDistance - minItemDistance));
-                conveyorItem.conveyorQueueOrigin = transform.position;
+                conveyorItem.conveyorQueueOrigin_local = transform.localPosition;
                 conveyorItem.UpdateTransform();
                 destination.Enqueue(conveyorItem);
                 return true;

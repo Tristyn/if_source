@@ -32,8 +32,7 @@ public class Machine : MonoBehaviour
     public MachineSeller machineSeller;
     public MachineAssembler machineAssembler;
     public MachinePlacer machinePlacer;
-
-    public GameObject instance;
+    public MachineVisual instance;
 
     public void Initialize()
     {
@@ -43,7 +42,8 @@ public class Machine : MonoBehaviour
         }
         else
         {
-            instance = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject instanceGameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            instance =  instanceGameObject.AddComponent<MachineVisual>();
             instance.transform.SetParent(transform, false);
             Destroy(instance.GetComponent<BoxCollider>());
             Transform instanceTransform = instance.transform;
@@ -51,9 +51,13 @@ public class Machine : MonoBehaviour
             instanceTransform.localScale = machineInfo.size;
         }
 
+        MachineDropper machineDropper = ObjectPooler.instance.Get<MachineDropper>();
+        machineDropper.recycleComponentAfterDrop = true;
+        machineDropper.Drop(bounds, instance.transform);
+
         gameObject.SetAllLayers(Layer.machines);
 
-        machineInfo.inventory.Clone(out inventory);
+        inventory = machineInfo.inventory.Clone();
 
         if (machineInfo.purchaseItem.itemInfo != null)
         {
@@ -150,16 +154,14 @@ public class Machine : MonoBehaviour
 
     public static Machine CreateMachine(MachineInfo machineInfo, Vector3 center)
     {
-        Vector3Int boundsMin = center.PositionToBounds(machineInfo.size).min;
-        boundsMin.y = Mathf.FloorToInt(center.y);
-        Bounds3Int bounds = new Bounds3Int(boundsMin, boundsMin + machineInfo.size - Vector3Int.one);
+        Bounds3Int bounds = center.PositionBottomToBounds(machineInfo.size);
         if (MachineSystem.instance.GetMachines(bounds, out Machine[] machines) > 0)
         {
             return null;
         }
 
         GameObject gameObject = new GameObject(machineInfo.machineName);
-        gameObject.transform.position = bounds.min;
+        gameObject.transform.localPosition = bounds.min;
         Machine machine = gameObject.AddComponent<Machine>();
         machine.bounds = bounds;
         machine.machineInfo = machineInfo;
@@ -241,7 +243,7 @@ public class Machine : MonoBehaviour
                     Conveyor output = outputs[j];
                     if (output)
                     {
-                        if (!ConveyorSystem.instance.CanLink(conveyor.position, output.position))
+                        if (!ConveyorSystem.instance.CanLink(conveyor.position_local, output.position_local))
                         {
                             conveyorsRecycled = true;
                             conveyor.Unlink(output);
@@ -257,7 +259,7 @@ public class Machine : MonoBehaviour
                         Conveyor input = inputs[j];
                         if (input)
                         {
-                            if (!ConveyorSystem.instance.CanLink(input.position, conveyor.position))
+                            if (!ConveyorSystem.instance.CanLink(input.position_local, conveyor.position_local))
                             {
                                 conveyorsRecycled = true;
                                 input.Unlink(conveyor);

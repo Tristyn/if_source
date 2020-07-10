@@ -1,11 +1,7 @@
-﻿using System.Linq;
-using UnityEditor;
-using UnityEngine;
-using UnityEngine.Rendering.Universal;
+﻿using UnityEngine;
 
 public class SelectionHighlighter : MonoBehaviour
 {
-    GameObject[] selectionHighlighters;
     Material material;
 
     private void Awake()
@@ -19,12 +15,17 @@ public class SelectionHighlighter : MonoBehaviour
         Vector3 size = bounds.size;
         center.y = bounds.min.y;
         material.mainTextureScale = new Vector2(size.x, size.z);
-        transform.position = center;
+        transform.localPosition = center;
         transform.localScale = size;
     }
 
     public void Recycle()
     {
         ObjectPooler.instance.Recycle(this);
+    }
+
+    private void OnDestroy()
+    {
+        Destroy(material);
     }
 }

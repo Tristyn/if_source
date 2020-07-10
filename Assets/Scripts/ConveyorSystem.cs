@@ -10,7 +10,7 @@ public class ConveyorSystem : Singleton<ConveyorSystem>
 
     public void Add(Conveyor conveyor)
     {
-        Vector3Int position = conveyor.position;
+        Vector3Int position = conveyor.position_local;
         conveyors.Add(position, conveyor);
         Directions[] directions = EnumUtils<Directions>.nonZeroValues;
 

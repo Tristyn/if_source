@@ -8,7 +8,6 @@ public class UISelectMachinesButton : MonoBehaviour
     public Vector3 entryOffset;
 
     public AudioClip expandListClip;
-    public AudioClip selectMachineClip;
 
     GameObject[] children;
     bool expanded;
@@ -76,18 +75,18 @@ public class UISelectMachinesButton : MonoBehaviour
     {
         if (expanded)
         {
-            PlaySelectMachineAudio();
+            current.PlaySelectMachineAudio();
             CollapseList();
         }
         else
         {
-            AudioSystem.instance.PlayOneShot(expandListClip, AudioCategory.Effect);
+            PlayExpandListAudio();
             ExpandList();
         }
     }
 
-    public void PlaySelectMachineAudio()
+    public void PlayExpandListAudio()
     {
-        AudioSystem.instance.PlayOneShot(selectMachineClip, AudioCategory.Effect);
+        AudioSystem.instance.PlayOneShot(expandListClip, AudioCategory.Effect);
     }
 }

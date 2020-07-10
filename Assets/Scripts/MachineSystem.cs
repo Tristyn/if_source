@@ -97,6 +97,11 @@ public class MachineSystem : Singleton<MachineSystem>
         return count;
     }
 
+    public void MachineLanded()
+    {
+        CameraShake.instance.MachineLanded();
+    }
+
     void WarnOrphanCollider()
     {
         Debug.LogWarning("Collider in Machines layer mask was not found in collider-machine dictionary. Collider has wrong layer mask.");

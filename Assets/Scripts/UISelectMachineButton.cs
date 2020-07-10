@@ -8,6 +8,7 @@ public class UISelectMachineButton : MonoBehaviour
     public Sprite spriteSeller;
     public Sprite spriteAssembler;
     public Sprite spriteConveyor;
+    public AudioClip selectMachineClip;
 
     public Image machineImage;
     public Image machineCategory;
@@ -51,6 +52,7 @@ public class UISelectMachineButton : MonoBehaviour
 
     public void OnClick()
     {
+        PlaySelectMachineAudio();
         if (isConveyor)
         {
             InterfaceSelectionManager.instance.SetSelectionConveyor();
@@ -59,5 +61,9 @@ public class UISelectMachineButton : MonoBehaviour
         {
             InterfaceSelectionManager.instance.SetSelection(machineInfo);
         }
+    }
+    public void PlaySelectMachineAudio()
+    {
+        AudioSystem.instance.PlayOneShot(selectMachineClip, AudioCategory.Effect);
     }
 }

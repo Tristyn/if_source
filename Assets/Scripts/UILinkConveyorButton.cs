@@ -11,13 +11,11 @@ public class UILinkConveyorButton : MonoBehaviour
     public Vector3Int sourcePosition;
 
     Button button;
-    RectTransform rectTransform;
 
     void Awake()
     {
         button = GetComponent<Button>();
         button.onClick.AddListener(OnClick);
-        rectTransform = (RectTransform)transform; // Casting this early probably has no performance benefit
     }
 
     void Update()
@@ -32,7 +30,7 @@ public class UILinkConveyorButton : MonoBehaviour
 
     void UpdatePosition()
     {
-        rectTransform.position = OverviewCameraController.instance.mainCamera.WorldToScreenPoint(position.RoundToTileCenter());
+        ((RectTransform)transform).position = MainCamera.instance.WorldToScreenPoint(position.RoundToTileCenter());
     }
 
     void OnClick()

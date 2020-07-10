@@ -29,7 +29,6 @@ public class ScriptableObjectMasterList : ScriptableObject
 {
     public ItemInfo[] allItems;
     public MachineInfo[] allMachines;
-
     public MachineGroup[] machineGroups;
 
     public void GroupMachines()

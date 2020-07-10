@@ -62,7 +62,7 @@ public class TileSelectionManager : Singleton<TileSelectionManager>
             state = new TileSelectionState
             {
                 conveyor = selection,
-                bounds = selection.position.ToBounds()
+                bounds = selection.position_local.ToBounds()
             };
         }
         UpdateSelection();
@@ -128,7 +128,7 @@ public class TileSelectionManager : Singleton<TileSelectionManager>
                     {
                         if (pan)
                         {
-                            Vector3 deltaPosition = input.position - conveyor.position;
+                            Vector3 deltaPosition = input.position_local - conveyor.position_local;
                             OverviewCameraController.instance.MoveWorld(deltaPosition);
                         }
                         SetSelection(input);
@@ -147,7 +147,7 @@ public class TileSelectionManager : Singleton<TileSelectionManager>
                 {
                     if (pan)
                     {
-                        Vector3 deltaPosition = input.position - state.conveyor.position;
+                        Vector3 deltaPosition = input.position_local - state.conveyor.position_local;
                         OverviewCameraController.instance.MoveWorld(deltaPosition);
                     }
                     SetSelection(input);

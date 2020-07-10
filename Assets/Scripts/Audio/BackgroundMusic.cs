@@ -10,13 +10,12 @@ public class BackgroundMusic : MonoBehaviour
 #if !UNITY_EDITOR
     private void Awake()
     {
-        audioSource = GetComponent<AudioSource>();
-    }
-
-    void Start()
-    {
-        audioSource.clip = startupMusic;
-        audioSource.Play();
+        Init.Bind += () =>
+        {
+            audioSource = AudioSystem.instance.GetAudioSource(AudioCategory.BackgroundMusic);
+            audioSource.clip = startupMusic;
+            audioSource.Play();
+        };
     }
 
     void FixedUpdate()
