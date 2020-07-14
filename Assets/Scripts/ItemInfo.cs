@@ -8,6 +8,7 @@ using UnityEngine;
 public class ItemInfo : ScriptableObject
 {
     public string itemName => name;
+    public int value;
     public Color color = Color.white;
     public Item prefab;
 

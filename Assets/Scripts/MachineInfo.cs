@@ -69,7 +69,7 @@ public class MachineInfo : ScriptableObject
             }
             else
             {
-                for (int i = 0, len = masterList.machineGroups.Length; i < len; i++)
+                for (int i = 0, len = masterList.machineGroups.Length; i < len; ++i)
                 {
                     MachineGroup group = masterList.machineGroups[i];
                     if (group.groupName == machineGroup)

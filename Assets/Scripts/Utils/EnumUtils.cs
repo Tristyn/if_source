@@ -18,7 +18,7 @@ public static class EnumUtils<T> where T : Enum
 
         List<string> nonZeroNames1 = new List<string>();
         List<T> nonZeroValues1 = new List<T>();
-        for (int i = 0, len = valueEnums.Length; i < len; i++)
+        for (int i = 0, len = valueEnums.Length; i < len; ++i)
         {
             if ((int)valueEnums.GetValue(i) != 0)
             {

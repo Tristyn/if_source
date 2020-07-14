@@ -19,7 +19,7 @@ public class UISelectMachinesButton : MonoBehaviour
         MachineGroup[] machineGroups = masterList.machineGroups;
         children = new GameObject[masterList.allMachines.Length + 1]; // The magic number +1 is for conveyor
         int childrenIndex = -1;
-        for (int i = 0, len = machineGroups.Length; i < len; i++)
+        for (int i = 0, len = machineGroups.Length; i < len; ++i)
         {
             groupOffset.y += entryOffset.y;
 
@@ -31,7 +31,7 @@ public class UISelectMachinesButton : MonoBehaviour
             groupOffset.y += entryOffset.y;
 
             MachineGroup machineGroup = machineGroups[i];
-            for(int j = 0, lenJ = machineGroup.members.Length; j < lenJ; j++)
+            for(int j = 0, lenJ = machineGroup.members.Length; j < lenJ; ++j)
             {
                 UISelectMachineButton machineButton = Instantiate(machineButtonPrefab, transform);
                 machineButton.machineInfo = machineGroup.members[j];
@@ -48,7 +48,7 @@ public class UISelectMachinesButton : MonoBehaviour
     public void ExpandList()
     {
         expanded = true;
-        for (int i = 0, len = children.Length; i < len; i++)
+        for (int i = 0, len = children.Length; i < len; ++i)
         {
             children[i].SetActive(true);
         }
@@ -57,7 +57,7 @@ public class UISelectMachinesButton : MonoBehaviour
     public void CollapseList()
     {
         expanded = false;
-        for (int i = 0, len = children.Length; i < len; i++)
+        for (int i = 0, len = children.Length; i < len; ++i)
         {
             children[i].SetActive(false);
         }

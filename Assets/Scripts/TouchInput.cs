@@ -59,19 +59,19 @@ public class TouchInput : Singleton<TouchInput>
     void InputTouch()
     {
         int validTouches = 0;
-        for (int i = 0, len = Input.touchCount; i < len; i++)
+        for (int i = 0, len = Input.touchCount; i < len; ++i)
         {
             Touch touch = Input.GetTouch(i);
 
             if (touch.phase == TouchPhase.Began)
             {
-                validTouches++;
+                ++validTouches;
                 AddTouch(touch);
             }
             else
             {
                 bool touchFound = false;
-                for (int j = 0, len2 = touches.Length; j < len2; j++)
+                for (int j = 0, len2 = touches.Length; j < len2; ++j)
                 {
                     if (!touches[j].valid)
                     {
@@ -80,7 +80,7 @@ public class TouchInput : Singleton<TouchInput>
 
                     if (touches[j].press.fingerId == touch.fingerId)
                     {
-                        validTouches++;
+                        ++validTouches;
                         touchFound = true;
                         touches[j].now = touch;
 
@@ -99,7 +99,7 @@ public class TouchInput : Singleton<TouchInput>
                 if (!touchFound)
                 {
                     // WebGL touch can insert new touches that do not start in the 'began' phase
-                    validTouches++;
+                    ++validTouches;
                     AddTouch(touch);
                 }
             }
@@ -107,7 +107,7 @@ public class TouchInput : Singleton<TouchInput>
 
         Touch(touches);
 
-        for (int i = 0, len = invalidate.Count; i < len; i++)
+        for (int i = 0, len = invalidate.Count; i < len; ++i)
         {
             touches[invalidate[i]].valid = false;
         }
@@ -117,7 +117,7 @@ public class TouchInput : Singleton<TouchInput>
         if (validTouches + 3 <= touches.Length)
         {
             TouchInfo[] newTouches = new TouchInfo[validTouches];
-            for (int i = 0, newTouchesIndex = -1, len = touches.Length; i < len; i++)
+            for (int i = 0, newTouchesIndex = -1, len = touches.Length; i < len; ++i)
             {
                 if (touches[i].valid)
                 {
@@ -132,7 +132,7 @@ public class TouchInput : Singleton<TouchInput>
     {
         bool added = false;
         touch.phase = TouchPhase.Began;
-        for (int j = 0, len2 = touches.Length; j < len2; j++)
+        for (int j = 0, len2 = touches.Length; j < len2; ++j)
         {
             if (!touches[j].valid)
             {

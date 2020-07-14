@@ -115,11 +115,11 @@ public class Machine : MonoBehaviour
         }
 
         Dictionary<Vector3Int, Conveyor> conveyors = ConveyorSystem.instance.conveyors;
-        for (int x = bounds.min.x, lenx = bounds.max.x + 1; x < lenx; x++)
+        for (int x = bounds.min.x, lenx = bounds.max.x + 1; x < lenx; ++x)
         {
-            for (int y = bounds.min.y, leny = bounds.max.y + 1; y < leny; y++)
+            for (int y = bounds.min.y, leny = bounds.max.y + 1; y < leny; ++y)
             {
-                for (int z = bounds.min.z, lenz = bounds.max.z + 1; z < lenz; z++)
+                for (int z = bounds.min.z, lenz = bounds.max.z + 1; z < lenz; ++z)
                 {
                     if (conveyors.TryGetValue(new Vector3Int(x, y, z), out Conveyor conveyor))
                     {
@@ -137,7 +137,7 @@ public class Machine : MonoBehaviour
     public void Delete()
     {
         Conveyor[] conv = (Conveyor[])conveyors.Clone();
-        for (int i = 0, len = conv.Length; i < len; i++)
+        for (int i = 0, len = conv.Length; i < len; ++i)
         {
             conv[i].Recycle();
         }
@@ -177,9 +177,9 @@ public class Machine : MonoBehaviour
         Dictionary<Vector3Int, Conveyor> conveyorDict = ConveyorSystem.instance.conveyors;
         List<Conveyor> conveyors = new List<Conveyor>();
 
-        for (int x = bounds.min.x, lenx = bounds.max.x + 1; x < lenx; x++)
+        for (int x = bounds.min.x, lenx = bounds.max.x + 1; x < lenx; ++x)
         {
-            for (int z = bounds.min.z, lenz = bounds.max.z + 1; z < lenz; z++)
+            for (int z = bounds.min.z, lenz = bounds.max.z + 1; z < lenz; ++z)
             {
                 if (conveyorDict.TryGetValue(new Vector3Int(x, bounds.min.y, z), out Conveyor conveyor))
                 {
@@ -238,7 +238,7 @@ public class Machine : MonoBehaviour
             {
                 Conveyor[] inputs = conveyor.inputs;
                 Conveyor[] outputs = conveyor.outputs;
-                for (int j = 1, lenj = inputs.Length; j < lenj; j++)
+                for (int j = 1, lenj = inputs.Length; j < lenj; ++j)
                 {
                     Conveyor output = outputs[j];
                     if (output)

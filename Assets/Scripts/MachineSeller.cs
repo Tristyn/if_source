@@ -24,6 +24,7 @@ public class MachineSeller : MonoBehaviour
             if (inventory.HasItem(sellItem))
             {
                 inventory.DeductItem(sellItem);
+                CurrencySystem.instance.ItemSold(sellItem.itemInfo, sellItem.count, machine.bounds.topCenter);
             }
         }
     }

@@ -80,7 +80,7 @@ public class TileSelectionManager : Singleton<TileSelectionManager>
 
     void UpdateSelection()
     {
-        for (int i = 0, len = conveyorButtons.Count; i < len; i++)
+        for (int i = 0, len = conveyorButtons.Count; i < len; ++i)
         {
             conveyorButtons[i].Recycle();
         }
@@ -117,11 +117,11 @@ public class TileSelectionManager : Singleton<TileSelectionManager>
         if (state.machine)
         {
             Conveyor[] conveyors = state.machine.conveyors;
-            for (int i = 0, len = conveyors.Length; i < len; i++)
+            for (int i = 0, len = conveyors.Length; i < len; ++i)
             {
                 Conveyor conveyor = conveyors[i];
                 Conveyor[] inputs = conveyor.inputs;
-                for (int j = 1, jLen = inputs.Length; j < jLen; j++)
+                for (int j = 1, jLen = inputs.Length; j < jLen; ++j)
                 {
                     Conveyor input = inputs[j];
                     if (input)
@@ -140,7 +140,7 @@ public class TileSelectionManager : Singleton<TileSelectionManager>
         else if (state.conveyor)
         {
             Conveyor[] inputs = state.conveyor.inputs;
-            for (int i = 0, len = inputs.Length; i < len; i++)
+            for (int i = 0, len = inputs.Length; i < len; ++i)
             {
                 Conveyor input = inputs[i];
                 if (input)

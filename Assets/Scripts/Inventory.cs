@@ -32,7 +32,7 @@ public struct InventorySlot
     {
         if (count < capacity)
         {
-            count++;
+            ++count;
             return true;
         }
         return false;
@@ -84,7 +84,7 @@ public struct Inventory
 
     public bool TryAdd(ItemInfo itemInfo, int count)
     {
-        for (int i = 0, len = slots.Length; i < len; i++)
+        for (int i = 0, len = slots.Length; i < len; ++i)
         {
             if (slots[i].itemInfo == itemInfo && slots[i].TryAdd(count))
             {
@@ -96,7 +96,7 @@ public struct Inventory
 
     public bool TryRemove(ItemInfo itemInfo, int count)
     {
-        for (int i = 0, len = slots.Length; i < len; i++)
+        for (int i = 0, len = slots.Length; i < len; ++i)
         {
             if (slots[i].itemInfo == itemInfo && slots[i].TryRemove(count))
             {
@@ -108,7 +108,7 @@ public struct Inventory
 
     public bool TryIncrement(ItemInfo itemInfo)
     {
-        for (int i = 0, len = slots.Length; i < len; i++)
+        for (int i = 0, len = slots.Length; i < len; ++i)
         {
             if (slots[i].itemInfo == itemInfo && slots[i].TryIncrement())
             {
@@ -120,7 +120,7 @@ public struct Inventory
 
     public bool TryDecrement(ItemInfo itemInfo)
     {
-        for (int i = 0, len = slots.Length; i < len; i++)
+        for (int i = 0, len = slots.Length; i < len; ++i)
         {
             if (slots[i].itemInfo == itemInfo && slots[i].TryDecrement())
             {
@@ -143,7 +143,7 @@ public struct Inventory
 
     public bool HasItem(ItemInfo itemInfo)
     {
-        for (int i = 0, len = slots.Length; i < len; i++)
+        for (int i = 0, len = slots.Length; i < len; ++i)
         {
             if (itemInfo == slots[i].itemInfo)
             {
@@ -164,7 +164,7 @@ public struct Inventory
 
     public bool HasItem(AssembleSlot item)
     {
-        for (int i = 0, len = slots.Length; i < len; i++)
+        for (int i = 0, len = slots.Length; i < len; ++i)
         {
             if (item.itemInfo == slots[i].itemInfo)
             {
@@ -187,10 +187,10 @@ public struct Inventory
     {
         // Why are we doing an O(n*m) algorithm here instead of keep inputs and inventory as dictionarys?
         // Arrays are faster than dictionaries roughly when count < 10, and these collections don't get bigger than 5
-        for (int i = 0, len = items.Length; i < len; i++)
+        for (int i = 0, len = items.Length; i < len; ++i)
         {
             AssembleSlot item = items[i];
-            for (int j = 0, lenj = slots.Length; j < lenj; j++)
+            for (int j = 0, lenj = slots.Length; j < lenj; ++j)
             {
                 if (item.itemInfo == slots[j].itemInfo)
                 {
@@ -215,7 +215,7 @@ public struct Inventory
 
     public void DeductItem(ItemInfo itemInfo)
     {
-        for (int i = 0, len = slots.Length; i < len; i++)
+        for (int i = 0, len = slots.Length; i < len; ++i)
         {
             if (itemInfo == slots[i].itemInfo)
             {
@@ -227,7 +227,7 @@ public struct Inventory
 
     public void DeductItem(AssembleSlot item)
     {
-        for (int i = 0, len = slots.Length; i < len; i++)
+        for (int i = 0, len = slots.Length; i < len; ++i)
         {
             if (item.itemInfo == slots[i].itemInfo)
             {
@@ -239,10 +239,10 @@ public struct Inventory
 
     public void DeductItems(AssembleSlot[] items)
     {
-        for (int i = 0, len = items.Length; i < len; i++)
+        for (int i = 0, len = items.Length; i < len; ++i)
         {
             AssembleSlot item = items[i];
-            for (int j = 0, lenj = slots.Length; j < lenj; j++)
+            for (int j = 0, lenj = slots.Length; j < lenj; ++j)
             {
                 if (item.itemInfo == slots[j].itemInfo)
                 {

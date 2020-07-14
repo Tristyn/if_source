@@ -4,7 +4,7 @@ public static class Layer
 {
     static Layer()
     {
-        for (int i = 0; i < maxLayers; i++)
+        for (int i = 0; i < maxLayers; ++i)
         {
             string layerName = LayerMask.LayerToName(i);
             layerMasks[i] = LayerMask.GetMask(layerName);

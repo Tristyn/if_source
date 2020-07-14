@@ -43,7 +43,7 @@ public class MachinePlacer : MonoBehaviour
     {
         MachineConveyorLink[] conveyorLinks = machine.conveyorLinks;
         int lastOutputIndex = Mathf.Min(this.lastOutputIndex, conveyorLinks.Length - 1);
-        for (int i = lastOutputIndex + 1, len = conveyorLinks.Length; i < len; i++)
+        for (int i = lastOutputIndex + 1, len = conveyorLinks.Length; i < len; ++i)
         {
             MachineConveyorLink conveyorLink = conveyorLinks[i];
             if (conveyorLink.isOutput && conveyorLink.innerConveyor.PlaceItem(itemInfo, conveyorLink.machineDirection))
@@ -52,7 +52,7 @@ public class MachinePlacer : MonoBehaviour
                 return true;
             }
         }
-        for (int i = 0, len = lastOutputIndex + 1; i < len; i++)
+        for (int i = 0, len = lastOutputIndex + 1; i < len; ++i)
         {
             MachineConveyorLink conveyorLink = conveyorLinks[i];
             if (conveyorLink.isOutput && conveyorLink.innerConveyor.PlaceItem(itemInfo, conveyorLink.machineDirection))

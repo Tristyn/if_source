@@ -230,7 +230,7 @@ namespace MultiBuild
                         break;
                     }
                 }
-                proplist.arraySize++;
+                ++proplist.arraySize;
                 // Move all existing items forward to make room for insert in order
                 for (int i = proplist.arraySize-1; i > insertIndex; --i) {
                     proplist.GetArrayElementAtIndex(i).enumValueIndex =

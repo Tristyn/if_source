@@ -131,7 +131,7 @@ public class Conveyor : MonoBehaviour
         lastRoutedDirection = Directions.None;
 
         // Remove neighbors
-        for (int i = 0, len = directions.Length; i < len; i++)
+        for (int i = 0, len = directions.Length; i < len; ++i)
         {
             Directions direction = directions[i];
             Conveyor neighbor = neighbors[(int)direction];
@@ -239,7 +239,7 @@ public class Conveyor : MonoBehaviour
 
     public bool IsLinked()
     {
-        for (int i = 1, len = outputs.Length; i < len; i++)
+        for (int i = 1, len = outputs.Length; i < len; ++i)
         {
             if (outputs[i] || inputs[i])
             {
@@ -256,7 +256,7 @@ public class Conveyor : MonoBehaviour
         {
             return false;
         }
-        for (int i = 1, len = outputs.Length; i < len; i++)
+        for (int i = 1, len = outputs.Length; i < len; ++i)
         {
             if (outputs[i] == to)
             {
@@ -282,7 +282,7 @@ public class Conveyor : MonoBehaviour
         // it is intentional to not check distance of other queues because items are only placed
         // inside machines and there we only care about the singular machine output.
         // When items transfer between conveyor queues we check distance on every queue.
-        if (items.Count == 0 || items.array[items.tail].distance >= minItemDistance)
+        if (items.Count == 0 || items.array[items.tail - 1].distance >= minItemDistance)
         {
             Item item = ItemPooler.instance.Get(itemInfo);
             ConveyorItem conveyorItem = new ConveyorItem(item, transform.localPosition, direction);
@@ -300,7 +300,7 @@ public class Conveyor : MonoBehaviour
     public OpenQueue<ConveyorItem> GetRouteDirection(out Directions direction)
     {
         OpenQueue<ConveyorItem>[] queues = outputQueues;
-        for (int i = (int)lastRoutedDirection + 1, len = queues.Length; i < len; i++)
+        for (int i = (int)lastRoutedDirection + 1, len = queues.Length; i < len; ++i)
         {
             OpenQueue<ConveyorItem> queue = queues[i];
             if (queue == null)
@@ -310,7 +310,7 @@ public class Conveyor : MonoBehaviour
             direction = (Directions)i;
             return queue;
         }
-        for (int i = 1, len = (int)lastRoutedDirection + 1; i < len; i++)
+        for (int i = 1, len = (int)lastRoutedDirection + 1; i < len; ++i)
         {
             OpenQueue<ConveyorItem> queue = queues[i];
             if (queue == null)
@@ -333,7 +333,7 @@ public class Conveyor : MonoBehaviour
         // These 2 loops checks every output queue to find the destination queue,
         // and also make sure there is some space on every queue
         OpenQueue<ConveyorItem>[] queues = outputQueues;
-        for (int i = (int)lastRoutedDirection + 1, len = queues.Length; i < len; i++)
+        for (int i = (int)lastRoutedDirection + 1, len = queues.Length; i < len; ++i)
         {
             if (!outputs[i])
             {
@@ -342,7 +342,7 @@ public class Conveyor : MonoBehaviour
             OpenQueue<ConveyorItem> queue = queues[i];
             Assert.IsNotNull(queue);
             ConveyorItem[] queueArray = queue.array;
-            int queueTail = queue.tail;
+            int queueTail = queue.tail - 1;
             if (queue.Count == 0)
             {
                 routedItemDistance = queueDistance;
@@ -360,7 +360,7 @@ public class Conveyor : MonoBehaviour
             destination = queue;
             return true;
         }
-        for (int i = 1, len = (int)lastRoutedDirection + 1; i < len; i++)
+        for (int i = 1, len = (int)lastRoutedDirection + 1; i < len; ++i)
         {
             if (!outputs[i])
             {
@@ -369,7 +369,7 @@ public class Conveyor : MonoBehaviour
             OpenQueue<ConveyorItem> queue = queues[i];
             Assert.IsNotNull(queue);
             ConveyorItem[] queueArray = queue.array;
-            int queueTail = queue.tail;
+            int queueTail = queue.tail - 1;
             if (queue.Count == 0)
             {
                 routedItemDistance = queueDistance;
@@ -405,14 +405,14 @@ public class Conveyor : MonoBehaviour
             return distance;
         }
         OpenQueue<ConveyorItem>[] queues = outputQueues;
-        for (int i = 1, len = queues.Length; i < len; i++)
+        for (int i = 1, len = queues.Length; i < len; ++i)
         {
             OpenQueue<ConveyorItem> queue = queues[i];
             if (queue == null || queue.Count == 0)
             {
                 continue;
             }
-            distance = Mathf.Min(distance, queue.array[queue.tail].distance);
+            distance = Mathf.Min(distance, queue.array[queue.tail - 1].distance);
         }
         return distance;
     }
@@ -470,7 +470,7 @@ public class Conveyor : MonoBehaviour
          * it's all done in one monolithic update.
          */
 
-        for (int i = 1, len = outputs.Length; i < len; i++)
+        for (int i = 1, len = outputs.Length; i < len; ++i)
         {
             Conveyor outputConveyor = outputs[i];
             if (outputConveyor)
@@ -528,7 +528,7 @@ public class Conveyor : MonoBehaviour
 
                 float lookAheadItemDistance = headDistance;
 
-                for (int j = 1, lenJ = queue.Count; j < lenJ; j++)
+                for (int j = 1, lenJ = queue.Count; j < lenJ; ++j)
                 {
                     int itemIndex = queue.GetElementIndex(j);
                     float itemDistance = queueArray[itemIndex].distance;

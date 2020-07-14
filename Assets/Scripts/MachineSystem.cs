@@ -25,7 +25,7 @@ public class MachineSystem : Singleton<MachineSystem>
     public void Add(Machine machine)
     {
         Collider[] colliders = machine.colliders;
-        for (int i = 0, len = colliders.Length; i < len; i++)
+        for (int i = 0, len = colliders.Length; i < len; ++i)
         {
             machineColliders.Add(colliders[i], machine);
         }
@@ -34,7 +34,7 @@ public class MachineSystem : Singleton<MachineSystem>
     public void Remove(Machine machine)
     {
         Collider[] colliders = machine.colliders;
-        for (int i = 0, len = colliders.Length; i < len; i++)
+        for (int i = 0, len = colliders.Length; i < len; ++i)
         {
             bool removed = machineColliders.Remove(colliders[i]);
             Assert.IsTrue(removed);
@@ -73,11 +73,11 @@ public class MachineSystem : Singleton<MachineSystem>
         machinesBuffer = manyMachinesBuffer;
         int count = Physics.OverlapBoxNonAlloc(position.center, position.size * 0.5f, manyColliderBuffer, Quaternion.identity, Layer.GetMask(Layer.machines).value);
         int machinesCount = 0;
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < count; ++i)
         {
             if (machineColliders.TryGetValue(manyColliderBuffer[i], out Machine machine))
             {
-                for (int j = 0; j < machinesCount; j++)
+                for (int j = 0; j < machinesCount; ++j)
                 {
                     if (machinesBuffer[j] == machine)
                     {
@@ -86,7 +86,7 @@ public class MachineSystem : Singleton<MachineSystem>
                 }
 
                 machinesBuffer[machinesCount] = machine;
-                machinesCount++;
+                ++machinesCount;
             skipAddingMachines:;
             }
             else

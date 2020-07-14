@@ -13,7 +13,7 @@ public class ObjectPooler : Singleton<ObjectPooler>
     protected override void Awake()
     {
         base.Awake();
-        for(int i = 0, len = prefabs.Length; i < len; i++)
+        for(int i = 0, len = prefabs.Length; i < len; ++i)
         {
             Component prefab = prefabs[i];
             prefabMap.Add(prefab.GetType(), prefab);

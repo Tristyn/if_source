@@ -26,6 +26,16 @@ public struct Bounds3Int
         }
     }
 
+    public Vector3 topCenter
+    {
+        get
+        {
+            Vector3 center = this.center;
+            center.y = max.y;
+            return center;
+        }
+    }
+
     public Vector3 size => max - min + Vector3Int.one;
 
     public bool Contains(Vector3Int position)
@@ -51,12 +61,12 @@ public struct Bounds3Int
 
     public IEnumerable<(Vector3Int outerTile, Vector3Int innerTile)> EnumeratePerimeter()
     {
-        for (int x = min.x; x <= max.x; x++)
+        for (int x = min.x; x <= max.x; ++x)
         {
             yield return (new Vector3Int(x, min.y, min.z - 1), new Vector3Int(x, min.y, min.z));
             yield return (new Vector3Int(x, min.y, max.z + 1), new Vector3Int(x, min.y, max.z));
         }
-        for (int z = min.z; z <= max.z; z++)
+        for (int z = min.z; z <= max.z; ++z)
         {
             yield return (new Vector3Int(min.x - 1, min.y, z), new Vector3Int(min.x, min.y, z));
             yield return (new Vector3Int(max.x + 1, min.y, z), new Vector3Int(max.x, min.y, z));
@@ -65,19 +75,19 @@ public struct Bounds3Int
 
     public IEnumerable<(Vector3Int outerTile, Vector3Int innerTile, Directions direction)> EnumeratePerimeterClockwise()
     {
-        for (int z = min.z; z <= max.z; z++)
+        for (int z = min.z; z <= max.z; ++z)
         {
             yield return (new Vector3Int(max.x + 1, min.y, z), new Vector3Int(max.x, min.y, z), Directions.North);
         }
-        for (int x = min.x; x <= max.x; x++)
+        for (int x = min.x; x <= max.x; ++x)
         {
             yield return (new Vector3Int(x, min.y, min.z - 1), new Vector3Int(x, min.y, min.z), Directions.East);
         }
-        for (int z = min.z; z <= max.z; z++)
+        for (int z = min.z; z <= max.z; ++z)
         {
             yield return (new Vector3Int(min.x - 1, min.y, z), new Vector3Int(min.x, min.y, z), Directions.South);
         }
-        for (int x = min.x; x <= max.x; x++)
+        for (int x = min.x; x <= max.x; ++x)
         {
             yield return (new Vector3Int(x, min.y, max.z + 1), new Vector3Int(x, min.y, max.z), Directions.West);
         }

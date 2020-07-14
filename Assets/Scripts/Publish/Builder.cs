@@ -50,19 +50,19 @@ namespace MultiBuild {
                 case 0:
                     // Skipping over all args until we see ours
                     if (args[i].Equals("MultiBuild.Builder.BuildCommandLine")) {
-                        stage++;
+                        ++stage;
                     }
                     break;
                 case 1:
                     // next arg is output
                     settings.outputFolder = args[i];
-                    stage++;
+                    ++stage;
                     break;
                 case 2:
                     // next arg is dev flag
                     try {
                         settings.developmentBuild = Boolean.Parse(args[i]);
-                        stage++;
+                        ++stage;
                     } catch (FormatException) {
                         throw new ArgumentException("Development build argument was not a valid boolean" + usage);
                     }

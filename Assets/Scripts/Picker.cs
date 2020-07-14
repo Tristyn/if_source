@@ -258,7 +258,7 @@ public class Picker : Singleton<Picker>
 
     bool TouchPicksContain(int fingerId, out int touchPickIndex)
     {
-        for (int i = 0, len = touchPicks.Count; i < len; i++)
+        for (int i = 0, len = touchPicks.Count; i < len; ++i)
         {
             if (touchPicks[i].fingerId == fingerId)
             {
@@ -272,7 +272,7 @@ public class Picker : Singleton<Picker>
 
     bool RemoveTouchPick(int fingerId)
     {
-        for (int i = 0, len = touchPicks.Count; i < len; i++)
+        for (int i = 0, len = touchPicks.Count; i < len; ++i)
         {
             if (touchPicks[i].fingerId == fingerId)
             {

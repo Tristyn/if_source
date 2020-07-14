@@ -9,7 +9,7 @@ public class Item : MonoBehaviour
         if (itemInfo.color != Color.white)
         {
             Renderer[] renderers = GetComponentsInChildren<Renderer>();
-            for (int i = 0, len = renderers.Length; i < len; i++)
+            for (int i = 0, len = renderers.Length; i < len; ++i)
             {
                 renderers[i].material.color = itemInfo.color;
             }

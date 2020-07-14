@@ -46,7 +46,7 @@ public class TouchPan : MonoBehaviour
 
         if (touch.now.phase == TouchPhase.Moved)
         {
-            for (int i = 0, len = pans.Count; i < len; i++)
+            for (int i = 0, len = pans.Count; i < len; ++i)
             {
                 Pan pan = pans[i];
                 if (!pan.panningBegan && Picker.instance.GetPickerTile(touch.now.position, PickMask.Floor, out pickerPosition) && pickerPosition != pan.startingTile)
@@ -62,7 +62,7 @@ public class TouchPan : MonoBehaviour
 
     void OnTouch(TouchInfo[] touches)
     {
-        for (int i = 0, len = touches.Length; i < len; i++)
+        for (int i = 0, len = touches.Length; i < len; ++i)
         {
             TouchInfo touch = touches[i];
             if (touch.valid)
@@ -108,7 +108,7 @@ public class TouchPan : MonoBehaviour
 
     bool PansContain(int fingerId, out int panIndex)
     {
-        for(int i =0, len = pans.Count; i < len; i++)
+        for(int i =0, len = pans.Count; i < len; ++i)
         {
             if(pans[i].fingerId == fingerId)
             {
@@ -122,7 +122,7 @@ public class TouchPan : MonoBehaviour
 
     bool RemovePan(int fingerId)
     {
-        for (int i = 0, len = pans.Count; i < len; i++)
+        for (int i = 0, len = pans.Count; i < len; ++i)
         {
             if (pans[i].fingerId == fingerId)
             {

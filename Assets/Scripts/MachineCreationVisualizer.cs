@@ -38,14 +38,14 @@ public class MachineCreationVisualizer : MonoBehaviour
     {
         instance = Instantiate(machineInfo.prefab, transform);
         Renderer[] machineRenderers = instance.machineRenderers;
-        for (int i = 0, len = machineRenderers.Length; i < len; i++)
+        for (int i = 0, len = machineRenderers.Length; i < len; ++i)
         {
             Renderer machineRenderer = machineRenderers[i];
             machineRenderer.sharedMaterial = hologramMaterial;
             machineRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         }
         Renderer[] infoRenderers = instance.infoRenderers;
-        for (int i = 0, len = infoRenderers.Length; i < len; i++)
+        for (int i = 0, len = infoRenderers.Length; i < len; ++i)
         {
             infoRenderers[i].enabled = false;
         }

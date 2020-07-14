@@ -34,7 +34,7 @@ public class ScriptableObjectMasterList : ScriptableObject
     public void GroupMachines()
     {
         Dictionary<string, MachineGroup> groups = new Dictionary<string, MachineGroup>();
-        for (int i = 0, len = allMachines.Length; i < len; i++)
+        for (int i = 0, len = allMachines.Length; i < len; ++i)
         {
             MachineInfo machineInfo = allMachines[i];
             if (!groups.TryGetValue(machineInfo.machineGroup, out MachineGroup group))
@@ -63,7 +63,7 @@ public class ScriptableObjectMasterList : ScriptableObject
 
         machineGroups = groups.Values.OrderBy(machineInfo => machineInfo.groupOrder != 0 ? machineInfo.groupOrder : float.MaxValue).ToArray();
 
-        for (int i = 0, len = machineGroups.Length; i < len; i++)
+        for (int i = 0, len = machineGroups.Length; i < len; ++i)
         {
             machineGroups[i].members = machineGroups[i].assemblers.Concat(machineGroups[i].purchasers).Concat(machineGroups[i].sellers).ToArray();
         }
@@ -71,13 +71,13 @@ public class ScriptableObjectMasterList : ScriptableObject
 
     public void SetMachineGroupOrder(string groupName, float groupOrder)
     {
-        for (int j = 0, jLen = machineGroups.Length; j < jLen; j++)
+        for (int j = 0, jLen = machineGroups.Length; j < jLen; ++j)
         {
             MachineGroup group = machineGroups[j];
             if (group.groupName == groupName)
             {
                 group.groupOrder = groupOrder;
-                for (int i = 0, len = group.members.Length; i < len; i++)
+                for (int i = 0, len = group.members.Length; i < len; ++i)
                 {
                     group.members[i].groupOrder = groupOrder;
                 }

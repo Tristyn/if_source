@@ -15,7 +15,7 @@ public class ConveyorSystem : Singleton<ConveyorSystem>
         Directions[] directions = EnumUtils<Directions>.nonZeroValues;
 
         // Set up neighbor pointers
-        for(int i = 0, len = directions.Length; i < len; i++)
+        for(int i = 0, len = directions.Length; i < len; ++i)
         {
             Directions direction = directions[i];
             if (conveyors.TryGetValue(position + direction.ToOffsetInt(), out Conveyor neighbor))
