@@ -54,6 +54,11 @@ public class MachineInfo : ScriptableObject
             AssetDatabase.FindAssets("ObjectMasterList t:ScriptableObjectMasterList", new[] { "Assets/Objects" })
             .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
             .SingleOrDefault());
+        if (!masterList)
+        {
+            return;
+        }
+
         if (!masterList.allMachines.Contains(this))
         {
             masterList.allMachines = masterList.allMachines.Append(this).ToArray();

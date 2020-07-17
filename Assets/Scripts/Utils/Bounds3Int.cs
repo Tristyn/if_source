@@ -31,7 +31,7 @@ public struct Bounds3Int
         get
         {
             Vector3 center = this.center;
-            center.y = max.y;
+            center.y = max.y + 1f;
             return center;
         }
     }

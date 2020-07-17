@@ -25,7 +25,6 @@ GameObject:
   - component: {fileID: 4333293523213517532}
   - component: {fileID: 1377630774239326338}
   - component: {fileID: 1377630774239326337}
-  - component: {fileID: 8462491279114145973}
   - component: {fileID: 6959869754596593112}
   m_Layer: 0
   m_Name: GlobalControllers
@@ -289,75 +288,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9827779e5e7be7f4dbc31662cd6db73e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8462491279114145973
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1377630774726580451}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27dd440993a34b14abb834165c60abf5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  heightAnimationCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 0.5083313
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: -2.0338898
-      outSlope: 0
-      tangentMode: 5
-      weightedMode: 1
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  yawAnimationCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 1066.8396
-      outSlope: 1174.088
-      tangentMode: 1
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.0375
-    - serializedVersion: 3
-      time: 1
-      value: 359
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!114 &6959869754596593112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -374,3 +304,68 @@ MonoBehaviour:
   Xp: 0
   Level: 0
   LevelPoints: 0
+  currencySpawnOffset: {x: 0, y: 0.5, z: 0}
+  heightAnimationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 10.674126
+      outSlope: 10.674126
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.053280815
+    - serializedVersion: 3
+      time: 0.2155264
+      value: 0.99777985
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  yawAnimationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 37.632965
+      inSlope: 1548.2815
+      outSlope: 1548.2815
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.041373014
+    - serializedVersion: 3
+      time: 0.26833978
+      value: 182.02141
+      inSlope: -9.508502
+      outSlope: -9.508502
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.23734024
+    - serializedVersion: 3
+      time: 0.34555054
+      value: 183.3962
+      inSlope: 48.305176
+      outSlope: 48.305176
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.2380276
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  collectAnimationDuration: 0.5
+  moneyChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  xpChanged:
+    m_PersistentCalls:
+      m_Calls: []

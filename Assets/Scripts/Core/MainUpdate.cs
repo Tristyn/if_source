@@ -2,19 +2,10 @@
 
 public class MainUpdate : MonoBehaviour
 {
-    CurrencyUpdate currencyUpdate;
-
-    private void Awake()
-    {
-        Init.Bind += () =>
-        {
-            currencyUpdate = CurrencyUpdate.instance;
-        };
-    }
 
     void Update()
     {
-        currencyUpdate.DoUpdate();
+
     }
 
     public void UpdateEnd()
@@ -29,7 +20,7 @@ public class MainUpdate : MonoBehaviour
 
     public void LateUpdateEnd()
     {
-        currencyUpdate.DoLateUpdate();
+
     }
 
     void FixedUpdate()

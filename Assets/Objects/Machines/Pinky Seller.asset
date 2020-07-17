@@ -30,7 +30,7 @@ MonoBehaviour:
     count: 0
   sellItem:
     itemInfo: {fileID: 11400000, guid: 51dfec3b8f540654b9f27d61d76c6910, type: 2}
-    count: 2
+    count: 1
   assembler: 0
   assembleInputs: []
   assembleOutput:

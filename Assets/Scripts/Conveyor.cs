@@ -282,7 +282,7 @@ public class Conveyor : MonoBehaviour
         // it is intentional to not check distance of other queues because items are only placed
         // inside machines and there we only care about the singular machine output.
         // When items transfer between conveyor queues we check distance on every queue.
-        if (items.Count == 0 || items.array[items.tail - 1].distance >= minItemDistance)
+        if (items.Count == 0 || items.array[items.tail].distance >= minItemDistance)
         {
             Item item = ItemPooler.instance.Get(itemInfo);
             ConveyorItem conveyorItem = new ConveyorItem(item, transform.localPosition, direction);
@@ -342,7 +342,7 @@ public class Conveyor : MonoBehaviour
             OpenQueue<ConveyorItem> queue = queues[i];
             Assert.IsNotNull(queue);
             ConveyorItem[] queueArray = queue.array;
-            int queueTail = queue.tail - 1;
+            int queueTail = queue.tail;
             if (queue.Count == 0)
             {
                 routedItemDistance = queueDistance;
@@ -369,7 +369,7 @@ public class Conveyor : MonoBehaviour
             OpenQueue<ConveyorItem> queue = queues[i];
             Assert.IsNotNull(queue);
             ConveyorItem[] queueArray = queue.array;
-            int queueTail = queue.tail - 1;
+            int queueTail = queue.tail;
             if (queue.Count == 0)
             {
                 routedItemDistance = queueDistance;
@@ -412,7 +412,7 @@ public class Conveyor : MonoBehaviour
             {
                 continue;
             }
-            distance = Mathf.Min(distance, queue.array[queue.tail - 1].distance);
+            distance = Mathf.Min(distance, queue.array[queue.tail].distance);
         }
         return distance;
     }

@@ -31,6 +31,11 @@ public class ItemInfo : ScriptableObject
             AssetDatabase.FindAssets("ObjectMasterList t:ScriptableObjectMasterList", new[] { "Assets/Objects" })
             .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
             .SingleOrDefault());
+        if (!masterList)
+        {
+            return;
+        }
+
         if (!masterList.allItems.Contains(this))
         {
             masterList.allItems = masterList.allItems.Append(this).ToArray();

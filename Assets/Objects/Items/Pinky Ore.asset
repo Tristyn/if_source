@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f102ce4e83fa2654ab75741b210d3a6c, type: 3}
   m_Name: Pinky Ore
   m_EditorClassIdentifier: 
-  value: 0
+  value: 2
   color: {r: 0.8113208, g: 0.3329477, b: 0.8047677, a: 1}
   prefab: {fileID: 175188181554914003, guid: 22c08dcb62ca21747a865b67f45d7fec, type: 3}

@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using UnityEngine;
 
 // A simple Queue of generic objects.  Internally it is implemented as a 
 // circular buffer, so Enqueue can be O(n).  Dequeue is O(1).
@@ -48,7 +47,7 @@ public class OpenQueue<T> : IEnumerable<T>,
     // END CHANGES
     private int _size;       // Number of elements.
 
-    int part1 => Mathf.Min(_size, _size - tail);
+    int part1 => UnityEngine.Mathf.Min(_size, _size - tail);
     int part1_sz => part1;
     int part2_sz => _size - part1_sz;
 
@@ -73,7 +72,7 @@ public class OpenQueue<T> : IEnumerable<T>,
     public OpenQueue()
     {
         array = _emptyArray;
-        tail = 0;
+        tail = -1;
     }
 
     // Creates a queue with room for capacity objects. The default grow factor
@@ -87,7 +86,7 @@ public class OpenQueue<T> : IEnumerable<T>,
 
         array = new T[capacity];
         head = 0;
-        tail = 0;
+        tail = -1;
         _size = 0;
     }
 
@@ -146,16 +145,16 @@ public class OpenQueue<T> : IEnumerable<T>,
     /// <include file='doc\Queue.uex' path='docs/doc[@for="Queue.Clear"]/*' />
     public void Clear()
     {
-        if (head < tail)
+        if (head <= tail)
             Array.Clear(array, head, _size);
         else
         {
             Array.Clear(array, head, array.Length - head);
-            Array.Clear(array, 0, tail);
+            Array.Clear(array, 0, tail+1);
         }
 
         head = 0;
-        tail = 0;
+        tail = -1;
         _size = 0;
         ++_version;
     }
@@ -321,7 +320,7 @@ public class OpenQueue<T> : IEnumerable<T>,
         if (_size == 0)
             throw new InvalidOperationException();
 
-        return array[tail+1];
+        return array[tail];
     }
     // END CHANGES
 
@@ -338,9 +337,9 @@ public class OpenQueue<T> : IEnumerable<T>,
         EqualityComparer<T> c = EqualityComparer<T>.Default;
         while (count-- > 0)
         {
-            if (item == null)
+            if (((Object)item) == null)
             {
-                if (array[index] == null)
+                if (((Object)array[index]) == null)
                     return true;
             }
             else if (array[index] != null && c.Equals(array[index], item))
@@ -378,14 +377,14 @@ public class OpenQueue<T> : IEnumerable<T>,
         if (_size == 0)
             return arr;
 
-        if (head < tail)
+        if (head <= tail)
         {
             Array.Copy(array, head, arr, 0, _size);
         }
         else
         {
             Array.Copy(array, head, arr, 0, array.Length - head);
-            Array.Copy(array, 0, arr, array.Length - head, tail);
+            Array.Copy(array, 0, arr, array.Length - head, tail+1);
         }
 
         return arr;
@@ -401,20 +400,20 @@ public class OpenQueue<T> : IEnumerable<T>,
         T[] newarray = new T[capacity];
         if (_size > 0)
         {
-            if (head < tail)
+            if (head <= tail)
             {
                 Array.Copy(array, head, newarray, 0, _size);
             }
             else
             {
                 Array.Copy(array, head, newarray, 0, array.Length - head);
-                Array.Copy(array, 0, newarray, array.Length - head, tail);
+                Array.Copy(array, 0, newarray, array.Length - head, tail+1);
             }
         }
 
         array = newarray;
         head = 0;
-        tail = (_size == capacity) ? 0 : _size;
+        tail = _size - 1;
         ++_version;
     }
     // END CHANGES

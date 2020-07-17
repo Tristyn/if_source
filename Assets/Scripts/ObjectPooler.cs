@@ -1,30 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class ObjectPooler : Singleton<ObjectPooler>
 {
     const int MAX_POOL_COUNT = 64;
 
-    public Component[] prefabs;
-    private Dictionary<Type, Component> prefabMap = new Dictionary<Type, Component>();
-    private Dictionary<Type, List<Component>> pools = new Dictionary<Type, List<Component>>();
+    public Behaviour[] prefabs;
+    private Dictionary<Type, Behaviour> prefabMap = new Dictionary<Type, Behaviour>();
+    private Dictionary<Type, List<Behaviour>> pools = new Dictionary<Type, List<Behaviour>>();
 
     protected override void Awake()
     {
         base.Awake();
         for(int i = 0, len = prefabs.Length; i < len; ++i)
         {
-            Component prefab = prefabs[i];
+            Behaviour prefab = prefabs[i];
             prefabMap.Add(prefab.GetType(), prefab);
+            pools.Add(prefab.GetType(), new List<Behaviour>(4));
         }
     }
 
-    public T Get<T>() where T : Component
+    public T Get<T>() where T : Behaviour
     {
-        if(!pools.TryGetValue(typeof(T), out List<Component> pool))
+        if(!pools.TryGetValue(typeof(T), out List<Behaviour> pool))
         {
-            pool = new List<Component>();
+            pool = new List<Behaviour>();
             pools.Add(typeof(T), pool);
         }
 
@@ -41,16 +43,15 @@ public class ObjectPooler : Singleton<ObjectPooler>
         return obj.GetComponent<T>();
     }
 
-    public void Recycle<T>(T obj) where T : Component
+    public void Recycle(Behaviour obj)
     {
+        Type poolKey = obj.GetType();
+
         obj.gameObject.SetActive(false);
         obj.transform.SetParent(transform, false);
 
-        if (!pools.TryGetValue(typeof(T), out List<Component> pool))
-        {
-            pool = new List<Component>();
-            pools.Add(typeof(T), pool);
-        }
+        Assert.IsTrue(pools.ContainsKey(poolKey));
+        List<Behaviour> pool = pools[poolKey];
 
         if (pool.Count < MAX_POOL_COUNT)
         {
