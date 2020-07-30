@@ -36,12 +36,19 @@ public struct Bounds3Int
         }
     }
 
-    public Vector3 size => max - min + Vector3Int.one;
+    public Vector3Int size => max - min + Vector3Int.one;
 
     public bool Contains(Vector3Int position)
     {
         return position.x >= min.x && position.y >= min.y && position.z >= min.z
             && position.x <= max.x && position.y <= max.y && position.z <= max.z;
+    }
+
+    public bool Overlaps(Bounds3Int b)
+    {
+        return max.x >= b.min.x && b.max.x >= min.x
+            && max.y >= b.min.y && b.max.y >= min.y
+            && max.z >= b.min.z && b.max.z >= min.z;
     }
 
     public bool Perimeter(Vector3Int vector)
@@ -90,6 +97,38 @@ public struct Bounds3Int
         for (int x = min.x; x <= max.x; ++x)
         {
             yield return (new Vector3Int(x, min.y, max.z + 1), new Vector3Int(x, min.y, max.z), Directions.West);
+        }
+    }
+
+    public static bool operator ==(Bounds3Int a, Bounds3Int b)
+    {
+        return a.min == b.min && a.max == b.max;
+    }
+
+    public static bool operator !=(Bounds3Int a, Bounds3Int b)
+    {
+        return a.min == b.min && a.max == b.max;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is Bounds3Int)
+        {
+            var bounds = (Bounds3Int)obj;
+            return this == bounds;
+
+        }
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            int hash = 13;
+            hash = (hash * 7) + min.GetHashCode();
+            hash = (hash * 7) + max.GetHashCode();
+            return hash;
         }
     }
 }

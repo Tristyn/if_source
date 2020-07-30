@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Events;
 
 public enum CurrencyType
@@ -7,29 +8,71 @@ public enum CurrencyType
     Xp
 }
 
-public class CurrencySystem : Singleton<CurrencySystem>
+public sealed class CurrencySystem : Singleton<CurrencySystem>
 {
-    public int Money;
-    public int Xp;
-    public int Level;
-    public int LevelPoints;
+    [Serializable]
+    public struct Save
+    {
+        public int money;
+        public int xp;
+        public int level;
+        public int levelPoints;
+    }
+
+    [NonSerialized]
+    public Save save;
 
     public Vector3 currencySpawnOffset;
-    public AnimationCurve heightAnimationCurve;
-    public AnimationCurve yawAnimationCurve;
-    public float collectAnimationDuration;
 
     public UnityEvent moneyChanged;
     public UnityEvent xpChanged;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        Init.LoadComplete += LoadComplete;
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        Init.LoadComplete -= LoadComplete;
+    }
+
+    void LoadComplete()
+    {
+        moneyChanged.Invoke();
+        xpChanged.Invoke();
+    }
+
     public void ItemSold(ItemInfo itemInfo, int count, Vector3 position)
     {
         int value = itemInfo.value * count;
-        Money += value;
+        save.money += value;
 
         CurrencyMoney currency = ObjectPooler.instance.Get<CurrencyMoney>();
         currency.Initialize(position);
 
+        moneyChanged.Invoke();
+    }
+
+    public bool CanPurchaseItem(ItemInfo itemInfo, int count)
+    {
+        int value = itemInfo.value * count;
+        return save.money >= value;
+    }
+
+    public void ItemPurchased(ItemInfo itemInfo, int count)
+    {
+        int value = itemInfo.value * count;
+        save.money -= value;
+
+        moneyChanged.Invoke();
+    }
+
+    public void SetMoney(int value)
+    {
+        save.money = value;
         moneyChanged.Invoke();
     }
 }

@@ -1,15 +1,24 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
-public class MachinePlacer : MonoBehaviour
+public sealed class MachinePlacer : MonoBehaviour
 {
     public Machine machine;
 
     Inventory inventory;
     ItemInfo itemInfo;
-    int lastOutputIndex;
 
     const float placeInterval = 1 / Conveyor.itemSpeed;
-    float nextPlaceTime = -1f;
+
+    [Serializable]
+    public struct Save
+    {
+        public float nextPlaceTime;
+        public int lastOutputIndex;
+    }
+
+    [NonSerialized]
+    public Save save;
 
     public void Initialize()
     {
@@ -26,30 +35,34 @@ public class MachinePlacer : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (nextPlaceTime <= Time.fixedTime)
+        if (save.nextPlaceTime <= GameTime.fixedTime)
         {
-            nextPlaceTime += placeInterval;
-            if (inventory.HasItem(itemInfo))
-            {
-                if (PlaceItem())
-                {
-                    inventory.DeductItem(itemInfo);
-                }
-            }
+            save.nextPlaceTime += placeInterval;
+            PlaceItem();
         }
     }
 
-    bool PlaceItem()
+    void PlaceItem()
     {
+        ref InventorySlot slot = ref inventory.GetSlot(itemInfo);
+        if (slot.count <= 0)
+        {
+            return;
+        }
+
         MachineConveyorLink[] conveyorLinks = machine.conveyorLinks;
-        int lastOutputIndex = Mathf.Min(this.lastOutputIndex, conveyorLinks.Length - 1);
+        int lastOutputIndex = Mathf.Min(save.lastOutputIndex, conveyorLinks.Length - 1);
         for (int i = lastOutputIndex + 1, len = conveyorLinks.Length; i < len; ++i)
         {
             MachineConveyorLink conveyorLink = conveyorLinks[i];
             if (conveyorLink.isOutput && conveyorLink.innerConveyor.PlaceItem(itemInfo, conveyorLink.machineDirection))
             {
-                this.lastOutputIndex = i;
-                return true;
+                save.lastOutputIndex = i;
+                --slot.count;
+                if (slot.count <= 0)
+                {
+                    return;
+                }
             }
         }
         for (int i = 0, len = lastOutputIndex + 1; i < len; ++i)
@@ -57,10 +70,14 @@ public class MachinePlacer : MonoBehaviour
             MachineConveyorLink conveyorLink = conveyorLinks[i];
             if (conveyorLink.isOutput && conveyorLink.innerConveyor.PlaceItem(itemInfo, conveyorLink.machineDirection))
             {
-                this.lastOutputIndex = i;
-                return true;
+                save.lastOutputIndex = i;
+                --slot.count;
+                if (slot.count <= 0)
+                {
+                    return;
+                }
             }
         }
-        return false;
+        return;
     }
 }

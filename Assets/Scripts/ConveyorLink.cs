@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class ConveyorLink : MonoBehaviour
+public sealed class ConveyorLink : MonoBehaviour
 {
     public Directions direction;
 

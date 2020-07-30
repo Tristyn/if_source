@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class MachineCreationVisualizer : MonoBehaviour
+public sealed class MachineCreationVisualizer : MonoBehaviour
 {
     public Material hologramMaterial;
     public SelectionHighlighter selectionHighlighter;

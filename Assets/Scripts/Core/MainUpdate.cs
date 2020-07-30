@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
 
-public class MainUpdate : MonoBehaviour
+public sealed class MainUpdate : MonoBehaviour
 {
-
     void Update()
     {
-
+        GameTime.DoUpdate();
     }
 
     public void UpdateEnd()
@@ -25,7 +24,7 @@ public class MainUpdate : MonoBehaviour
 
     void FixedUpdate()
     {
-
+        GameTime.DoFixedUpdate();
     }
 
     public void FixedUpdateEnd()

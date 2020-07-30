@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UISelectMachineButton : MonoBehaviour
+public sealed class UISelectMachineButton : MonoBehaviour
 {
     public Sprite spritePurchaser;
     public Sprite spriteSeller;

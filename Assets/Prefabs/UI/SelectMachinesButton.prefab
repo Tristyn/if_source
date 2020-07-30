@@ -46,14 +46,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 6956235873191560118}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f86ab27b275fbd3498b5ca8048e5d09c, type: 3}
+  m_Script: {fileID: 11500000, guid: f89bad55197860d4c931f46c803529ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  masterList: {fileID: 11400000, guid: 903d92d67fe0f754cb71d46212159d63, type: 2}
   current: {fileID: 8856741839018027157}
   machineButtonPrefab: {fileID: 1900787790664568874, guid: d12657a1280848d49b35380bab29d6e7,
     type: 3}
-  entryOffset: {x: 268, y: -220, z: 0}
+  entryOffset: {x: 260, y: -240, z: 0}
   expandListClip: {fileID: 8300000, guid: a13255c53c59cf148a61d8b8985f43d7, type: 3}
 --- !u!1001 &6956235872898676927
 PrefabInstance:
@@ -62,6 +61,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6956235873191560121}
     m_Modifications:
+    - target: {fileID: 1900787790664568874, guid: d12657a1280848d49b35380bab29d6e7,
+        type: 3}
+      propertyPath: isConveyor
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1900787790664568877, guid: d12657a1280848d49b35380bab29d6e7,
         type: 3}
       propertyPath: m_Name
@@ -279,6 +283,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ab5d52ee074c374ba1262f6922f2137, type: 3}
+  m_Script: {fileID: 11500000, guid: 1bb2acecbed81e34a8dad68a92ffb834, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

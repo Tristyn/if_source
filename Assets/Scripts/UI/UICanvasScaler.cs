@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class UICanvasScaler : MonoBehaviour
+public sealed class UICanvasScaler : MonoBehaviour
 {
     public float desktopScale;
     

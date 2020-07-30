@@ -12,14 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc0e76f1a4b5ac247961624e9c254f55, type: 3}
   m_Name: ObjectMasterList
   m_EditorClassIdentifier: 
-  allItems:
-  - {fileID: 11400000, guid: aac787e0f59938d48a4e31166b8a60d1, type: 2}
-  - {fileID: 11400000, guid: 51dfec3b8f540654b9f27d61d76c6910, type: 2}
-  - {fileID: 11400000, guid: 51c5ef02c174dc44a9dc430ddbfe120d, type: 2}
-  allMachines:
-  - {fileID: 11400000, guid: 3c7e56af39ff89c4da32c45706e9d12b, type: 2}
-  - {fileID: 11400000, guid: 240c652c16e9202449cbfeadd0284160, type: 2}
-  - {fileID: 11400000, guid: ffa214700dc0c6e4ba0ced2de9e0da08, type: 2}
   machineGroups:
   - groupName: Pinky
     groupOrder: 10

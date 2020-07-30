@@ -8,7 +8,7 @@ public enum AudioCategory
     BackgroundMusic,
 }
 
-public class AudioSystem : Singleton<AudioSystem>
+public sealed class AudioSystem : Singleton<AudioSystem>
 {
     public AudioSource effectAudioSource;
     public AudioSource ambienceAudioSource;

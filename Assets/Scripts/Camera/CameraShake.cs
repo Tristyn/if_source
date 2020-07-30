@@ -1,8 +1,6 @@
-﻿using Assets.Scripts.Consts;
-using UnityEngine;
-using UnityEngine.LowLevel;
+﻿using UnityEngine;
 
-public class CameraShake : Singleton<CameraShake>
+public sealed class CameraShake : Singleton<CameraShake>
 {
     public float angularFrequency;
     public float dampingRatio;

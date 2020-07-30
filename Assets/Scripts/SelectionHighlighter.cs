@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class SelectionHighlighter : MonoBehaviour
+public sealed class SelectionHighlighter : MonoBehaviour
 {
     Material material;
 

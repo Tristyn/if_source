@@ -12,9 +12,9 @@ public enum PickMask
     Demolish
 }
 
-public class Picker : Singleton<Picker>
+public sealed class Picker : Singleton<Picker>
 {
-    public class TouchPick
+    public struct TouchPick
     {
         public int fingerId;
         public Vector3Int startingTile;
@@ -74,10 +74,13 @@ public class Picker : Singleton<Picker>
                     if (interfaceState.mode == InterfaceMode.Conveyor)
                     {
                         mouseDraggingConveyor = true;
-                        Conveyor conveyor = Conveyor.CreateConveyor(pickerTile);
-                        if (conveyor)
+                        if (!ConveyorSystem.instance.conveyors.TryGetValue(pickerTile, out Conveyor conveyor))
                         {
-                            TileSelectionManager.instance.SetSelection(conveyor);
+                            conveyor = ConveyorSystem.instance.CreateConveyor(pickerTile, ConveyorCreateFlags.None);
+                            if (conveyor)
+                            {
+                                TileSelectionManager.instance.SetSelection(conveyor);
+                            }
                         }
                     }
                 }
@@ -88,26 +91,14 @@ public class Picker : Singleton<Picker>
             if (GetPickerTile(Input.mousePosition, PickMask.Construct, out pickerTile) && pickerTile != lastMouseDragPosition)
             {
                 Conveyor conveyor = null;
-                if ((pickerTile - lastMouseDragPosition).ToDirection() != Directions.None)
+                if (lastMouseDragPosition.IsNeighbor(pickerTile))
                 {
                     mouseDraggingConveyor = true;
-                    if (ConveyorSystem.instance.CanLink(lastMouseDragPosition, pickerTile))
-                    {
-                        conveyor = Conveyor.CreateConveyor(lastMouseDragPosition, pickerTile);
-                        Assert.IsNotNull(conveyor);
-                    }
+                    conveyor = ConveyorSystem.instance.GetOrCreateConveyor(lastMouseDragPosition, pickerTile, ConveyorCreateFlags.SelectConveyor);
                 }
                 else
                 {
-                    if (ConveyorSystem.instance.CanCreate(pickerTile))
-                    {
-                        conveyor = Conveyor.CreateConveyor(pickerTile);
-                        Assert.IsNotNull(conveyor);
-                    }
-                }
-                if (conveyor)
-                {
-                    TileSelectionManager.instance.SetSelection(conveyor);
+                    conveyor = ConveyorSystem.instance.CreateConveyor(pickerTile, ConveyorCreateFlags.SelectConveyor);
                 }
                 lastMouseDragPosition = pickerTile;
             }
@@ -121,6 +112,7 @@ public class Picker : Singleton<Picker>
                     Machine machine = Machine.CreateMachine(interfaceState.machineInfo, pickerPosition);
                     if (machine)
                     {
+                        machine.Drop();
                         TileSelectionManager.instance.SetSelection(machine);
                         InterfaceSelectionManager.instance.SetSelectionConveyor();
                     }
@@ -145,23 +137,22 @@ public class Picker : Singleton<Picker>
         {
             if (GetPickerTile(Input.mousePosition, PickMask.Demolish, out pickerTile))
             {
-                if (MachineSystem.instance.GetMachine(pickerTile, out Machine machine))
+                Machine machine = MachineSystem.instance.GetMachine(pickerTile);
+                if (machine)
                 {
                     if (TileSelectionManager.instance.state.machine == machine)
                     {
-                        TileSelectionManager.instance.SelectInput(false);
+                        TileSelectionManager.instance.TrySelectAnyInput(false);
                     }
-                    machine.PlayDemolishAudio();
-                    machine.Delete();
+                    machine.Demolish();
                 }
                 else if (ConveyorSystem.instance.conveyors.TryGetValue(pickerTile, out Conveyor conveyor))
                 {
                     if (TileSelectionManager.instance.state.conveyor == conveyor)
                     {
-                        TileSelectionManager.instance.SelectInput(false);
+                        TileSelectionManager.instance.TrySelectAnyInput(false);
                     }
-                    conveyor.PlayDemolishAudio();
-                    conveyor.Recycle();
+                    conveyor.Demolish();
                 }
             }
         }
@@ -171,22 +162,22 @@ public class Picker : Singleton<Picker>
     {
         if (!touch.canvas)
         {
-            if (touch.now.phase == TouchPhase.Began && GetPickerTile(touch.now.position, PickMask.Construct, out Vector3Int pickerPosition))
+            if (touch.now.phase == TouchPhase.Began && GetPickerTile(touch.now.position, PickMask.Construct, out Vector3Int pickerTile))
             {
                 touchPicks.Add(new TouchPick
                 {
                     fingerId = touch.now.fingerId,
-                    startingTile = pickerPosition
+                    startingTile = pickerTile
                 });
                 return false;
             }
 
             if (touch.now.phase == TouchPhase.Moved)
             {
-                if (TouchPicksContain(touch.now.fingerId, out int touchPickIndex) && GetPickerTile(touch.now.position, PickMask.Construct, out pickerPosition))
+                if (TouchPicksContain(touch.now.fingerId, out int touchPickIndex) && GetPickerTile(touch.now.position, PickMask.Construct, out pickerTile))
                 {
                     TouchPick touchPick = touchPicks[touchPickIndex];
-                    if (pickerPosition != touchPick.startingTile)
+                    if (pickerTile != touchPick.startingTile)
                     {
                         RemoveTouchPick(touch.now.fingerId);
                         return false;
@@ -200,17 +191,19 @@ public class Picker : Singleton<Picker>
                 {
                     TouchPick touchPick = touchPicks[touchPickIndex];
                     RemoveTouchPick(touch.now.fingerId);
-                    if (GetPickerTile(touch.now.position, PickMask.Construct, out pickerPosition) && touchPick.startingTile == pickerPosition)
+                    if (GetPickerTile(touch.now.position, PickMask.Construct, out pickerTile) && touchPick.startingTile == pickerTile)
                     {
                         InterfaceState interfaceState = InterfaceSelectionManager.instance.state;
                         if (interfaceState.mode == InterfaceMode.Machine)
                         {
-                            if (!MachineSystem.instance.GetMachine(pickerPosition, out Machine machine))
+                            Machine machine = MachineSystem.instance.GetMachine(pickerTile);
+                            if (!machine)
                             {
-                                machine = Machine.CreateMachine(interfaceState.machineInfo, pickerPosition);
+                                machine = Machine.CreateMachine(interfaceState.machineInfo, pickerTile);
                             }
                             if (machine)
                             {
+                                machine.Drop();
                                 TileSelectionManager.instance.SetSelection(machine);
                             }
                             return true;
@@ -225,23 +218,17 @@ public class Picker : Singleton<Picker>
                             {
                                 foreach ((Vector3Int outerTile, Vector3Int innerTile) in selection.bounds.EnumeratePerimeter())
                                 {
-                                    if (outerTile == pickerPosition)
+                                    if (outerTile == pickerTile)
                                     {
-                                        conveyor = Conveyor.CreateConveyor(innerTile, pickerPosition);
-                                        if (conveyor)
-                                        {
-                                            Vector3 deltaPosition = pickerPosition - innerTile;
-                                            OverviewCameraController.instance.MoveWorld(deltaPosition);
-                                        }
+                                        conveyor = ConveyorSystem.instance.GetOrCreateConveyor(lastMouseDragPosition, pickerTile, ConveyorCreateFlags.SelectConveyor | ConveyorCreateFlags.PanRelative);
                                         break;
                                     }
                                 }
                             }
                             if (!conveyor)
                             {
-                                conveyor = Conveyor.CreateConveyor(pickerPosition);
+                                conveyor = ConveyorSystem.instance.CreateConveyor(pickerTile, ConveyorCreateFlags.SelectConveyor);
                             }
-                            TileSelectionManager.instance.SetSelection(pickerPosition);
                             return true;
                         }
                     }

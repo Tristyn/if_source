@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using UnityEngine.Assertions;
 
-public class MachineAssembler : MonoBehaviour
+public sealed class MachineAssembler : MonoBehaviour
 {
     public Machine machine;
 
@@ -8,7 +10,14 @@ public class MachineAssembler : MonoBehaviour
     AssembleSlot output;
     Inventory inventory;
     float placeInterval;
-    float nextAssembleTime = -1f;
+
+    [Serializable]
+    public struct Save
+    {
+        public float nextAssembleTime;
+    }
+    [NonSerialized]
+    public Save save;
 
     public void Initialize()
     {
@@ -20,12 +29,14 @@ public class MachineAssembler : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (nextAssembleTime <= Time.fixedTime)
+        if (save.nextAssembleTime <= GameTime.fixedTime)
         {
-            nextAssembleTime += placeInterval;
+            save.nextAssembleTime += placeInterval;
             if (inventory.HasItems(inputs))
             {
-                if (inventory.TryAdd(output.itemInfo, output.count))
+                ref InventorySlot outputSlot = ref inventory.GetSlot(output.itemInfo);
+                Assert.IsTrue(outputSlot.valid);
+                if (outputSlot.TryAdd(output.count))
                 {
                     inventory.DeductItems(inputs);
                 }

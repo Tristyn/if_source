@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Animations;
 
-public class FlipUpEndedBehaviour : StateMachineBehaviour
+public sealed class FlipUpEndedBehaviour : StateMachineBehaviour
 {
     Currency currency;
 

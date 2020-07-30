@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Item : MonoBehaviour
+public sealed class Item : MonoBehaviour
 {
     public ItemInfo itemInfo;
     
@@ -28,6 +28,7 @@ public class Item : MonoBehaviour
 
     public void EvictedFromConveyor()
     {
+        CurrencySystem.instance.ItemSold(itemInfo, 1, transform.position);
         Recycle();
     }
 }

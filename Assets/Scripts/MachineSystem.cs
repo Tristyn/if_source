@@ -3,98 +3,119 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public class MachineSystem : Singleton<MachineSystem>
+public sealed class MachineSystem : Singleton<MachineSystem>
 {
-    public int queryMaxResults = 24;
     public AudioClip createMachineClip;
     public AudioClip demolishMachineClip;
 
     [NonSerialized]
-    public Dictionary<Collider, Machine> machineColliders = new Dictionary<Collider, Machine>();
-    private Collider[] oneColliderBuffer = new Collider[1];
-    private Collider[] manyColliderBuffer;
-    private Machine[] manyMachinesBuffer;
+    public HashSet<Machine> machines = new HashSet<Machine>();
+    [NonSerialized]
+    public SpatialHash<Machine> machineSpatialHash;
+
+    [Serializable]
+    public struct Save
+    {
+        public Machine.Save[] machines;
+    }
+
+    [NonSerialized]
+    public Save save;
 
     protected override void Awake()
     {
         base.Awake();
-        manyColliderBuffer = new Collider[queryMaxResults];
-        manyMachinesBuffer = new Machine[queryMaxResults];
+        machineSpatialHash.Initialize();
+        Init.PreSave += OnPreSave;
+        Init.PostSave += OnPostSave;
+        Init.PreLoad += OnPreLoad;
+        Init.PostLoad += OnPostLoad;
+    }
+
+    protected override void OnDestroy()
+    {
+        Init.PreSave -= OnPreSave;
+        Init.PostSave -= OnPostSave;
+        Init.PreLoad -= OnPreLoad;
+        Init.PostLoad -= OnPostLoad;
     }
 
     public void Add(Machine machine)
     {
-        Collider[] colliders = machine.colliders;
-        for (int i = 0, len = colliders.Length; i < len; ++i)
-        {
-            machineColliders.Add(colliders[i], machine);
-        }
+        Assert.IsFalse(machineSpatialHash.Overlaps(machine.bounds));
+        machineSpatialHash.Add(machine, machine.bounds);
+        machines.Add(machine);
     }
 
     public void Remove(Machine machine)
     {
-        Collider[] colliders = machine.colliders;
-        for (int i = 0, len = colliders.Length; i < len; ++i)
+        machines.Remove(machine);
+        machineSpatialHash.Remove(machine, in machine.bounds);
+    }
+    public bool MachineExists(Bounds3Int bounds)
+    {
+        return machineSpatialHash.Overlaps(bounds);
+    }
+
+    public bool MachineExists(Vector3Int tile)
+    {
+        return machineSpatialHash.Overlaps(tile);
+    }
+
+    public Machine GetMachine(Vector3Int tile)
+    {
+        return machineSpatialHash.GetSingle(tile);
+    }
+
+    void OnPreSave()
+    {
+        HashSet<Machine> machines = this.machines;
+        int i = 0;
+        int len = machines.Count;
+        Machine.Save[] machineSaves = new Machine.Save[len];
+        foreach (Machine machine in machines)
         {
-            bool removed = machineColliders.Remove(colliders[i]);
-            Assert.IsTrue(removed);
+            machine.GetSave(out machineSaves[i]);
+            ++i;
+        }
+
+        save.machines = machineSaves;
+    }
+
+    void OnPostSave()
+    {
+        save = default;
+    }
+
+    void OnPreLoad()
+    {
+        Machine[] machinesClone = new Machine[machines.Count];
+        machines.CopyTo(machinesClone);
+        for (int i = 0, len = machinesClone.Length; i < len; ++i)
+        {
+            machinesClone[i].Delete();
         }
     }
 
-    public bool MachineExists(Vector3Int position)
+    void OnPostLoad()
     {
-        if (Physics.OverlapBoxNonAlloc(position.RoundToTileCenter(), new Vector3(0.5f, 0.5f, 0.5f), oneColliderBuffer) > 0)
+        Machine.Save[] saveMachines = save.machines;
+        for (int i = 0, len = saveMachines.Length; i < len; ++i)
         {
-            return true;
-        }
-        return false;
-    }
-
-    public bool GetMachine(Vector3Int tile, out Machine machine)
-    {
-        Vector3 center = tile.RoundToTileCenter();
-        center.y += 0.5f;
-        if (Physics.OverlapBoxNonAlloc(center, new Vector3(0.4f, 0.4f, 0.4f), oneColliderBuffer, Quaternion.identity, Layer.GetMask(Layer.machines).value) > 0)
-        {
-            if (machineColliders.TryGetValue(oneColliderBuffer[0], out machine))
+            ref Machine.Save saveMachine = ref saveMachines[i];
+            MachineInfo machineInfo = ScriptableObjects.instance.GetMachineInfo(saveMachine.machineName);
+            if (machineInfo)
             {
-                return true;
-            }
-            WarnOrphanCollider();
-            return false;
-        }
-        machine = null;
-        return false;
-    }
-
-    // param machines is reused, don't hold on to it
-    public int GetMachines(Bounds3Int position, out Machine[] machinesBuffer)
-    {
-        machinesBuffer = manyMachinesBuffer;
-        int count = Physics.OverlapBoxNonAlloc(position.center, position.size * 0.5f, manyColliderBuffer, Quaternion.identity, Layer.GetMask(Layer.machines).value);
-        int machinesCount = 0;
-        for (int i = 0; i < count; ++i)
-        {
-            if (machineColliders.TryGetValue(manyColliderBuffer[i], out Machine machine))
-            {
-                for (int j = 0; j < machinesCount; ++j)
-                {
-                    if (machinesBuffer[j] == machine)
-                    {
-                        goto skipAddingMachines;
-                    }
-                }
-
-                machinesBuffer[machinesCount] = machine;
-                ++machinesCount;
-            skipAddingMachines:;
+                Machine machine = Machine.CreateMachine(machineInfo, saveMachine.bounds.bottomCenter);
+                machine.SetSave(in saveMachine);
             }
             else
             {
-                WarnOrphanCollider();
+                Debug.LogWarning($"Failed to find MachineInfo {saveMachine.machineName} while loading machine.");
             }
+
         }
-        return count;
+        save = default;
     }
 
     public void MachineLanded()
@@ -102,8 +123,22 @@ public class MachineSystem : Singleton<MachineSystem>
         CameraShake.instance.MachineLanded();
     }
 
-    void WarnOrphanCollider()
+    void OnDrawGizmosSelected()
     {
-        Debug.LogWarning("Collider in Machines layer mask was not found in collider-machine dictionary. Collider has wrong layer mask.");
+        if (!machineSpatialHash.initialized)
+        {
+            machineSpatialHash.Initialize();
+        }
+        foreach (var bucket in machineSpatialHash.buckets)
+        {
+            Gizmos.color = Color.white;
+            var bounds = new Bounds3Int(bucket.Key, bucket.Key.Add(SpatialHash.CELL_SIZE) - Vector3Int.one);
+            Gizmos.DrawWireCube(bounds.center, bounds.size);
+            Gizmos.color = Color.red;
+            foreach (var entry in bucket.Value)
+            {
+                Gizmos.DrawWireCube(entry.bounds.center, entry.bounds.size - new Vector3(0.2f, 0.2f, 0.2f));
+            }
+        }
     }
 }

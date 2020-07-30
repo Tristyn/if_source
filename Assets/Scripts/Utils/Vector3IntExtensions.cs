@@ -11,4 +11,9 @@ public static class Vector3IntExtensions
     {
         return new Bounds3Int(vector, vector);
     }
+
+    public static Vector3Int Add(this Vector3Int vector, int value)
+    {
+        return new Vector3Int(vector.x + value, vector.y + value, vector.z + value);
+    }
 }

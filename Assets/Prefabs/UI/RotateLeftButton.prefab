@@ -86,6 +86,7 @@ GameObject:
   - component: {fileID: 362126591246984918}
   - component: {fileID: 362126591246984917}
   - component: {fileID: 362126591246984916}
+  - component: {fileID: 2226715729563738823}
   m_Layer: 5
   m_Name: RotateLeftButton
   m_TagString: Untagged
@@ -193,7 +194,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2226715729563738823}
         m_MethodName: RotateLeft
         m_Mode: 1
         m_Arguments:
@@ -204,3 +205,15 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &2226715729563738823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 362126591246984746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdceb9aa105dd0446b8e2bee3babc2fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

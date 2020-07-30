@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class UIRotate : MonoBehaviour
+public sealed class UIRotate : MonoBehaviour
 {
     public void RotateLeft()
     {

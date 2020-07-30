@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.ExceptionServices;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.Assertions;
 
-public class TileSelectionState
+public sealed class TileSelectionState
 {
     public Bounds3Int bounds;
     public Conveyor conveyor;
@@ -11,7 +12,7 @@ public class TileSelectionState
     public bool isSelected => conveyor || machine;
 }
 
-public class TileSelectionManager : Singleton<TileSelectionManager>
+public sealed class TileSelectionManager : Singleton<TileSelectionManager>
 {
     public TileSelectionState state = new TileSelectionState();
     public UIDemolishButton demolishButton;
@@ -20,10 +21,75 @@ public class TileSelectionManager : Singleton<TileSelectionManager>
     private List<UILinkConveyorButton> conveyorButtons = new List<UILinkConveyorButton>(16);
     private SelectionHighlighter selectionHighlighter;
 
+    public Save save;
+
+    public struct Save
+    {
+        public Vector3Int? conveyorPosition;
+        public Vector3Int? machinePosition;
+    }
+
     protected override void Awake()
     {
         base.Awake();
         demolishButton.gameObject.SetActive(false);
+        Init.PreSave += PreSave;
+        Init.PreLoad += PreLoad;
+        Init.LoadComplete += LoadComplete;
+    }
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        Init.PreSave -= PreSave;
+        Init.PreLoad -= PreLoad;
+        Init.LoadComplete -= LoadComplete;
+    }
+
+    void PreSave()
+    {
+        if (state.machine)
+        {
+            save = new Save
+            {
+                machinePosition = state.machine.bounds.min,
+            };
+        }
+        else if (state.conveyor)
+        {
+            save = new Save
+            {
+                conveyorPosition = state.conveyor.save.position_local
+            };
+        }
+        else
+        {
+            save = new Save();
+        }
+    }
+
+    void PreLoad()
+    {
+        SetSelection();
+    }
+
+    void LoadComplete()
+    {
+        if (save.machinePosition.HasValue)
+        {
+            Machine machine = MachineSystem.instance.GetMachine(save.machinePosition.Value);
+            Assert.IsNotNull(machine);
+            SetSelection(machine);
+        }
+        else if (state.conveyor)
+        {
+            ConveyorSystem.instance.conveyors.TryGetValue(save.machinePosition.Value, out Conveyor conveyor);
+            Assert.IsNotNull(conveyor);
+            SetSelection(conveyor);
+        }
+        else
+        {
+            SetSelection();
+        }
     }
 
     public void SetSelection()
@@ -34,12 +100,13 @@ public class TileSelectionManager : Singleton<TileSelectionManager>
 
     public bool SetSelection(Vector3Int tile)
     {
-        if(MachineSystem.instance.GetMachine(tile, out Machine machine))
+        Machine machine = MachineSystem.instance.GetMachine(tile);
+        if (machine)
         {
             SetSelection(machine);
             return true;
         }
-        else if(ConveyorSystem.instance.conveyors.TryGetValue(tile, out Conveyor conveyor))
+        else if (ConveyorSystem.instance.conveyors.TryGetValue(tile, out Conveyor conveyor))
         {
             SetSelection(conveyor);
             return true;
@@ -62,7 +129,7 @@ public class TileSelectionManager : Singleton<TileSelectionManager>
             state = new TileSelectionState
             {
                 conveyor = selection,
-                bounds = selection.position_local.ToBounds()
+                bounds = selection.save.position_local.ToBounds()
             };
         }
         UpdateSelection();
@@ -112,7 +179,7 @@ public class TileSelectionManager : Singleton<TileSelectionManager>
         }
     }
 
-    public void SelectInput(bool pan)
+    public void TrySelectAnyInput(bool pan)
     {
         if (state.machine)
         {
@@ -120,34 +187,12 @@ public class TileSelectionManager : Singleton<TileSelectionManager>
             for (int i = 0, len = conveyors.Length; i < len; ++i)
             {
                 Conveyor conveyor = conveyors[i];
-                Conveyor[] inputs = conveyor.inputs;
-                for (int j = 1, jLen = inputs.Length; j < jLen; ++j)
-                {
-                    Conveyor input = inputs[j];
-                    if (input)
-                    {
-                        if (pan)
-                        {
-                            Vector3 deltaPosition = input.position_local - conveyor.position_local;
-                            OverviewCameraController.instance.MoveWorld(deltaPosition);
-                        }
-                        SetSelection(input);
-                        return;
-                    }
-                }
-            }
-        }
-        else if (state.conveyor)
-        {
-            Conveyor[] inputs = state.conveyor.inputs;
-            for (int i = 0, len = inputs.Length; i < len; ++i)
-            {
-                Conveyor input = inputs[i];
+                Conveyor input = TryGetAnyInput(conveyor);
                 if (input)
                 {
                     if (pan)
                     {
-                        Vector3 deltaPosition = input.position_local - state.conveyor.position_local;
+                        Vector3 deltaPosition = input.save.position_local - conveyor.save.position_local;
                         OverviewCameraController.instance.MoveWorld(deltaPosition);
                     }
                     SetSelection(input);
@@ -155,6 +200,35 @@ public class TileSelectionManager : Singleton<TileSelectionManager>
                 }
             }
         }
+        else if (state.conveyor)
+        {
+            Conveyor input = TryGetAnyInput(state.conveyor);
+            if (input)
+            {
+                if (pan)
+                {
+                    Vector3 deltaPosition = input.save.position_local - state.conveyor.save.position_local;
+                    OverviewCameraController.instance.MoveWorld(deltaPosition);
+                }
+                SetSelection(input);
+                return;
+            }
+        }
         SetSelection();
+    }
+
+    private Conveyor TryGetAnyInput(Conveyor conveyor)
+    {
+        Directions[] directions = EnumUtils<Directions>.values;
+        int directionsLen = directions.Length;
+        for (int j = 0; j < directionsLen; ++j)
+        {
+            Conveyor input = conveyor.TryGetInput(directions[j]);
+            if (input)
+            {
+                return input;
+            }
+        }
+        return null;
     }
 }

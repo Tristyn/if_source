@@ -48,17 +48,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 6614903216753420287}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b13364fe7e18450479941fae46fb026a, type: 3}
+  m_Script: {fileID: 11500000, guid: 263d55a6bf1d6ec4e98bd06962ea7be1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MachineOutputMaterial: {fileID: 21300000, guid: b278c3933aee83947aa832531b19cf09,
+  MachineOutputMaterial: {fileID: 21300000, guid: 9688fbcac07b9d34eb615d2e80a3f3f4,
     type: 3}
-  MachineInputMaterial: {fileID: 21300000, guid: 9688fbcac07b9d34eb615d2e80a3f3f4,
+  MachineInputMaterial: {fileID: 21300000, guid: b278c3933aee83947aa832531b19cf09,
     type: 3}
   ConveyorLinkMaterial: {fileID: 21300000, guid: 3862265149200f244a67524d64d32e1e,
     type: 3}
-  cameraController: {fileID: 0}
-  canvas: {fileID: 0}
   position: {x: 0, y: 0, z: 0}
   sourcePosition: {x: 0, y: 0, z: 0}
 --- !u!222 &6614903216753420283
@@ -108,7 +106,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 5512789960210265341}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []

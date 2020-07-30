@@ -1,5 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using UnityEngine;
 using UnityEngine.Assertions;
+
+public enum InventorySlotType : byte
+{
+    None = 0,
+    Input = 1,
+    Output = 2,
+    InputOutput = 3
+}
 
 [Serializable]
 public struct InventorySlot
@@ -7,6 +18,34 @@ public struct InventorySlot
     public ItemInfo itemInfo;
     public int count;
     public int capacity;
+    public InventorySlotType inventorySlotType;
+
+    public static InventorySlot Invalid;
+
+    public bool valid
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get { return itemInfo; }
+    }
+
+    [Serializable]
+    public struct Save
+    {
+        public string itemName;
+        public int count;
+    }
+
+    public void GetSave(out Save save)
+    {
+        save.itemName = itemInfo.name;
+        save.count = count;
+    }
+
+    public void SetSave(in Save save)
+    {
+        Assert.IsTrue(itemInfo.itemName == save.itemName);
+        count = save.count;
+    }
 
     public bool TryAdd(int count)
     {
@@ -48,23 +87,14 @@ public struct InventorySlot
         return false;
     }
 
-    public static InventorySlot Defaults(ItemInfo itemInfo)
-    {
-        return new InventorySlot
-        {
-            itemInfo = itemInfo,
-            count = 0,
-            capacity = 10
-        };
-    }
-
-    public static InventorySlot Defaults(AssembleSlot assembleSlot)
+    public static InventorySlot Create(AssembleSlot assembleSlot, InventorySlotType inventorySlotType)
     {
         return new InventorySlot
         {
             itemInfo = assembleSlot.itemInfo,
             count = 0,
-            capacity = 10
+            capacity = assembleSlot.count * 2,
+            inventorySlotType = inventorySlotType
         };
     }
 }
@@ -77,110 +107,147 @@ public struct Inventory
 {
     public InventorySlot[] slots;
 
-    public static Inventory empty = new Inventory
+    public static Inventory empty
     {
-        slots = Array.Empty<InventorySlot>()
-    };
-
-    public bool TryAdd(ItemInfo itemInfo, int count)
-    {
-        for (int i = 0, len = slots.Length; i < len; ++i)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => new Inventory
         {
-            if (slots[i].itemInfo == itemInfo && slots[i].TryAdd(count))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public bool TryRemove(ItemInfo itemInfo, int count)
-    {
-        for (int i = 0, len = slots.Length; i < len; ++i)
-        {
-            if (slots[i].itemInfo == itemInfo && slots[i].TryRemove(count))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public bool TryIncrement(ItemInfo itemInfo)
-    {
-        for (int i = 0, len = slots.Length; i < len; ++i)
-        {
-            if (slots[i].itemInfo == itemInfo && slots[i].TryIncrement())
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public bool TryDecrement(ItemInfo itemInfo)
-    {
-        for (int i = 0, len = slots.Length; i < len; ++i)
-        {
-            if (slots[i].itemInfo == itemInfo && slots[i].TryDecrement())
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public Inventory Clone()
-    {
-        int slotsLength = slots.Length;
-        InventorySlot[] destinationSlots = new InventorySlot[slotsLength];
-        Array.Copy(slots, destinationSlots, slotsLength);
-        return new Inventory
-        {
-            slots = destinationSlots
+            slots = Array.Empty<InventorySlot>()
         };
     }
 
-    public bool HasItem(ItemInfo itemInfo)
+    public static Inventory invalid
     {
-        for (int i = 0, len = slots.Length; i < len; ++i)
-        {
-            if (itemInfo == slots[i].itemInfo)
-            {
-                if (slots[i].count < 1)
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-        }
-
-        Assert.IsTrue(false, "Inventory is missing the item slot");
-        return false;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => default;
     }
 
-    public bool HasItem(AssembleSlot item)
+    public bool valid
     {
-        for (int i = 0, len = slots.Length; i < len; ++i)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => slots != null;
+    }
+
+    [Serializable]
+    public struct Save
+    {
+        public InventorySlot.Save[] slots;
+    }
+
+    public static Inventory CreateInventory(MachineInfo machineInfo)
+    {
+        int numSlots = 0;
+        if (machineInfo.purchaseItem.itemInfo)
         {
-            if (item.itemInfo == slots[i].itemInfo)
+            ++numSlots;
+        }
+        if (machineInfo.sellItem.itemInfo)
+        {
+            ++numSlots;
+        }
+        if (machineInfo.assembler)
+        {
+            numSlots += machineInfo.assembleInputs.Length;
+            if (machineInfo.assembleOutput.itemInfo)
             {
-                if (slots[i].count < item.count)
+                ++numSlots;
+            }
+        }
+        InventorySlot[] slots = new InventorySlot[numSlots];
+        int inventorySlotsIndex = 0;
+
+        // inventory order is purchase item, sell item, assemble inputs, assemble outputs, anything else
+        if (machineInfo.purchaseItem.itemInfo)
+        {
+            slots[inventorySlotsIndex] = InventorySlot.Create(machineInfo.purchaseItem, InventorySlotType.Output);
+            ++inventorySlotsIndex;
+        }
+        if (machineInfo.sellItem.itemInfo)
+        {
+            slots[inventorySlotsIndex] = InventorySlot.Create(machineInfo.sellItem, InventorySlotType.Input);
+            ++inventorySlotsIndex;
+        }
+
+        if (machineInfo.assembler)
+        {
+            AssembleSlot[] assembleInputs = machineInfo.assembleInputs;
+            for (int i = 0, len = assembleInputs.Length; i < len; ++i)
+            {
+                slots[inventorySlotsIndex] = InventorySlot.Create(machineInfo.assembleInputs[i], InventorySlotType.Input);
+                ++inventorySlotsIndex;
+            }
+
+            slots[inventorySlotsIndex] = InventorySlot.Create(machineInfo.assembleOutput, InventorySlotType.Output);
+            ++inventorySlotsIndex;
+        }
+        Assert.IsTrue(inventorySlotsIndex == slots.Length);
+
+        return new Inventory
+        {
+            slots = slots
+        };
+    }
+
+    public void GetSave(out Save save)
+    {
+        InventorySlot[] slots = this.slots;
+        int len = slots.Length;
+        InventorySlot.Save[] saveSlots = new InventorySlot.Save[len];
+        for (int i = 0; i < len; ++i)
+        {
+            slots[i].GetSave(out saveSlots[i]);
+        }
+
+        save.slots = saveSlots;
+    }
+
+    public void SetSave(in Save save)
+    {
+        // The inventory should have been initialized with itemInfo and capacity values at this point
+        InventorySlot.Save[] saveSlots = save.slots;
+        int len = saveSlots.Length;
+        for (int i = 0; i < len; ++i)
+        {
+            ItemInfo itemInfo = ScriptableObjects.instance.GetItemInfo(saveSlots[i].itemName);
+            InventorySlot slot;
+            if (itemInfo)
+            {
+                if ((slot = GetSlot(itemInfo)).valid)
                 {
-                    return false;
+                    slot.SetSave(in saveSlots[i]);
                 }
                 else
                 {
-                    return true;
+                    Debug.LogWarning($"Failed to find item slot {saveSlots[i].itemName} while loading inventory.");
                 }
             }
         }
+    }
 
-        Assert.IsTrue(false, "Inventory is missing the item slot");
-        return false;
+    // Must check if slot is valid before accessing
+    public ref InventorySlot GetSlot(ItemInfo itemInfo)
+    {
+        for (int i = 0, len = slots.Length; i < len; ++i)
+        {
+            if (slots[i].itemInfo == itemInfo)
+            {
+                return ref slots[i];
+            }
+        }
+        return ref InventorySlot.Invalid;
+    }
+
+    // Must check if slot is valid before accessing
+    public ref InventorySlot GetSlot(ItemInfo itemInfo, InventorySlotType inventorySlotType)
+    {
+        for (int i = 0, len = slots.Length; i < len; ++i)
+        {
+            if (slots[i].itemInfo == itemInfo && slots[i].inventorySlotType == inventorySlotType)
+            {
+                return ref slots[i];
+            }
+        }
+        return ref InventorySlot.Invalid;
     }
 
     public bool HasItems(AssembleSlot[] items)
@@ -211,30 +278,6 @@ public struct Inventory
         }
 
         return true;
-    }
-
-    public void DeductItem(ItemInfo itemInfo)
-    {
-        for (int i = 0, len = slots.Length; i < len; ++i)
-        {
-            if (itemInfo == slots[i].itemInfo)
-            {
-                slots[i].count -= 1;
-                Assert.IsTrue(slots[i].count >= 0);
-            }
-        }
-    }
-
-    public void DeductItem(AssembleSlot item)
-    {
-        for (int i = 0, len = slots.Length; i < len; ++i)
-        {
-            if (item.itemInfo == slots[i].itemInfo)
-            {
-                slots[i].count -= item.count;
-                Assert.IsTrue(slots[i].count >= 0);
-            }
-        }
     }
 
     public void DeductItems(AssembleSlot[] items)

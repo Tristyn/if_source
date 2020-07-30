@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class UICurrency : MonoBehaviour
+public sealed class UICurrency : MonoBehaviour
 {
     TextMeshProUGUI text;
     StringBuilder textStringBuilder = new StringBuilder(6);
@@ -32,7 +32,7 @@ public class UICurrency : MonoBehaviour
 
     void OnMoneyChanged()
     {
-        SetMoney(CurrencySystem.instance.Money);
+        SetMoney(CurrencySystem.instance.save.money);
     }
 
     public void AddMoney(int amount)

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class MachineLandedSmoke : MonoBehaviour
+public sealed class MachineLandedSmoke : MonoBehaviour
 {
     public ParticleSystem smokeParticleSystem;
     public float radiusExtra;

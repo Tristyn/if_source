@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 1900787790664568872}
   - component: {fileID: 1900787790664568879}
   m_Layer: 5
-  m_Name: Select Machine Button
+  m_Name: SelectMachineButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -125,7 +125,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1900787790664568877}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ab5d52ee074c374ba1262f6922f2137, type: 3}
+  m_Script: {fileID: 11500000, guid: 1bb2acecbed81e34a8dad68a92ffb834, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   spritePurchaser: {fileID: 21300000, guid: a0e30d47c3ad2994a8233525c29d7368, type: 3}
@@ -137,7 +137,7 @@ MonoBehaviour:
   machineCategory: {fileID: 1900787791533129254}
   machineName: {fileID: 8991901936009709014}
   isConveyor: 0
-  machineInfo: {fileID: 11400000, guid: 3c7e56af39ff89c4da32c45706e9d12b, type: 2}
+  machineInfo: {fileID: 0}
 --- !u!222 &1900787790664568873
 CanvasRenderer:
   m_ObjectHideFlags: 0

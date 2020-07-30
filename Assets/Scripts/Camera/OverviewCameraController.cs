@@ -8,7 +8,7 @@ public struct ZoomIncrement
     public float pitch;
 }
 
-public class OverviewCameraController : Singleton<OverviewCameraController>
+public sealed class OverviewCameraController : Singleton<OverviewCameraController>
 {
     CameraState targetCameraState;
     CameraState interpolatingCameraState;
@@ -144,7 +144,7 @@ public class OverviewCameraController : Singleton<OverviewCameraController>
         }
 
         // Translation
-        Vector3 translation = GetKeyboardTranslationDirection() * panSpeed * Time.deltaTime;
+        Vector3 translation = GetKeyboardTranslationDirection() * panSpeed * GameTime.deltaTime;
         // Speed up movement when shift key held
         if (Input.GetKey(KeyCode.LeftShift))
         {
@@ -153,13 +153,13 @@ public class OverviewCameraController : Singleton<OverviewCameraController>
 
         targetCameraState.TranslateLocal(translation);
 
-        currentPositionLerpTime = Mathf.Lerp(currentPositionLerpTime, positionLerpTime, Time.deltaTime);
-        currentRotationLerpTime = Mathf.Lerp(currentRotationLerpTime, rotationLerpTime, Time.deltaTime);
+        currentPositionLerpTime = Mathf.Lerp(currentPositionLerpTime, positionLerpTime, GameTime.deltaTime);
+        currentRotationLerpTime = Mathf.Lerp(currentRotationLerpTime, rotationLerpTime, GameTime.deltaTime);
 
         // Framerate-independent interpolation
         // Calculate the lerp amount, such that we get 99% of the way to our target in the specified time
-        var positionLerpPct = 1f - Mathf.Exp(Mathf.Log(1f - 0.99f) / currentPositionLerpTime * Time.deltaTime);
-        var rotationLerpPct = 1f - Mathf.Exp(Mathf.Log(1f - 0.99f) / currentRotationLerpTime * Time.deltaTime);
+        var positionLerpPct = 1f - Mathf.Exp(Mathf.Log(1f - 0.99f) / currentPositionLerpTime * GameTime.deltaTime);
+        var rotationLerpPct = 1f - Mathf.Exp(Mathf.Log(1f - 0.99f) / currentRotationLerpTime * GameTime.deltaTime);
         interpolatingCameraState.LerpTowards(targetCameraState, positionLerpPct, rotationLerpPct);
 
         interpolatingCameraState.UpdateTransform(transform);

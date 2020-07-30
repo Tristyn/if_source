@@ -7,6 +7,7 @@ public static class EnumUtils<T> where T : Enum
     public static int valuesLength;
     public static T[] nonZeroValues;
     public static int nonZeroValuesLength;
+    public static T last;
     public static string[] names;
     public static string[] nonZeroNames;
 
@@ -18,9 +19,12 @@ public static class EnumUtils<T> where T : Enum
 
         List<string> nonZeroNames1 = new List<string>();
         List<T> nonZeroValues1 = new List<T>();
-        for (int i = 0, len = valueEnums.Length; i < len; ++i)
+        int len = values.Length;
+        for (int i = 0; i < len; ++i)
         {
-            if ((int)valueEnums.GetValue(i) != 0)
+            Enum valueEnum = Enum.Parse(typeof(T), values.GetValue(i).ToString()) as Enum;
+            int enumValue = Convert.ToInt32(valueEnum);
+            if ((byte)enumValue != 0)
             {
                 nonZeroNames1.Add(names[i]);
                 nonZeroValues1.Add(values[i]);
@@ -29,6 +33,10 @@ public static class EnumUtils<T> where T : Enum
         nonZeroNames = nonZeroNames1.ToArray();
         nonZeroValues = nonZeroValues1.ToArray();
         nonZeroValuesLength = nonZeroValues.Length;
-        valuesLength = values.Length;
+        valuesLength = len;
+        if (len > 0)
+        {
+            last = values[valuesLength - 1];
+        }
     }
 }

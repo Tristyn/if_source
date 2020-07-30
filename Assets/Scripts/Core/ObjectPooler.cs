@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public class ObjectPooler : Singleton<ObjectPooler>
+public sealed class ObjectPooler : Singleton<ObjectPooler>
 {
     const int MAX_POOL_COUNT = 64;
 

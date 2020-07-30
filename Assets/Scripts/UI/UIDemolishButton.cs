@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class UIDemolishButton : MonoBehaviour
+public sealed class UIDemolishButton : MonoBehaviour
 {
     public Vector3Int demolishTile;
 
@@ -13,23 +13,22 @@ public class UIDemolishButton : MonoBehaviour
 
     void OnClick()
     {
-        if (MachineSystem.instance.GetMachine(demolishTile, out Machine machine))
+        Machine machine = MachineSystem.instance.GetMachine(demolishTile);
+        if (machine)
         {
             if (TileSelectionManager.instance.state.machine == machine)
             {
-                TileSelectionManager.instance.SelectInput(true);
+                TileSelectionManager.instance.TrySelectAnyInput(true);
             }
-            machine.PlayDemolishAudio();
-            machine.Delete();
+            machine.Demolish();
         }
         else if (ConveyorSystem.instance.conveyors.TryGetValue(demolishTile, out Conveyor conveyor))
         {
             if (TileSelectionManager.instance.state.conveyor == conveyor)
             {
-                TileSelectionManager.instance.SelectInput(true);
+                TileSelectionManager.instance.TrySelectAnyInput(true);
             }
-            conveyor.PlayDemolishAudio();
-            conveyor.Recycle();
+            conveyor.Demolish();
         }
     }
 

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UIElements;
 
-public class MachineDropper : MonoBehaviour
+public sealed class MachineDropper : MonoBehaviour
 {
     public MachineLandedSmoke machineDropSmoke;
 
@@ -24,9 +24,9 @@ public class MachineDropper : MonoBehaviour
         if (!landed)
         {
             // Not accurate to do physics with unfixed time but who cares
-            velocity += Physics.gravity * Time.deltaTime;
+            velocity += Physics.gravity * GameTime.deltaTime;
             Vector3 position_local = machineTransform.localPosition;
-            position_local += velocity * Time.deltaTime;
+            position_local += velocity * GameTime.deltaTime;
             position_local.y = Mathf.Max(position_local.y, 0);
 
             machineTransform.localPosition = position_local;

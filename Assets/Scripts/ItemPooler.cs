@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public class ItemPooler : Singleton<ItemPooler>
+public sealed class ItemPooler : Singleton<ItemPooler>
 {
     const int MAX_POOL_COUNT = 64;
 

@@ -1,13 +1,20 @@
 ﻿using UnityEngine;
 using System;
+using System.Runtime.CompilerServices;
 
-public enum Directions
+public enum Directions : byte
 {
-    None, North, East, South, West
+    North = 0, East = 1, South = 2, West = 3
 }
 
 public static class DirectionsExtensions
 {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DirectionsFlag ToFlag(this Directions direction)
+    {
+        return (DirectionsFlag)(1 << (int)direction);
+    }
+
     public static Vector3 ToOffset(this Directions direction)
     {
         switch (direction)
@@ -58,25 +65,66 @@ public static class DirectionsExtensions
         }
     }
 
-    public static Directions ToDirection(this Vector3Int offset)
+    public static bool IsNeighbor(this Vector3Int from, Vector3Int to)
     {
-        if (offset == new Vector3Int(1, 0, 0))
+        Vector3Int offset = to - from;
+        if (offset.y == 0)
         {
-            return Directions.North;
+            if (offset.x == 0)
+            {
+                if (offset.z == -1)
+                {
+                    return true;
+                }
+                else if (offset.z == 1)
+                {
+                    return true;
+                }
+            }
+            else if (offset.z == 0)
+            {
+                if (offset.x == 1)
+                {
+                    return true;
+                }
+                else if (offset.x == -1)
+                {
+                    return true;
+                }
+            }
         }
-        else if (offset == new Vector3Int(0, 0, -1))
+        return false;
+    }
+
+    public static (bool isNeighbor, Directions direction) ToDirection(this Vector3Int from, Vector3Int to)
+    {
+        Vector3Int offset = to - from;
+        if (offset.y == 0)
         {
-            return Directions.East;
+            if (offset.x == 0)
+            {
+                if (offset.z == -1)
+                {
+                    return (true, Directions.East);
+                }
+                else if (offset.z == 1)
+                {
+                    return (true, Directions.West);
+                }
+            }
+            else if (offset.z == 0)
+            {
+                if (offset.x == 1)
+                {
+                    return (true, Directions.North);
+                }
+                else if (offset.x == -1)
+                {
+                    return (true, Directions.South);
+                }
+            }
         }
-        else if (offset == new Vector3Int(-1, 0, 0))
-        {
-            return Directions.South;
-        }
-        else if (offset == new Vector3Int(0, 0, 1))
-        {
-            return Directions.West;
-        }
-        return Directions.None;
+        return (false, Directions.North);
     }
 
     public static Directions Inverse(this Directions direction)

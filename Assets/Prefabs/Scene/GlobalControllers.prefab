@@ -19,13 +19,14 @@ GameObject:
   - component: {fileID: 1377630774726580443}
   - component: {fileID: 1377630774726580437}
   - component: {fileID: 1377630774726580438}
-  - component: {fileID: 1377630774726580439}
   - component: {fileID: 1377630774726580440}
   - component: {fileID: 8256295186933584317}
   - component: {fileID: 4333293523213517532}
   - component: {fileID: 1377630774239326338}
   - component: {fileID: 1377630774239326337}
   - component: {fileID: 6959869754596593112}
+  - component: {fileID: 7823837483173332736}
+  - component: {fileID: 3054280759666208902}
   m_Layer: 0
   m_Name: GlobalControllers
   m_TagString: Untagged
@@ -98,7 +99,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b5fee729fc9d3140ae1ebbf9d258a45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  queryMaxResults: 24
   createMachineClip: {fileID: 8300000, guid: 6e94a89b2b8882f4ab4415c543944819, type: 3}
   demolishMachineClip: {fileID: 8300000, guid: b8d3c9ff06e0c844daf377bf1217b4d4, type: 3}
 --- !u!114 &1377630774726580442
@@ -197,18 +197,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5999cb5eb081cc549b7871d9832c239f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1377630774726580439
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1377630774726580451}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e78fdcf5042f42349825ebc24f0135f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1377630774726580440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -300,72 +288,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0560eaa1c075af4d82d6e666850a2ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Money: 0
-  Xp: 0
-  Level: 0
-  LevelPoints: 0
   currencySpawnOffset: {x: 0, y: 0.5, z: 0}
-  heightAnimationCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 10.674126
-      outSlope: 10.674126
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.053280815
-    - serializedVersion: 3
-      time: 0.2155264
-      value: 0.99777985
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  yawAnimationCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 37.632965
-      inSlope: 1548.2815
-      outSlope: 1548.2815
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.041373014
-    - serializedVersion: 3
-      time: 0.26833978
-      value: 182.02141
-      inSlope: -9.508502
-      outSlope: -9.508502
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.23734024
-    - serializedVersion: 3
-      time: 0.34555054
-      value: 183.3962
-      inSlope: 48.305176
-      outSlope: 48.305176
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.2380276
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  collectAnimationDuration: 0.5
   moneyChanged:
     m_PersistentCalls:
       m_Calls: []
   xpChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7823837483173332736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377630774726580451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bec162d0f3801dc4f80b39b55b118e8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  autoSaveInterval: 30
+--- !u!114 &3054280759666208902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377630774726580451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 255a63695f710674db8ebd352257dd35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  masterList: {fileID: 11400000, guid: 903d92d67fe0f754cb71d46212159d63, type: 2}

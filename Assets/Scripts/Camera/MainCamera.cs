@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class MainCamera : Singleton<Camera>
+public sealed class MainCamera : Singleton<Camera>
 {
     public static Transform instanceTransform;
 

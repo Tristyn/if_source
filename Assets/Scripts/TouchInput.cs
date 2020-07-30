@@ -20,7 +20,7 @@ public struct TouchInfo
     public Touch now;
 }
 
-public class TouchInput : Singleton<TouchInput>
+public sealed class TouchInput : Singleton<TouchInput>
 {
     /// <summary>
     /// Is touch API supported. It's notably not supported on WebGL,

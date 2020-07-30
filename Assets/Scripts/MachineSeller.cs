@@ -1,13 +1,23 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using UnityEngine.Assertions;
 
-public class MachineSeller : MonoBehaviour
+public sealed class MachineSeller : MonoBehaviour
 {
     public Machine machine;
 
     AssembleSlot sellItem;
     Inventory inventory;
     float placeInterval;
-    float nextAssembleTime = -1f;
+
+    [Serializable]
+    public struct Save
+    {
+        public float nextAssembleTime;
+    }
+
+    [NonSerialized]
+    public Save save;
 
     public void Initialize()
     {
@@ -18,12 +28,14 @@ public class MachineSeller : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (nextAssembleTime <= Time.fixedTime)
+        if (save.nextAssembleTime <= GameTime.fixedTime)
         {
-            nextAssembleTime += placeInterval;
-            if (inventory.HasItem(sellItem))
+            save.nextAssembleTime += placeInterval;
+
+            ref InventorySlot slot = ref inventory.GetSlot(sellItem.itemInfo);
+            Assert.IsTrue(slot.valid);
+            if (slot.TryRemove(sellItem.count))
             {
-                inventory.DeductItem(sellItem);
                 CurrencySystem.instance.ItemSold(sellItem.itemInfo, sellItem.count, machine.bounds.topCenter);
             }
         }

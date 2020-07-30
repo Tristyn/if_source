@@ -28,7 +28,7 @@ namespace MultiBuild {
 #endif
     }
 
-    public class Settings : ScriptableObject {
+    public sealed class Settings : ScriptableObject {
 
         public string outputFolder;
         public bool useProductName;

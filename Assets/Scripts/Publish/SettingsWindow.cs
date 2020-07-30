@@ -23,7 +23,7 @@ namespace UnityEditor
 
 namespace MultiBuild
 {
-    public class SettingsWindow : EditorWindow {
+    public sealed class SettingsWindow : EditorWindow {
 
         // Manually format the descriptive names
         // Simpler than DescriptionAttribute style IMO

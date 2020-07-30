@@ -14,7 +14,7 @@ public struct AssembleSlot
 }
 
 [CreateAssetMenu(fileName = "NewMachine", menuName = "Machine", order = 30)]
-public class MachineInfo : ScriptableObject
+public sealed class MachineInfo : ScriptableObject
 {
     public string machineName => name;
     public string machineGroup = string.Empty;
@@ -25,8 +25,6 @@ public class MachineInfo : ScriptableObject
     public MachineVisual prefab;
     public Sprite sprite;
     public Color spriteColor = Color.white;
-
-    public Inventory inventory = new Inventory { slots = new InventorySlot[0] };
 
     public AssembleSlot purchaseItem;
     public AssembleSlot sellItem;
@@ -59,9 +57,9 @@ public class MachineInfo : ScriptableObject
             return;
         }
 
-        if (!masterList.allMachines.Contains(this))
+        if (!masterList.allMachines.ContainsKey(machineName))
         {
-            masterList.allMachines = masterList.allMachines.Append(this).ToArray();
+            masterList.allMachines.Add(machineName, this);
         }
 
         masterList.GroupMachines();
@@ -84,28 +82,6 @@ public class MachineInfo : ScriptableObject
                 }
             }
         }
-
-
-        // inventory order is purchase item, sell item, assemble inputs, assemble outputs, anything else
-        List<InventorySlot> inventorySlots = new List<InventorySlot>();
-        if (purchaseItem.itemInfo != null)
-        {
-            inventorySlots.Add(InventorySlot.Defaults(purchaseItem));
-        }
-        if (sellItem.itemInfo != null)
-        {
-            inventorySlots.Add(InventorySlot.Defaults(sellItem));
-        }
-        if (assembler)
-        {
-            inventorySlots.AddRange(assembleInputs.Select(item => InventorySlot.Defaults(item.itemInfo)));
-            inventorySlots.Add(InventorySlot.Defaults(assembleOutput.itemInfo));
-        }
-        inventorySlots.AddRange(inventory.slots.Except(inventorySlots.ToArray()));
-        inventory = new Inventory
-        {
-            slots = inventorySlots.ToArray()
-        };
 
         EditorUtility.SetDirty(this);
         EditorUtility.SetDirty(masterList);

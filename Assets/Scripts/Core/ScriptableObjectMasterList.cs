@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 [Serializable]
-public class MachineGroup
+public sealed class MachineGroup
 {
     public MachineGroup(string groupName, float groupOrder)
     {
@@ -25,18 +25,17 @@ public class MachineGroup
 }
 
 [CreateAssetMenu(fileName = "ObjectMasterList", menuName = "Scriptable Object Master List", order = 32)]
-public class ScriptableObjectMasterList : ScriptableObject
+public sealed class ScriptableObjectMasterList : ScriptableObject
 {
-    public ItemInfo[] allItems;
-    public MachineInfo[] allMachines;
+    public Dictionary<string, ItemInfo> allItems = new Dictionary<string, ItemInfo>();
+    public Dictionary<string, MachineInfo> allMachines = new Dictionary<string, MachineInfo>();
     public MachineGroup[] machineGroups;
 
     public void GroupMachines()
     {
         Dictionary<string, MachineGroup> groups = new Dictionary<string, MachineGroup>();
-        for (int i = 0, len = allMachines.Length; i < len; ++i)
+        foreach (MachineInfo machineInfo in allMachines.Values)
         {
-            MachineInfo machineInfo = allMachines[i];
             if (!groups.TryGetValue(machineInfo.machineGroup, out MachineGroup group))
             {
                 group = new MachineGroup(machineInfo.machineGroup, machineInfo.groupOrder);

@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewItem", menuName = "Item", order = 30)]
-public class ItemInfo : ScriptableObject
+public sealed class ItemInfo : ScriptableObject
 {
     public string itemName => name;
     public int value;
@@ -36,9 +36,9 @@ public class ItemInfo : ScriptableObject
             return;
         }
 
-        if (!masterList.allItems.Contains(this))
+        if (!masterList.allItems.ContainsKey(itemName))
         {
-            masterList.allItems = masterList.allItems.Append(this).ToArray();
+            masterList.allItems.Add(itemName, this);
         }
 
         EditorUtility.SetDirty(this);

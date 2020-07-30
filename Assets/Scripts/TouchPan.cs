@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class TouchPan : MonoBehaviour
+public sealed class TouchPan : MonoBehaviour
 {
     private struct Pan
     {

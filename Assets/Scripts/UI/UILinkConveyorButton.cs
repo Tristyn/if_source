@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class UILinkConveyorButton : MonoBehaviour
+public sealed class UILinkConveyorButton : MonoBehaviour
 {
     public Sprite MachineOutputMaterial;
     public Sprite MachineInputMaterial;
@@ -35,13 +35,8 @@ public class UILinkConveyorButton : MonoBehaviour
 
     void OnClick()
     {
-        Conveyor conveyor = Conveyor.CreateConveyor(sourcePosition, position);
-        if (conveyor)
-        {
-            Vector3 deltaposition = position - sourcePosition;
-            OverviewCameraController.instance.MoveWorld(deltaposition);
-            TileSelectionManager.instance.SetSelection(conveyor);
-        }
+        bool exists = ConveyorSystem.instance.conveyors.ContainsKey(position);
+        Conveyor conveyor = ConveyorSystem.instance.GetOrCreateConveyor(sourcePosition, position, ConveyorCreateFlags.SelectConveyor | ConveyorCreateFlags.PanRelative);
     }
 
     public void Recycle()

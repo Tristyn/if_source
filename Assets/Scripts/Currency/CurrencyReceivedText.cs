@@ -2,7 +2,7 @@
 using TMPro;
 using UnityEngine;
 
-public class CurrencyReceivedText : MonoBehaviour
+public sealed class CurrencyReceivedText : MonoBehaviour
 {
     public float duration;
     public float flickerDuration;
@@ -23,12 +23,12 @@ public class CurrencyReceivedText : MonoBehaviour
 
     public void Initialize()
     {
-        startTime = Time.time;
+        startTime = GameTime.time;
         nextFlickerCycle = startTime + flickerDuration + flickerDuration;
     }
 
     void Update()
     {
-        float time = Time.time;
+        float time = GameTime.time;
     }
 }

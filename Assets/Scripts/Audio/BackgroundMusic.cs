@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class BackgroundMusic : MonoBehaviour
+public sealed class BackgroundMusic : MonoBehaviour
 {
     public AudioClip startupMusic;
     public AudioClip[] music;
