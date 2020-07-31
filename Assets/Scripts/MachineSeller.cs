@@ -10,14 +10,14 @@ public sealed class MachineSeller : MonoBehaviour
     Inventory inventory;
     float placeInterval;
 
+    [NonSerialized]
+    public Save save;
+
     [Serializable]
     public struct Save
     {
         public float nextAssembleTime;
     }
-
-    [NonSerialized]
-    public Save save;
 
     public void Initialize()
     {

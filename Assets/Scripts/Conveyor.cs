@@ -192,9 +192,9 @@ public sealed class Conveyor : MonoBehaviour
                             if (itemInfo)
                             {
                                 Item item = ItemPooler.instance.Get(itemInfo);
-                                ref ConveyorItem conveyorItem = ref outputQueue.Enqueue();
-                                conveyorItem = new ConveyorItem(item, saveConveyorItem.distance);
+                                ConveyorItem conveyorItem = new ConveyorItem(item, saveConveyorItem.distance);
                                 conveyorItem.UpdateTransform(transform.position, (Directions)i);
+                                outputQueue.Enqueue(conveyorItem);
                                 ++jOutput;
                             }
                             else
@@ -389,9 +389,9 @@ public sealed class Conveyor : MonoBehaviour
         if (items.Count == 0 || items.array[items.tail].distance >= minItemDistance)
         {
             Item item = ItemPooler.instance.Get(itemInfo);
-            ref ConveyorItem conveyorItem = ref items.Enqueue();
-            conveyorItem = new ConveyorItem(item);
+            ConveyorItem conveyorItem = new ConveyorItem(item);
             conveyorItem.UpdateTransform(transform.localPosition, direction);
+            items.Enqueue(conveyorItem);
             return true;
         }
 
@@ -532,8 +532,9 @@ public sealed class Conveyor : MonoBehaviour
         save.currentRouterInput = outputDirection;
     }
 
-    public bool EndTransferIn(in ConveyorItem conveyorItem)
+    public bool EndTransferIn(in ConveyorItem conveyorItem, ref float transferredDistance)
     {
+        Assert.IsTrue(transferredDistance > 0f);
         if (machineInventory.valid)
         {
             Item item = conveyorItem.GetItem();
@@ -551,10 +552,13 @@ public sealed class Conveyor : MonoBehaviour
             save.lastRoutedDirection = direction;
             save.hasRouterInput = false;
 
-            ref ConveyorItem transferItem = ref destination.Enqueue();
-            transferItem = conveyorItem;
-            transferItem.distance = Mathf.Max(0f, Mathf.Min(fixedItemSpeed, routedItemDistance - minItemDistance));
+            float distance = Mathf.Min(transferredDistance, routedItemDistance - minItemDistance);
+            transferredDistance = distance;
+
+            ConveyorItem transferItem = conveyorItem;
+            transferItem.distance = distance;
             transferItem.UpdateTransform(transform.localPosition, direction);
+            destination.Enqueue(transferItem);
             return true;
         }
         return false;
@@ -585,13 +589,13 @@ public sealed class Conveyor : MonoBehaviour
                     continue;
                 }
                 ConveyorItem[] queueArray = queue.array;
-                int queueHead = queue.head;
-                float headDistance = queueArray[queueHead].distance;
-                if (headDistance + fixedItemSpeed + minItemDistance < queueDistance)
+                ref var head = ref queueArray[queue.head];
+                float headDistance = head.distance;
+                if (headDistance + fixedItemSpeed < queueDistance - minItemDistance)
                 {
                     headDistance += fixedItemSpeed;
-                    queueArray[queueHead].distance = headDistance;
-                    queueArray[queueHead].UpdateTransform(transform.localPosition, (Directions)i);
+                    head.distance = headDistance;
+                    head.UpdateTransform(transform.localPosition, (Directions)i);
                 }
                 else
                 {
@@ -599,25 +603,28 @@ public sealed class Conveyor : MonoBehaviour
                     if (outputConveyor.CanTransferIn((Directions)i))
                     {
                         outputConveyor.BeginTransferIn((Directions)i);
-                        headDistance = Mathf.Min(headDistance + fixedItemSpeed, queueDistance);
-                        if (headDistance == queueDistance)
+                        headDistance += fixedItemSpeed;
+                        if (headDistance >= queueDistance)
                         {
+                            float transferredHeadDistance = headDistance - queueDistance;
                             // We only transfer when all queues have enough space
                             // That's why it doesn't need to check for space on each route once it's transferred and routed
-                            if (outputConveyor.EndTransferIn(in queueArray[queueHead]))
+                            if (outputConveyor.EndTransferIn(in head, ref transferredHeadDistance))
                             {
+                                headDistance = transferredHeadDistance + queueDistance;
                                 queue.Dequeue();
                             }
                             else
                             {
-                                queueArray[queueHead].distance = headDistance;
-                                queueArray[queueHead].UpdateTransform(position_local, (Directions)i);
+                                headDistance = queueDistance;
+                                head.distance = headDistance;
+                                head.UpdateTransform(position_local, (Directions)i);
                             }
                         }
                         else
                         {
-                            queueArray[queueHead].distance = headDistance;
-                            queueArray[queueHead].UpdateTransform(position_local, (Directions)i);
+                            head.distance = headDistance;
+                            head.UpdateTransform(position_local, (Directions)i);
                         }
                     }
                     else
@@ -625,8 +632,8 @@ public sealed class Conveyor : MonoBehaviour
                         Assert.IsTrue(queueDistance - minItemDistance >= headDistance);
                         Assert.IsTrue(queueDistance - minItemDistance <= headDistance + fixedItemSpeed);
                         headDistance = Mathf.Min(headDistance, queueDistance - minItemDistance);
-                        queueArray[queueHead].distance = headDistance;
-                        queueArray[queueHead].UpdateTransform(position_local, (Directions)i);
+                        head.distance = headDistance;
+                        head.UpdateTransform(position_local, (Directions)i);
                     }
                 }
 

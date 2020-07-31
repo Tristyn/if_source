@@ -258,29 +258,6 @@ public sealed class OpenQueue<T> : IEnumerable<T>,
         ++_size;
         ++_version;
     }
-    
-    // Expands the tail of the queue by one and returns the reference to the new element.
-    //
-    /// <include file='doc\Queue.uex' path='docs/doc[@for="Queue.Enqueue"]/*' />
-    public ref T Enqueue()
-    {
-        if (_size == array.Length)
-        {
-            int newcapacity = (int)((long)array.Length * (long)_GrowFactor / 100);
-            if (newcapacity < array.Length + _MinimumGrow)
-            {
-                newcapacity = array.Length + _MinimumGrow;
-            }
-            SetCapacity(newcapacity);
-        }
-
-        int enqueueIndex = firstEmptyElement;
-        tail = enqueueIndex;
-        firstEmptyElement = (enqueueIndex + 1) % array.Length;
-        ++_size;
-        ++_version;
-        return ref array[enqueueIndex];
-    }
 
     // GetEnumerator returns an IEnumerator over this Queue.  This
     // Enumerator will support removing.
