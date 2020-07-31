@@ -14,6 +14,8 @@ public static class SaveLoad
         public MachineSystem.Save machine;
         public TileSelectionManager.Save tileSelection;
         public InterfaceSelectionManager.Save interfaceSelection;
+        public BackgroundMusic.Save backgroundMusic;
+        public OverviewCameraController.Save overviewCameraController;
     }
 
     public sealed class SaveOptions
@@ -120,8 +122,10 @@ public static class SaveLoad
             currency = CurrencySystem.instance.save,
             conveyor = ConveyorSystem.instance.save,
             machine = MachineSystem.instance.save,
-            tileSelection = TileSelectionManager.instance.save
+            tileSelection = TileSelectionManager.instance.save,
+            overviewCameraController = OverviewCameraController.instance.save
         };
+        BackgroundMusic.instance.GetSave(out save.backgroundMusic);
         InterfaceSelectionManager.instance.GetSave(out save.interfaceSelection);
         Init.InvokePostSave();
 
@@ -137,7 +141,9 @@ public static class SaveLoad
         ConveyorSystem.instance.save = saveFile.conveyor;
         MachineSystem.instance.save = saveFile.machine;
         TileSelectionManager.instance.save = saveFile.tileSelection;
+        OverviewCameraController.instance.save = saveFile.overviewCameraController;
         InterfaceSelectionManager.instance.SetSave(in saveFile.interfaceSelection);
+        BackgroundMusic.instance.SetSave(in saveFile.backgroundMusic);
         Init.InvokePostLoad();
     }
 }

@@ -10,8 +10,6 @@ public struct ZoomIncrement
 
 public sealed class OverviewCameraController : Singleton<OverviewCameraController>
 {
-    CameraState targetCameraState;
-    CameraState interpolatingCameraState;
     float accumulatedScroll;
 
     public float panSpeed = 5f;
@@ -33,15 +31,41 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
     public float zoomInPitch = 30;
 
     public ZoomIncrement[] zoomIncrements;
-    [SerializeField]
-    public int zoomIncrement;
+
+    public Save save;
+
+    public struct Save
+    {
+        public CameraState targetCameraState;
+        public CameraState interpolatingCameraState;
+        public int zoomIncrement;
+    }
+
+    protected override void Awake()
+    {
+        base.Awake();
+        SetZoomIncrement(zoomIncrements.Length - 1);
+        Init.PostLoad += PostLoad;
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        Init.PostLoad -= PostLoad;
+    }
 
     void OnEnable()
     {
-        targetCameraState.SetFromTransform(transform);
-        interpolatingCameraState.SetFromTransform(transform);
+        save.targetCameraState.SetFromTransform(transform);
+        save.interpolatingCameraState.SetFromTransform(transform);
         currentPositionLerpTime = positionLerpTime;
         currentRotationLerpTime = rotationLerpTime;
+    }
+
+    void PostLoad()
+    {
+        SetZoomIncrement(save.zoomIncrement);
+        save.interpolatingCameraState.UpdateTransform(transform);
     }
 
     Vector3 GetKeyboardTranslationDirection()
@@ -72,11 +96,11 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
     public void PanLocal(Vector2 translation_local)
     {
         Vector3 translation_local3 = new Vector3(translation_local.x, 0, translation_local.y);
-        Vector3 cameraDirection = interpolatingCameraState.eulerAngles;
+        Vector3 cameraDirection = save.interpolatingCameraState.eulerAngles;
         cameraDirection.y = 0; // Only pan on xz
         cameraDirection.Normalize();
         Vector3 translation_world = Quaternion.Euler(cameraDirection) * translation_local3 * panSpeed;
-        targetCameraState.TranslateLocal(translation_world);
+        save.targetCameraState.TranslateLocal(translation_world);
     }
 
     /// <summary>
@@ -84,18 +108,18 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
     /// </summary>
     public void MoveWorld(Vector3 translation_world)
     {
-        targetCameraState.TranslateWorld(translation_world);
+        save.targetCameraState.TranslateWorld(translation_world);
     }
 
     public void Rotate(float angle)
     {
-        Vector3 yaw = new Vector3(0, targetCameraState.eulerAngles.y, 0);
-        Vector3 pivot = targetCameraState.position + Quaternion.Euler(yaw) * new Vector3(0f, 0f, distanceWhenRotating);
+        Vector3 yaw = new Vector3(0, save.targetCameraState.eulerAngles.y, 0);
+        Vector3 pivot = save.targetCameraState.position + Quaternion.Euler(yaw) * new Vector3(0f, 0f, distanceWhenRotating);
 
         Vector3 eulerRotation = new Vector3(0, angle, 0);
 
-        targetCameraState.position = Vector3Extensions.RotatePositionAroundPivot(targetCameraState.position, pivot, eulerRotation);
-        targetCameraState.eulerAngles += eulerRotation;
+        save.targetCameraState.position = Vector3Extensions.RotatePositionAroundPivot(save.targetCameraState.position, pivot, eulerRotation);
+        save.targetCameraState.eulerAngles += eulerRotation;
 
         currentPositionLerpTime = positionLerpTime * 2.2f;
         currentRotationLerpTime = rotationLerpTime * 2;
@@ -103,10 +127,10 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
 
     public void SetZoomIncrement(int zoomIncrement)
     {
-        this.zoomIncrement = Mathf.Clamp(zoomIncrement, 0, zoomIncrements.Length - 1);
+        this.save.zoomIncrement = Mathf.Clamp(zoomIncrement, 0, zoomIncrements.Length - 1);
 
-        targetCameraState.position.y = zoomIncrements[this.zoomIncrement].height;
-        targetCameraState.eulerAngles.x = zoomIncrements[this.zoomIncrement].pitch;
+        save.targetCameraState.position.y = zoomIncrements[this.save.zoomIncrement].height;
+        save.targetCameraState.eulerAngles.x = zoomIncrements[this.save.zoomIncrement].pitch;
     }
 
     void Update()
@@ -130,17 +154,17 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
         }
         if (Input.GetKeyDown(KeyCode.T))
         {
-            SetZoomIncrement(zoomIncrement + 1);
+            SetZoomIncrement(save.zoomIncrement + 1);
         }
         if (Input.GetKeyDown(KeyCode.G))
         {
-            SetZoomIncrement(zoomIncrement - 1);
+            SetZoomIncrement(save.zoomIncrement - 1);
         }
         int scrolldelta = Mathf.FloorToInt(Input.mouseScrollDelta.y + accumulatedScroll) - Mathf.FloorToInt(accumulatedScroll);
         accumulatedScroll += Input.mouseScrollDelta.y;
         if (scrolldelta != 0)
         {
-            SetZoomIncrement(zoomIncrement - scrolldelta);
+            SetZoomIncrement(save.zoomIncrement - scrolldelta);
         }
 
         // Translation
@@ -151,7 +175,7 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
             translation *= 2.2f;
         }
 
-        targetCameraState.TranslateLocal(translation);
+        save.targetCameraState.TranslateLocal(translation);
 
         currentPositionLerpTime = Mathf.Lerp(currentPositionLerpTime, positionLerpTime, GameTime.deltaTime);
         currentRotationLerpTime = Mathf.Lerp(currentRotationLerpTime, rotationLerpTime, GameTime.deltaTime);
@@ -160,8 +184,8 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
         // Calculate the lerp amount, such that we get 99% of the way to our target in the specified time
         var positionLerpPct = 1f - Mathf.Exp(Mathf.Log(1f - 0.99f) / currentPositionLerpTime * GameTime.deltaTime);
         var rotationLerpPct = 1f - Mathf.Exp(Mathf.Log(1f - 0.99f) / currentRotationLerpTime * GameTime.deltaTime);
-        interpolatingCameraState.LerpTowards(targetCameraState, positionLerpPct, rotationLerpPct);
+        save.interpolatingCameraState.LerpTowards(save.targetCameraState, positionLerpPct, rotationLerpPct);
 
-        interpolatingCameraState.UpdateTransform(transform);
+        save.interpolatingCameraState.UpdateTransform(transform);
     }
 }

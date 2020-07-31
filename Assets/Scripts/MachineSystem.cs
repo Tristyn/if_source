@@ -26,18 +26,18 @@ public sealed class MachineSystem : Singleton<MachineSystem>
     {
         base.Awake();
         machineSpatialHash.Initialize();
-        Init.PreSave += OnPreSave;
-        Init.PostSave += OnPostSave;
-        Init.PreLoad += OnPreLoad;
-        Init.PostLoad += OnPostLoad;
+        Init.PreSave += PreSave;
+        Init.PostSave += PostSave;
+        Init.PreLoad += PreLoad;
+        Init.PostLoad += PostLoad;
     }
 
     protected override void OnDestroy()
     {
-        Init.PreSave -= OnPreSave;
-        Init.PostSave -= OnPostSave;
-        Init.PreLoad -= OnPreLoad;
-        Init.PostLoad -= OnPostLoad;
+        Init.PreSave -= PreSave;
+        Init.PostSave -= PostSave;
+        Init.PreLoad -= PreLoad;
+        Init.PostLoad -= PostLoad;
     }
 
     public void Add(Machine machine)
@@ -67,7 +67,7 @@ public sealed class MachineSystem : Singleton<MachineSystem>
         return machineSpatialHash.GetSingle(tile);
     }
 
-    void OnPreSave()
+    void PreSave()
     {
         HashSet<Machine> machines = this.machines;
         int i = 0;
@@ -82,12 +82,12 @@ public sealed class MachineSystem : Singleton<MachineSystem>
         save.machines = machineSaves;
     }
 
-    void OnPostSave()
+    void PostSave()
     {
         save = default;
     }
 
-    void OnPreLoad()
+    void PreLoad()
     {
         Machine[] machinesClone = new Machine[machines.Count];
         machines.CopyTo(machinesClone);
@@ -97,7 +97,7 @@ public sealed class MachineSystem : Singleton<MachineSystem>
         }
     }
 
-    void OnPostLoad()
+    void PostLoad()
     {
         Machine.Save[] saveMachines = save.machines;
         for (int i = 0, len = saveMachines.Length; i < len; ++i)

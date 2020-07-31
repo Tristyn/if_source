@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-struct CameraState
+public struct CameraState
 {
     public Vector3 eulerAngles; // Vector3(pitch, yaw, roll)
     public Vector3 position;

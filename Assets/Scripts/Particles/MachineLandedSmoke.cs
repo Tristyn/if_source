@@ -9,7 +9,6 @@ public sealed class MachineLandedSmoke : MonoBehaviour
 
     public void Landed()
     {
-        
         ParticleSystem.ShapeModule shape = smokeParticleSystem.shape;
         shape.radius = radius;
         smokeParticleSystem.Play();
