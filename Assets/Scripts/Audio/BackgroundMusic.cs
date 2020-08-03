@@ -18,11 +18,12 @@ public sealed class BackgroundMusic : Singleton<BackgroundMusic>
         base.Awake();
         Init.Bind += () =>
         {
-            //#if !UNITY_EDITOR
+#if !UNITY_EDITOR
             audioSource = AudioSystem.instance.GetAudioSource(AudioCategory.BackgroundMusic);
             audioSource.clip = startupMusic;
+            audioSource.time = 0f;
             audioSource.Play();
-            //#endif
+#endif
         };
     }
 
@@ -45,15 +46,19 @@ public sealed class BackgroundMusic : Singleton<BackgroundMusic>
     {
         string clipName = save.musicName;
         AudioClip[] music = this.music;
-        for(int i = 0, len = music.Length; i < len; ++i)
+        for (int i = 0, len = music.Length; i < len; ++i)
         {
-            if(clipName == music[i].name)
+            if (clipName == music[i].name)
             {
                 audioSource.clip = music[i];
                 audioSource.time = save.time;
+#if !UNITY_EDITOR
+                audioSource.Play();
+#endif
                 return;
             }
         }
+        Debug.Log("Could not find music track when loading " + clipName, this);
         NextTrack();
     }
 
@@ -65,8 +70,9 @@ public sealed class BackgroundMusic : Singleton<BackgroundMusic>
             clip = music[Random.Range(0, music.Length - 1)];
         } while (audioSource.clip == clip && music.Length > 1);
         audioSource.clip = clip;
-        //#if !UNITY_EDITOR
+        audioSource.time = 0f;
+#if !UNITY_EDITOR
         audioSource.Play();
-        //#endif
+#endif
     }
 }
