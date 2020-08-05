@@ -12,8 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27d3c800e9bd45b44b1b50b231b605ee, type: 3}
   m_Name: MultiBuildSettings
   m_EditorClassIdentifier: 
-  outputFolder: C:/repos/IF/Build/Multi
-  useProductName: 1
-  overrideName: 
-  developmentBuild: 1
-  targets: 080000000900000001000000060000000400000007000000
+  outputFolder: C:/repos/IF/Build
+  developmentBuild: 0
+  targets:
+  - outputFolder: C:/repos/IF/Build/Win64/Idle Factory.exe
+    targetType: 1
+  - outputFolder: C:/repos/IF/Build/Idle Factory.apk
+    targetType: 8
+  - outputFolder: C:/repos/IF/Build
+    targetType: 9

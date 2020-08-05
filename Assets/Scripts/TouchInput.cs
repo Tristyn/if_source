@@ -41,8 +41,15 @@ public sealed class TouchInput : Singleton<TouchInput>
     List<int> invalidate = new List<int>(1);
     Vector3 lastMousePosition;
 
+    /// <summary>
+    /// Returns true if the platform is WebGL and the host is a mobile browser.
+    /// </summary>
+#if UNITY_WEBGL
     [DllImport("__Internal")]
     static extern bool GetWebGLMobileHost();
+#else
+    static bool GetWebGLMobileHost() => false;
+#endif
 
     protected override void Awake()
     {

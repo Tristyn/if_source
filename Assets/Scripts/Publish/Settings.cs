@@ -2,12 +2,14 @@
 using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
+using System;
 
-namespace MultiBuild {
-
+namespace MultiBuild
+{
     // Our own enumeration of targets so we can serialize with confidence
     // in case Unity changes the values of their internal targets
-    public enum Target {
+    public enum TargetType
+    {
         Win32 = 0,
         Win64 = 1,
         Mac32 = 2,
@@ -23,29 +25,29 @@ namespace MultiBuild {
         XboxOne = 13,
         SamsungTV = 14,
         tvOS = 17,
-#if UNITY_5_6_OR_NEWER
         Switch = 18,
-#endif
     }
 
-    public sealed class Settings : ScriptableObject {
+    [Serializable]
+    public class Target
+    {
+        public string outputFolder;
+        public TargetType targetType;
+    }
+
+    public sealed class Settings : ScriptableObject
+    {
 
         public string outputFolder;
-        public bool useProductName;
-        public string overrideName;
         public bool developmentBuild;
         public List<Target> targets;
 
-        public void Reset() {
+        public void Reset()
+        {
             outputFolder = Directory.GetParent(Application.dataPath).FullName;
-            useProductName = true;
-            overrideName = string.Empty;
             developmentBuild = false;
             targets = new List<Target>();
         }
-
     }
-
-
 }
 #endif

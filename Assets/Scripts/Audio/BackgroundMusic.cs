@@ -18,10 +18,10 @@ public sealed class BackgroundMusic : Singleton<BackgroundMusic>
         base.Awake();
         Init.Bind += () =>
         {
-#if !UNITY_EDITOR
             audioSource = AudioSystem.instance.GetAudioSource(AudioCategory.BackgroundMusic);
             audioSource.clip = startupMusic;
             audioSource.time = 0f;
+#if !UNITY_EDITOR
             audioSource.Play();
 #endif
         };
