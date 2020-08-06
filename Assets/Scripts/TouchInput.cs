@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+#if UNITY_WEBGL
+using System.Runtime.InteropServices;
+#endif
 using UnityEngine;
 using UnityEngine.EventSystems;
 

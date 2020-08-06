@@ -1,10 +1,16 @@
-- Add placement hologram
-- Add machine drop effect
+Version 0.1.8.6
+Browser https://tristyn.github.io
+Android Installer https://tristyn.github.io/Idle_Factory.apk
+Windows Zip https://tristyn.github.io/Idle_Factory_Win64.zip
++ Autosave
++ Placement hologram
++ Machine drop effect
+* Machines inventory capacity is now 2 or 4 (recipe requirement*2) instead of 10
 
-tristyn.github.io/if 0.1.7.4
-- Machines
-- Items
-- Machine Picker
-- 10 Music Tracks
-- 6 Sounds
-- Improved Phone, PC controls, layout
+Version 0.1.7.4 https://tristyn.github.io
++ Machines
++ Items
++ Machine Picker
++ 10 Music Tracks
++ 6 Sounds
++ Improved Phone, PC controls, layout

@@ -17,7 +17,7 @@ MonoBehaviour:
   targets:
   - outputFolder: C:/repos/IF/Build/Win64/Idle Factory.exe
     targetType: 1
-  - outputFolder: C:/repos/IF/Build/Idle Factory.apk
+  - outputFolder: C:/repos/IF/Build/Idle_Factory.apk
     targetType: 8
   - outputFolder: C:/repos/IF/Build
     targetType: 9
