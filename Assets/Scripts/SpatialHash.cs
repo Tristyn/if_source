@@ -6,9 +6,8 @@ using UnityEngine.Assertions;
 
 public static class SpatialHash
 {
-    public const int CELL_MASK = ~0b1111;
-    public const int CELL_SIZE = 0b10000;
-    public const int CELL_BITS = 4; // num bits used by the cell mask
+    public const int CELL_MASK = ~0b111;
+    public const int CELL_SIZE = 0b1000;
 }
 
 [Serializable]

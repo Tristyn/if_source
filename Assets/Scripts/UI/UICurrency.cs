@@ -1,9 +1,6 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
 
 public sealed class UICurrency : MonoBehaviour
 {
@@ -32,18 +29,7 @@ public sealed class UICurrency : MonoBehaviour
 
     void OnMoneyChanged()
     {
-        SetMoney(CurrencySystem.instance.save.money);
-    }
-
-    public void AddMoney(int amount)
-    {
-        this.amount += amount;
-        UpdateMoneyText();
-    }
-
-    public void SetMoney(int amount)
-    {
-        this.amount = amount;
+        this.amount = CurrencySystem.instance.save.money;
         UpdateMoneyText();
     }
 

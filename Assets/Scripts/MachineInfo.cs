@@ -4,7 +4,6 @@ using UnityEditor;
 using System.Linq;
 using UnityEngine;
 using System;
-using System.Collections.Generic;
 
 [Serializable]
 public struct AssembleSlot
@@ -57,9 +56,9 @@ public sealed class MachineInfo : ScriptableObject
             return;
         }
 
-        if (!masterList.allMachines.ContainsKey(machineName))
+        if (!masterList.machines.Any(machine => machine.machineName == machineName))
         {
-            masterList.allMachines.Add(machineName, this);
+            masterList.machines = masterList.machines.Append(this);
         }
 
         masterList.GroupMachines();

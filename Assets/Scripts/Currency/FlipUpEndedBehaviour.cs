@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Animations;
 
 public sealed class FlipUpEndedBehaviour : StateMachineBehaviour
 {

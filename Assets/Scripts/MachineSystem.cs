@@ -18,7 +18,6 @@ public sealed class MachineSystem : Singleton<MachineSystem>
     {
         public Machine.Save[] machines;
     }
-
     [NonSerialized]
     public Save save;
 

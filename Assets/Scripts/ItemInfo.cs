@@ -36,9 +36,9 @@ public sealed class ItemInfo : ScriptableObject
             return;
         }
 
-        if (!masterList.allItems.ContainsKey(itemName))
+        if (!masterList.items.Any(item => item.itemName == itemName))
         {
-            masterList.allItems.Add(itemName, this);
+            masterList.items = masterList.items.Append(this);
         }
 
         EditorUtility.SetDirty(this);

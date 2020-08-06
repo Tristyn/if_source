@@ -80,7 +80,7 @@ public sealed class Conveyor : MonoBehaviour
 
     public void Initialize()
     {
-        save.position_local = transform.localPosition.RoundToTile();
+        transform.localPosition = save.position_local.RoundToTileCenter();
         ConveyorSystem.instance.conveyors.Add(save.position_local, this);
         Machine machine = MachineSystem.instance.GetMachine(save.position_local);
         if (machine)
@@ -199,7 +199,7 @@ public sealed class Conveyor : MonoBehaviour
                             }
                             else
                             {
-                                Debug.LogWarning($"Failed to find item slot {saveConveyorItem.itemName} while loading conveyor.");
+                                Debug.LogWarning($"Failed to find item {saveConveyorItem.itemName} while loading conveyor.");
                             }
                         }
                     }

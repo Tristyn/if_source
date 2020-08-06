@@ -107,6 +107,7 @@ public static class SaveLoad
                 BackupCorruptSave(path);
                 Init.InvokePreLoad();
                 StarterSave.SuperimposeStarterSave();
+                Init.InvokeLoadComplete();
             }
             return true;
         }
@@ -145,5 +146,6 @@ public static class SaveLoad
         InterfaceSelectionManager.instance.SetSave(in saveFile.interfaceSelection);
         BackgroundMusic.instance.SetSave(in saveFile.backgroundMusic);
         Init.InvokePostLoad();
+        Init.InvokeLoadComplete();
     }
 }

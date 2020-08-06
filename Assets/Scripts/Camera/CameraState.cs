@@ -14,7 +14,7 @@ public struct CameraState
     public void TranslateLocal(Vector3 translation)
     {
         Vector3 rotatedTranslation = Quaternion.Euler(0, eulerAngles.y, 0) * translation;
-
+        
         position += rotatedTranslation;
     }
 

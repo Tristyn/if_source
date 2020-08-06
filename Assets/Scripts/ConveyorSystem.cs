@@ -192,7 +192,7 @@ public sealed class ConveyorSystem : Singleton<ConveyorSystem>
     private Conveyor DoCreateConveyor(Vector3Int position)
     {
         Conveyor conveyor = ObjectPooler.instance.Get<Conveyor>();
-        conveyor.transform.localPosition = position.RoundToTileCenter();
+        conveyor.save.position_local = position;
         conveyor.Initialize();
         return conveyor;
     }

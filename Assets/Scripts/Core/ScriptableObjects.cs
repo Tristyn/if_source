@@ -1,9 +1,16 @@
 ﻿public sealed class ScriptableObjects : Singleton<ScriptableObjects>
 {
     public ScriptableObjectMasterList masterList;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        masterList.Initialize();
+    }
+
     public ItemInfo GetItemInfo(string name)
     {
-        if (masterList.allItems.TryGetValue(name, out ItemInfo itemInfo))
+        if (masterList.itemsDict.TryGetValue(name, out ItemInfo itemInfo))
         {
             return itemInfo;
         }
@@ -12,7 +19,7 @@
 
     public MachineInfo GetMachineInfo(string name)
     {
-        if(masterList.allMachines.TryGetValue(name, out MachineInfo machineInfo))
+        if(masterList.machinesDict.TryGetValue(name, out MachineInfo machineInfo))
         {
             return machineInfo;
         }

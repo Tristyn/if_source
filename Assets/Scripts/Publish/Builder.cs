@@ -7,7 +7,6 @@ using System.IO;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 using System.IO.Compression;
-using System.Threading.Tasks;
 
 namespace MultiBuild
 {

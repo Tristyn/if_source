@@ -27,14 +27,50 @@ public sealed class MachineGroup
 [CreateAssetMenu(fileName = "ObjectMasterList", menuName = "Scriptable Object Master List", order = 32)]
 public sealed class ScriptableObjectMasterList : ScriptableObject
 {
-    public Dictionary<string, ItemInfo> allItems = new Dictionary<string, ItemInfo>();
-    public Dictionary<string, MachineInfo> allMachines = new Dictionary<string, MachineInfo>();
+    public ItemInfo[] items;
+    public MachineInfo[] machines;
     public MachineGroup[] machineGroups;
+
+    [NonSerialized]
+    public Dictionary<string, ItemInfo> itemsDict;
+    [NonSerialized]
+    public Dictionary<string, MachineInfo> machinesDict;
+
+    public void Initialize()
+    {
+        if (itemsDict == null)
+        {
+            itemsDict = new Dictionary<string, ItemInfo>(items.Length);
+        }
+        else
+        {
+            itemsDict.Clear();
+        }
+        for (int i = 0, len = items.Length; i < len; ++i)
+        {
+            ItemInfo itemInfo = items[i];
+            itemsDict.Add(itemInfo.name, itemInfo);
+        }
+
+        if (machinesDict == null)
+        {
+            machinesDict = new Dictionary<string, MachineInfo>(machines.Length);
+        }
+        else
+        {
+            machinesDict.Clear();
+        }
+        for (int i = 0, len = machines.Length; i < len; ++i)
+        {
+            MachineInfo machineInfo = machines[i];
+            machinesDict.Add(machineInfo.name, machineInfo);
+        }
+    }
 
     public void GroupMachines()
     {
         Dictionary<string, MachineGroup> groups = new Dictionary<string, MachineGroup>();
-        foreach (MachineInfo machineInfo in allMachines.Values)
+        foreach (MachineInfo machineInfo in machines)
         {
             if (!groups.TryGetValue(machineInfo.machineGroup, out MachineGroup group))
             {
