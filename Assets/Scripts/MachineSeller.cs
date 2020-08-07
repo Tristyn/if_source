@@ -21,6 +21,7 @@ public sealed class MachineSeller : MonoBehaviour
 
     public void Initialize()
     {
+        save.nextAssembleTime = GameTime.fixedTime;
         placeInterval = machine.machineInfo.placeInterval;
         sellItem = machine.machineInfo.sellItem;
         inventory = machine.inventory;

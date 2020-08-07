@@ -21,6 +21,7 @@ public sealed class MachineAssembler : MonoBehaviour
 
     public void Initialize()
     {
+        save.nextAssembleTime = GameTime.fixedTime;
         placeInterval = machine.machineInfo.placeInterval;
         inputs = machine.machineInfo.assembleInputs;
         output = machine.machineInfo.assembleOutput;

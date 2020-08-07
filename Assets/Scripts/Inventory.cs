@@ -27,6 +27,12 @@ public struct InventorySlot
         get { return itemInfo; }
     }
 
+    public bool empty
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get { return count <= 0; }
+    }
+
     [Serializable]
     public struct Save
     {

@@ -183,7 +183,11 @@ namespace MultiBuild
             }
 
             EditorUtility.ClearProgressBar();
-            if (!ok)
+            if (ok)
+            {
+                Debug.Log("MultiBuild succeess");
+            }
+            else
             {
                 EditorUtility.DisplayDialog("Cancelled", "Build cancelled before finishing.", "Close");
             }

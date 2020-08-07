@@ -55,11 +55,15 @@ public static class GameTime
 
     public static void DoFixedUpdate()
     {
+        if (save.fixedDeltaTime > Time.fixedDeltaTime)
+        {
+            Debug.LogWarning("fixed delta timee grew from " + save.fixedDeltaTime + " to " + Time.fixedDeltaTime);
+        }
         float fixedDeltaTime = Time.fixedDeltaTime;
         save.fixedDeltaTime = fixedDeltaTime;
         save.fixedTime += fixedDeltaTime;
         float unscaledDeltaTime = Time.unscaledDeltaTime;
         save.unscaledDeltaTime = unscaledDeltaTime;
-        save.fixedTime += unscaledDeltaTime;
+        save.unscaledTime += unscaledDeltaTime;
     }
 }

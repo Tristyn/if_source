@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Rendering;
 
 [Serializable]
 public struct MachineConveyorLink
@@ -21,7 +22,6 @@ public sealed class Machine : MonoBehaviour
     public MachineConveyorLink[] conveyorLinks;
     [NonSerialized]
     public MachineInfo machineInfo;
-    [NonSerialized]
     public Inventory inventory = Inventory.empty;
 
     public bool canOutput;
@@ -117,11 +117,11 @@ public sealed class Machine : MonoBehaviour
         }
 
         Dictionary<Vector3Int, Conveyor> conveyors = ConveyorSystem.instance.conveyors;
-        for (int x = bounds.min.x, lenx = bounds.max.x; x < lenx; ++x)
+        for (int x = bounds.min.x, lenx = bounds.max.x; x <= lenx; ++x)
         {
-            for (int y = bounds.min.y, leny = bounds.max.y; y < leny; ++y)
+            for (int y = bounds.min.y, leny = bounds.max.y; y <= leny; ++y)
             {
-                for (int z = bounds.min.z, lenz = bounds.max.z; z < lenz; ++z)
+                for (int z = bounds.min.z, lenz = bounds.max.z; z <= lenz; ++z)
                 {
                     if (conveyors.TryGetValue(new Vector3Int(x, y, z), out Conveyor conveyor))
                     {
@@ -206,8 +206,13 @@ public sealed class Machine : MonoBehaviour
         Conveyor[] conv = (Conveyor[])conveyors.Clone();
         for (int i = 0, len = conv.Length; i < len; ++i)
         {
+            Assert.IsNotNull(conv[i].machine);
+            Assert.IsTrue(conv[i].machine == this);
             conv[i].Recycle();
         }
+
+        Assert.IsTrue(conveyors.Length == 0);
+        Assert.IsTrue(conveyorLinks.Length == 0);
 
         MachineSystem.instance.Remove(this);
 
@@ -285,54 +290,71 @@ public sealed class Machine : MonoBehaviour
     /// </summary>
     public bool RecycleInvalidConveyors()
     {
-        bool wereAnyConveyorsRecycled = false;
-        Directions[] directions = EnumUtils<Directions>.values;
-        int directionsLen = directions.Length;
-        for (int i = conveyors.Length - 1; i >= 0; i--)
+        using (ListPool<Conveyor>.Get(out List<Conveyor> toRecycle))
         {
-            Conveyor conveyor = conveyors[i];
-            if (conveyor)
+            Assert.IsTrue(toRecycle.Count == 0);
+            Directions[] directions = EnumUtils<Directions>.values;
+            int directionsLen = directions.Length;
+
+            for (int i = conveyors.Length - 1; i >= 0; i--)
             {
-                for (int j = 1; j < directionsLen; ++j)
+                Conveyor conveyor = conveyors[i];
+                if (conveyor)
                 {
-                    Directions direction = directions[j];
-                    Conveyor output = conveyor.TryGetOutput(direction);
-                    Conveyor input;
-                    if (output)
+                    for (int j = 1; j < directionsLen; ++j)
                     {
-                        if (!ConveyorSystem.instance.CanLink(conveyor.save.position_local, output.save.position_local))
+                        Directions direction = directions[j];
+                        Conveyor output = conveyor.TryGetOutput(direction);
+                        Conveyor input;
+                        if (output)
                         {
-                            wereAnyConveyorsRecycled = true;
-                            conveyor.Unlink(output);
-                            if (!output.HasAnyLinks() && output.machine != this)
+                            if (!ConveyorSystem.instance.CanLink(conveyor.save.position_local, output.save.position_local))
                             {
-                                Assert.IsNotNull(output.machine);
-                                output.Recycle();
+                                conveyor.Unlink(output);
+
+                                if (!output.HasAnyLinks() && output.machine != this && output.machine != null)
+                                {
+                                    if (!toRecycle.Contains(output))
+                                    {
+                                        toRecycle.Add(output);
+                                    }
+                                }
+                            }
+                        }
+                        else if (input = conveyor.TryGetInput(direction))
+                        {
+                            if (!ConveyorSystem.instance.CanLink(input.save.position_local, conveyor.save.position_local))
+                            {
+                                input.Unlink(conveyor);
+                                if (!input.HasAnyLinks() && input.machine != this && input.machine != null)
+                                {
+                                    if (!toRecycle.Contains(input))
+                                    {
+                                        toRecycle.Add(input);
+                                    }
+                                }
                             }
                         }
                     }
-                    else if (input = conveyor.TryGetInput(direction))
+
+                    if (!conveyor.HasAnyLinks())
                     {
-                        if (!ConveyorSystem.instance.CanLink(input.save.position_local, conveyor.save.position_local))
+                        if (!toRecycle.Contains(conveyor))
                         {
-                            wereAnyConveyorsRecycled = true;
-                            input.Unlink(conveyor);
-                            if (!input.HasAnyLinks() && input.machine != this)
-                            {
-                                Assert.IsNotNull(input.machine);
-                                input.Recycle();
-                            }
+                            toRecycle.Add(conveyor);
                         }
                     }
-                }
-                if (!conveyor.HasAnyLinks())
-                {
-                    wereAnyConveyorsRecycled = true;
-                    conveyor.Recycle();
                 }
             }
+
+            int numRecycled = toRecycle.Count;
+            for (int i = 0; i < numRecycled; ++i)
+            {
+                Conveyor conveyor = toRecycle[i];
+                conveyor.Recycle();
+            }
+            return numRecycled > 0;
         }
-        return wereAnyConveyorsRecycled;
     }
 
     void OnDrawGizmosSelected()

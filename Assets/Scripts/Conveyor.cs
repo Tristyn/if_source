@@ -60,7 +60,7 @@ public sealed class Conveyor : MonoBehaviour
 
     public const float minItemDistance = 0.5000001f;
     public const float queueDistance = 1f;
-    public const float itemSpeed = 1f;
+    public const float itemSpeed = 2f;
     public const float fixedItemSpeed = itemSpeed / TimeHelper.fixedFrameRate;
 
     public Save save;
@@ -121,7 +121,6 @@ public sealed class Conveyor : MonoBehaviour
         Assert.IsTrue(exists);
         if (machine)
         {
-            machine.FindConveyors();
             UnlinkMachine();
         }
         ObjectPooler.instance.Recycle(this);
@@ -358,16 +357,19 @@ public sealed class Conveyor : MonoBehaviour
     public void LinkMachine(Machine machine)
     {
         Debug.Assert(!this.machine || this.machine == machine);
+        Debug.Assert(machine.bounds.Contains(save.position_local));
         this.machine = machine;
         machineInventory = machine.inventory;
     }
 
-    public void UnlinkMachine()
+    void UnlinkMachine()
     {
+        Machine machine = this.machine;
         Assert.IsNotNull(machine);
         Assert.IsTrue(machineInventory.valid);
-        machine = null;
+        this.machine = null;
         machineInventory = default;
+        machine.FindConveyors();
     }
 
     void ClearItemQueue(OpenQueue<ConveyorItem> itemQueue)
@@ -534,7 +536,7 @@ public sealed class Conveyor : MonoBehaviour
 
     public bool EndTransferIn(in ConveyorItem conveyorItem, ref float transferredDistance)
     {
-        Assert.IsTrue(transferredDistance > 0f);
+        Assert.IsTrue(transferredDistance >= 0f);
         if (machineInventory.valid)
         {
             Item item = conveyorItem.GetItem();

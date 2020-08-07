@@ -155,7 +155,16 @@ namespace MultiBuild
                 }
             }
 
-            
+            string changelogPath = Path.Combine(Application.dataPath, "..", "changelog.txt");
+            string changelogDestPath = Path.Combine(settings.outputFolder, "changelog.txt");
+            if (File.Exists(changelogPath))
+            {
+                File.Copy(changelogPath, changelogDestPath, overwrite: true);
+            }
+            else
+            {
+                Debug.LogWarning("Could not copy changelog at path " + changelogPath);
+            }
 
             return true;
         }

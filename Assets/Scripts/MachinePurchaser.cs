@@ -21,6 +21,7 @@ public sealed class MachinePurchaser : MonoBehaviour
 
     public void Initialize()
     {
+        save.nextPlaceTime = GameTime.fixedTime;
         inventory = machine.inventory;
         purchaseItem = machine.machineInfo.purchaseItem;
         placeInterval = machine.machineInfo.placeInterval;

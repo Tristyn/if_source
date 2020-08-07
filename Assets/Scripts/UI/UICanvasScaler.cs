@@ -8,7 +8,7 @@ public sealed class UICanvasScaler : MonoBehaviour
     void OnEnable()
     {
         CanvasScaler scaler = GetComponent<CanvasScaler>();
-        if (!Application.isMobilePlatform && !TouchInput.webGLMobile)
+        if (!Application.isMobilePlatform)
         {
             scaler.referenceResolution *= desktopScale;
         }

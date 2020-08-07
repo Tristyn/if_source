@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-#if UNITY_WEBGL
-using System.Runtime.InteropServices;
-#endif
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -29,10 +26,6 @@ public sealed class TouchInput : Singleton<TouchInput>
     /// mobile browsers will use the simulated mouse.
     /// </summary>
     public static bool supported = Application.isMobilePlatform;
-    /// <summary>
-    /// Returns true if the platform is WebGL and the host is a mobile browser.
-    /// </summary>
-    public static bool webGLMobile = Application.platform == RuntimePlatform.WebGLPlayer && GetWebGLMobileHost();
 
     public Action<TouchInfo[]> Touch = touches => { };
 
@@ -42,16 +35,6 @@ public sealed class TouchInput : Singleton<TouchInput>
     public TouchInfo[] touches = new TouchInfo[1];
     List<int> invalidate = new List<int>(1);
     Vector3 lastMousePosition;
-
-    /// <summary>
-    /// Returns true if the platform is WebGL and the host is a mobile browser.
-    /// </summary>
-#if UNITY_WEBGL
-    [DllImport("__Internal")]
-    static extern bool GetWebGLMobileHost();
-#else
-    static bool GetWebGLMobileHost() => false;
-#endif
 
     protected override void Awake()
     {

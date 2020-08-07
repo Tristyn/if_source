@@ -22,6 +22,7 @@ public sealed class MachinePlacer : MonoBehaviour
 
     public void Initialize()
     {
+        save.nextPlaceTime = GameTime.fixedTime;
         inventory = machine.inventory;
         if (machine.machinePurchaser)
         {
@@ -45,7 +46,7 @@ public sealed class MachinePlacer : MonoBehaviour
     void PlaceItem()
     {
         ref InventorySlot slot = ref inventory.GetSlot(itemInfo);
-        if (slot.count <= 0)
+        if (slot.empty)
         {
             return;
         }
@@ -59,7 +60,7 @@ public sealed class MachinePlacer : MonoBehaviour
             {
                 save.lastOutputIndex = i;
                 --slot.count;
-                if (slot.count <= 0)
+                if (slot.empty)
                 {
                     return;
                 }
@@ -72,7 +73,7 @@ public sealed class MachinePlacer : MonoBehaviour
             {
                 save.lastOutputIndex = i;
                 --slot.count;
-                if (slot.count <= 0)
+                if (slot.empty)
                 {
                     return;
                 }

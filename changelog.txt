@@ -1,3 +1,11 @@
+Version 0.1.8.6.1
++ Buffed conveyor speed to 2m/s from 1m/s
+* Fixed machines could buying/selling/assembling every frame
+* Fixed game time passing by at twice speed, and at normal speed when game was paused
+* Fixed bug preventing some machines from being sold
+* Fixed items could permanently stopping in place
+* Fixed browser hangs at loading screen
+
 Version 0.1.8.6
 Browser https://tristyn.github.io
 Android Installer https://tristyn.github.io/Idle_Factory.apk
