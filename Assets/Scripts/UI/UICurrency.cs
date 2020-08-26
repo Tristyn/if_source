@@ -7,7 +7,7 @@ public sealed class UICurrency : MonoBehaviour
     TextMeshProUGUI text;
     StringBuilder textStringBuilder = new StringBuilder(6);
 
-    int amount;
+    long amount;
 
     void Awake()
     {
@@ -29,7 +29,7 @@ public sealed class UICurrency : MonoBehaviour
 
     void OnMoneyChanged()
     {
-        this.amount = CurrencySystem.instance.save.money;
+        amount = CurrencySystem.instance.save.money;
         UpdateMoneyText();
     }
 

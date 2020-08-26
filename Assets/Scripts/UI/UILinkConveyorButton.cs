@@ -37,6 +37,15 @@ public sealed class UILinkConveyorButton : MonoBehaviour
     {
         bool exists = ConveyorSystem.instance.conveyors.ContainsKey(position);
         Conveyor conveyor = ConveyorSystem.instance.GetOrCreateConveyor(sourcePosition, position, ConveyorCreateFlags.SelectConveyor | ConveyorCreateFlags.PanRelative);
+        ConveyorSystem.instance.conveyors.TryGetValue(sourcePosition, out Conveyor sourceConveyor);
+        if ((conveyor && conveyor.machine) || (sourceConveyor && sourceConveyor.machine))
+        {
+            Analytics.instance.NewUiEvent(UiEventId.ButtonLinkConveyorToMachine, 1);
+        }
+        else
+        {
+            Analytics.instance.NewUiEvent(UiEventId.ButtonLinkConveyor, 1);
+        }
     }
 
     public void Recycle()

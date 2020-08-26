@@ -98,6 +98,7 @@ public sealed class Machine : MonoBehaviour
         }
 
         MachineSystem.instance.Add(this);
+        MachineGroupAchievements.instance.OnMachineCreated(machineInfo.machineGroup);
 
         if (machinePurchaser)
         {
@@ -188,15 +189,8 @@ public sealed class Machine : MonoBehaviour
 
     public void Demolish()
     {
-        InventorySlot[] slots = inventory.slots;
-        for (int i = 0, len = slots.Length; i < len; ++i)
-        {
-            InventorySlot slot = slots[i];
-            if (slots[i].count > 0)
-            {
-                CurrencySystem.instance.ItemSold(slot.itemInfo, slot.count, bounds.topCenter);
-            }
-        }
+        CurrencySystem.instance.RefundInventory(inventory);
+        MachineGroupAchievements.instance.OnMachineDemolished(machineInfo.machineGroup);
         PlayDemolishAudio();
         Delete();
     }

@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
+public struct MachineMetaData
+{
+    public int numInstances;
+}
+
 public sealed class MachineSystem : Singleton<MachineSystem>
 {
     public AudioClip createMachineClip;
@@ -12,6 +17,9 @@ public sealed class MachineSystem : Singleton<MachineSystem>
     public HashSet<Machine> machines = new HashSet<Machine>();
     [NonSerialized]
     public SpatialHash<Machine> machineSpatialHash;
+    [NonSerialized]
+    public Dictionary<MachineInfo, MachineMetaData> machinesMetaData = new Dictionary<MachineInfo, MachineMetaData>();
+
 
     [Serializable]
     public struct Save
@@ -42,14 +50,39 @@ public sealed class MachineSystem : Singleton<MachineSystem>
     public void Add(Machine machine)
     {
         Assert.IsFalse(machineSpatialHash.Overlaps(machine.bounds));
-        machineSpatialHash.Add(machine, machine.bounds);
         machines.Add(machine);
+        machineSpatialHash.Add(machine, machine.bounds);
+        MachineInfo machineInfo = machine.machineInfo;
+        if (machinesMetaData.TryGetValue(machineInfo, out MachineMetaData machineMetaData))
+        {
+            machineMetaData.numInstances++;
+            machinesMetaData[machineInfo] = machineMetaData;
+        }
+        else
+        {
+            machineMetaData.numInstances++;
+            machinesMetaData.Add(machineInfo, machineMetaData);
+        }
     }
 
     public void Remove(Machine machine)
     {
-        machines.Remove(machine);
+        bool exists = machines.Remove(machine);
+        Assert.IsTrue(exists);
         machineSpatialHash.Remove(machine, in machine.bounds);
+        MachineInfo machineInfo = machine.machineInfo;
+        exists = machinesMetaData.TryGetValue(machineInfo, out MachineMetaData machineMetaData);
+        Assert.IsTrue(exists);
+        machineMetaData.numInstances--;
+        if (machineMetaData.numInstances > 0)
+        {
+            machinesMetaData[machineInfo] = machineMetaData;
+        }
+        else
+        {
+            exists = machinesMetaData.Remove(machineInfo);
+            Assert.IsTrue(exists);
+        }
     }
     public bool MachineExists(Bounds3Int bounds)
     {

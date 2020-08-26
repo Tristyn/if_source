@@ -21,6 +21,7 @@ public sealed class UIDemolishButton : MonoBehaviour
                 TileSelectionManager.instance.TrySelectAnyInput(true);
             }
             machine.Demolish();
+            Analytics.instance.NewUiEvent(UiEventId.ButtonDemolish, 1);
         }
         else if (ConveyorSystem.instance.conveyors.TryGetValue(demolishTile, out Conveyor conveyor))
         {
@@ -29,6 +30,7 @@ public sealed class UIDemolishButton : MonoBehaviour
                 TileSelectionManager.instance.TrySelectAnyInput(true);
             }
             conveyor.Demolish();
+            Analytics.instance.NewUiEvent(UiEventId.ButtonDemolish, 1);
         }
     }
 

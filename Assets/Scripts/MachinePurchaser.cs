@@ -40,7 +40,7 @@ public sealed class MachinePurchaser : MonoBehaviour
                 Assert.IsTrue(slot.valid);
                 if (slot.TryAdd(purchaseItem.count))
                 {
-                    currencySystem.ItemPurchased(purchaseItem.itemInfo, purchaseItem.count);
+                    currencySystem.MachinePurchaserBuyItem(purchaseItem.itemInfo, purchaseItem.count);
                 }
             }
         }

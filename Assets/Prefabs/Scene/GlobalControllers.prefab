@@ -1,5 +1,76 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &767634413751375545
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6759739381125784974}
+  - component: {fileID: 4131815130254237621}
+  - component: {fileID: 1933061622684213068}
+  - component: {fileID: 6152140235810060572}
+  m_Layer: 0
+  m_Name: Machines
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6759739381125784974
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 767634413751375545}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1377630774726580450}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4131815130254237621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 767634413751375545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b5fee729fc9d3140ae1ebbf9d258a45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  createMachineClip: {fileID: 8300000, guid: 6e94a89b2b8882f4ab4415c543944819, type: 3}
+  demolishMachineClip: {fileID: 8300000, guid: b8d3c9ff06e0c844daf377bf1217b4d4, type: 3}
+--- !u!114 &1933061622684213068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 767634413751375545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 216fa94bde5f10d4f86f7ed9c6069060, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6152140235810060572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 767634413751375545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49f181efa7b784044bdfc811a9309e0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1377630774726580451
 GameObject:
   m_ObjectHideFlags: 0
@@ -12,7 +83,6 @@ GameObject:
   - component: {fileID: 1377630774726580448}
   - component: {fileID: 1377630774726580446}
   - component: {fileID: 1377630774726580449}
-  - component: {fileID: 1377630774726580444}
   - component: {fileID: 1377630774726580442}
   - component: {fileID: 1377630774726580447}
   - component: {fileID: 1377630774726580445}
@@ -44,7 +114,8 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 6759739381125784974}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -87,20 +158,6 @@ MonoBehaviour:
   createConveyorClip: {fileID: 8300000, guid: 9dc958029235c134b955c3ff2a4c0f6d, type: 3}
   demolishConveyorClip: {fileID: 8300000, guid: 75bc47a71fb314342b9a7e56a95133d5,
     type: 3}
---- !u!114 &1377630774726580444
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1377630774726580451}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b5fee729fc9d3140ae1ebbf9d258a45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  createMachineClip: {fileID: 8300000, guid: 6e94a89b2b8882f4ab4415c543944819, type: 3}
-  demolishMachineClip: {fileID: 8300000, guid: b8d3c9ff06e0c844daf377bf1217b4d4, type: 3}
 --- !u!114 &1377630774726580442
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -293,6 +350,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   xpChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  levelChanged:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &7823837483173332736

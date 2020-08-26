@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc0e76f1a4b5ac247961624e9c254f55, type: 3}
+  m_Name: ObjectMasterList
+  m_EditorClassIdentifier: 
+  items:
+  - {fileID: 11400000, guid: 51dfec3b8f540654b9f27d61d76c6910, type: 2}
+  - {fileID: 11400000, guid: 51c5ef02c174dc44a9dc430ddbfe120d, type: 2}
+  - {fileID: 11400000, guid: aac787e0f59938d48a4e31166b8a60d1, type: 2}
+  machines:
+  - {fileID: 11400000, guid: 3c7e56af39ff89c4da32c45706e9d12b, type: 2}
+  - {fileID: 11400000, guid: ffa214700dc0c6e4ba0ced2de9e0da08, type: 2}
+  - {fileID: 11400000, guid: 240c652c16e9202449cbfeadd0284160, type: 2}
+  machineGroups:
+  - {fileID: 11400000, guid: b63e9fb2fc0447c4a8d30ea30e1b87f1, type: 2}
+  progressionInfos:
+  - {fileID: 11400000, guid: e107b294ee0455a4fb273c204dcf3cf2, type: 2}
+  nextProgressionId: 2

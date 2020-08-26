@@ -20,8 +20,8 @@ public sealed class UISelectMachinesButton : MonoBehaviour
     {
         Vector3 groupOffset = Vector3.zero;
 
-        MachineGroup[] machineGroups = ScriptableObjects.instance.masterList.machineGroups;
-        children = new GameObject[ScriptableObjects.instance.masterList.machines.Length + 1]; // The magic number +1 is for conveyor
+        MachineGroupInfo[] machineGroups = ScriptableObjects.instance.machineGroups;
+        children = new GameObject[ScriptableObjects.instance.machines.Length + 1]; // The magic number +1 is for conveyor
         int childrenIndex = -1;
         for (int i = 0, len = machineGroups.Length; i < len; ++i)
         {
@@ -34,7 +34,7 @@ public sealed class UISelectMachinesButton : MonoBehaviour
             children[++childrenIndex] = conveyorButton.gameObject;
             groupOffset.y += entryOffset.y;
 
-            MachineGroup machineGroup = machineGroups[i];
+            MachineGroupInfo machineGroup = machineGroups[i];
             for (int j = 0, lenJ = machineGroup.members.Length; j < lenJ; ++j)
             {
                 UISelectMachineButton machineButton = Instantiate(machineButtonPrefab, transform);

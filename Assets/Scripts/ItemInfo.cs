@@ -8,7 +8,7 @@ using UnityEngine;
 public sealed class ItemInfo : ScriptableObject
 {
     public string itemName => name;
-    public int value;
+    public long value;
     public Color color = Color.white;
     public Item prefab;
 
@@ -27,10 +27,7 @@ public sealed class ItemInfo : ScriptableObject
             }
         }
 
-        ScriptableObjectMasterList masterList = AssetDatabase.LoadAssetAtPath<ScriptableObjectMasterList>(
-            AssetDatabase.FindAssets("ObjectMasterList t:ScriptableObjectMasterList", new[] { "Assets/Objects" })
-            .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
-            .SingleOrDefault());
+        ScriptableObjectMasterList masterList = ScriptableObjectMasterList.LoadAsset();
         if (!masterList)
         {
             return;

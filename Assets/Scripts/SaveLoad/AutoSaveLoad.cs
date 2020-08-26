@@ -15,7 +15,6 @@ public sealed class AutoSaveLoad : MonoBehaviour
         Application.quitting += Save;
 
         var saveDirectory = new SaveLoad.SaveOptions().directory;
-        Debug.Log("Save directory: " + saveDirectory);
     }
 
     void OnDestroy()

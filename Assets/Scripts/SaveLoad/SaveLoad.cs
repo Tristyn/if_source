@@ -3,21 +3,26 @@ using System;
 using System.IO;
 using UnityEngine;
 
+[Serializable]
+public sealed class SaveFile
+{
+    public string version;
+    public GameTime.Save gameTime;
+    public CurrencySystem.Save currency;
+    public ConveyorSystem.Save conveyor;
+    public MachineSystem.Save machine;
+    public TileSelectionManager.Save tileSelection;
+    public OverviewCameraController.Save overviewCameraController;
+    public Analytics.Save analytics;
+    public MachineGroupAchievements.Save machineGroupProgression;
+    public BackgroundMusic.Save backgroundMusic;
+    public InterfaceSelectionManager.Save interfaceSelection;
+    public MachineGroupAchievements.Save machineGroupAchievements;
+    public ProgressionSystem.Save progressionSystem;
+}
+
 public static class SaveLoad
 {
-    [Serializable]
-    public sealed class SaveFile
-    {
-        public GameTime.Save gameTime;
-        public CurrencySystem.Save currency;
-        public ConveyorSystem.Save conveyor;
-        public MachineSystem.Save machine;
-        public TileSelectionManager.Save tileSelection;
-        public InterfaceSelectionManager.Save interfaceSelection;
-        public BackgroundMusic.Save backgroundMusic;
-        public OverviewCameraController.Save overviewCameraController;
-    }
-
     public sealed class SaveOptions
     {
         public SaveOptions()
@@ -77,6 +82,11 @@ public static class SaveLoad
             {
                 File.Move(tempFilePath, path);
             }
+#if UNITY_WEBGL
+#pragma warning disable CS0618 // Type or member is obsolete
+            Application.ExternalEval("_JS_FileSystem_Sync();");
+#pragma warning restore CS0618 // Type or member is obsolete
+#endif
         }
         catch (Exception ex)
         {
@@ -119,15 +129,19 @@ public static class SaveLoad
         Init.InvokePreSave();
         SaveFile save = new SaveFile
         {
+            version = Migrations.version,
             gameTime = GameTime.save,
             currency = CurrencySystem.instance.save,
             conveyor = ConveyorSystem.instance.save,
             machine = MachineSystem.instance.save,
             tileSelection = TileSelectionManager.instance.save,
-            overviewCameraController = OverviewCameraController.instance.save
+            overviewCameraController = OverviewCameraController.instance.save,
+            analytics = Analytics.instance.save
         };
         BackgroundMusic.instance.GetSave(out save.backgroundMusic);
         InterfaceSelectionManager.instance.GetSave(out save.interfaceSelection);
+        MachineGroupAchievements.instance.GetSave(out save.machineGroupAchievements);
+        ProgressionSystem.instance.GetSave(out save.progressionSystem);
         Init.InvokePostSave();
 
         return save;
@@ -135,16 +149,19 @@ public static class SaveLoad
 
     static void Load(SaveFile saveFile)
     {
+        Migrations.Migrate(saveFile);
         Init.InvokePreLoad();
-        Physics.SyncTransforms();
         GameTime.save = saveFile.gameTime;
         CurrencySystem.instance.save = saveFile.currency;
         ConveyorSystem.instance.save = saveFile.conveyor;
         MachineSystem.instance.save = saveFile.machine;
         TileSelectionManager.instance.save = saveFile.tileSelection;
         OverviewCameraController.instance.save = saveFile.overviewCameraController;
-        InterfaceSelectionManager.instance.SetSave(in saveFile.interfaceSelection);
+        Analytics.instance.save = saveFile.analytics;
         BackgroundMusic.instance.SetSave(in saveFile.backgroundMusic);
+        InterfaceSelectionManager.instance.SetSave(in saveFile.interfaceSelection);
+        MachineGroupAchievements.instance.SetSave(in saveFile.machineGroupAchievements);
+        ProgressionSystem.instance.SetSave(in saveFile.progressionSystem);
         Init.InvokePostLoad();
         Init.InvokeLoadComplete();
     }

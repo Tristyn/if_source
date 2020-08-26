@@ -57,7 +57,7 @@ public static class GameTime
     {
         if (save.fixedDeltaTime > Time.fixedDeltaTime)
         {
-            Debug.LogWarning("fixed delta timee grew from " + save.fixedDeltaTime + " to " + Time.fixedDeltaTime);
+            Debug.LogWarning("fixed delta time grew from " + save.fixedDeltaTime + " to " + Time.fixedDeltaTime);
         }
         float fixedDeltaTime = Time.fixedDeltaTime;
         save.fixedDeltaTime = fixedDeltaTime;

@@ -28,7 +28,7 @@ public sealed class Item : MonoBehaviour
 
     public void EvictedFromConveyor()
     {
-        CurrencySystem.instance.ItemSold(itemInfo, 1, transform.position);
+        CurrencySystem.instance.RefundItem(itemInfo, 1);
         Recycle();
     }
 }

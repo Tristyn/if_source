@@ -8,6 +8,9 @@ public static class JsonConfiguration
     {
         JsonSerializerSettings settings = new JsonSerializerSettings()
         {
+            DefaultValueHandling = DefaultValueHandling.Populate,
+            NullValueHandling = NullValueHandling.Ignore,
+            MissingMemberHandling = MissingMemberHandling.Ignore,
             Converters = new List<JsonConverter>
             {
                 // From https://github.com/jilleJr/Newtonsoft.Json-for-Unity.Converters/blob/master/Doc/Compatability-table.md
@@ -17,7 +20,7 @@ public static class JsonConfiguration
                 new Bounds3IntConverter()
             }
         };
-
+        
         JsonConvert.DefaultSettings = () => settings;
     }
 }

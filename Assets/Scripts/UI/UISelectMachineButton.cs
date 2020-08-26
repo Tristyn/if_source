@@ -61,6 +61,8 @@ public sealed class UISelectMachineButton : MonoBehaviour
         {
             InterfaceSelectionManager.instance.SetSelection(machineInfo);
         }
+
+        Analytics.instance.NewUiEvent(UiEventId.ButtonSelectMachine, 1);
     }
     public void PlaySelectMachineAudio()
     {

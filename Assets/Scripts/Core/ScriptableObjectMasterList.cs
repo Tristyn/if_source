@@ -1,40 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using System.Linq;
+using UnityEditor;
+#endif
 using UnityEngine;
-
-[Serializable]
-public sealed class MachineGroup
-{
-    public MachineGroup(string groupName, float groupOrder)
-    {
-        this.groupName = groupName;
-        this.groupOrder = groupOrder;
-        members = Array.Empty<MachineInfo>();
-        assemblers = Array.Empty<MachineInfo>();
-        purchasers = Array.Empty<MachineInfo>();
-        sellers = Array.Empty<MachineInfo>();
-    }
-
-    public string groupName;
-    public float groupOrder;
-    public MachineInfo[] members;
-    public MachineInfo[] assemblers;
-    public MachineInfo[] purchasers;
-    public MachineInfo[] sellers;
-}
 
 [CreateAssetMenu(fileName = "ObjectMasterList", menuName = "Scriptable Object Master List", order = 32)]
 public sealed class ScriptableObjectMasterList : ScriptableObject
 {
     public ItemInfo[] items;
     public MachineInfo[] machines;
-    public MachineGroup[] machineGroups;
+    public MachineGroupInfo[] machineGroups;
+    public ProgressionInfo[] progressionInfos;
+    [ReadOnly]
+    public int nextProgressionId;
 
     [NonSerialized]
     public Dictionary<string, ItemInfo> itemsDict;
     [NonSerialized]
     public Dictionary<string, MachineInfo> machinesDict;
+    [NonSerialized]
+    public Dictionary<string, MachineGroupInfo> machineGroupsDict;
 
     public void Initialize()
     {
@@ -65,58 +52,56 @@ public sealed class ScriptableObjectMasterList : ScriptableObject
             MachineInfo machineInfo = machines[i];
             machinesDict.Add(machineInfo.name, machineInfo);
         }
-    }
 
-    public void GroupMachines()
-    {
-        Dictionary<string, MachineGroup> groups = new Dictionary<string, MachineGroup>();
-        foreach (MachineInfo machineInfo in machines)
+        if (machineGroupsDict == null)
         {
-            if (!groups.TryGetValue(machineInfo.machineGroup, out MachineGroup group))
-            {
-                group = new MachineGroup(machineInfo.machineGroup, machineInfo.groupOrder);
-            }
-
-            if (machineInfo.assembler)
-            {
-                group.assemblers = group.assemblers.Append(machineInfo).ToArray();
-            }
-            if (machineInfo.purchaseItem.itemInfo != null)
-            {
-                group.purchasers = group.purchasers.Append(machineInfo).ToArray();
-            }
-            if (machineInfo.sellItem.itemInfo != null)
-            {
-                group.sellers = group.sellers.Append(machineInfo).ToArray();
-            }
-
-            if (!groups.ContainsKey(group.groupName))
-            {
-                groups.Add(group.groupName, group);
-            }
+            machineGroupsDict = new Dictionary<string, MachineGroupInfo>();
         }
-
-        machineGroups = groups.Values.OrderBy(machineInfo => machineInfo.groupOrder != 0 ? machineInfo.groupOrder : float.MaxValue).ToArray();
-
+        else
+        {
+            machineGroupsDict.Clear();
+        }
         for (int i = 0, len = machineGroups.Length; i < len; ++i)
         {
-            machineGroups[i].members = machineGroups[i].assemblers.Concat(machineGroups[i].purchasers).Concat(machineGroups[i].sellers).ToArray();
+            MachineGroupInfo machineGroup = machineGroups[i];
+            machineGroupsDict.Add(machineGroup.machineGroupName, machineGroup);
         }
     }
 
-    public void SetMachineGroupOrder(string groupName, float groupOrder)
+    public ItemInfo GetItemInfo(string name)
     {
-        for (int j = 0, jLen = machineGroups.Length; j < jLen; ++j)
+        if (itemsDict.TryGetValue(name, out ItemInfo itemInfo))
         {
-            MachineGroup group = machineGroups[j];
-            if (group.groupName == groupName)
-            {
-                group.groupOrder = groupOrder;
-                for (int i = 0, len = group.members.Length; i < len; ++i)
-                {
-                    group.members[i].groupOrder = groupOrder;
-                }
-            }
+            return itemInfo;
         }
+        return null;
     }
+
+    public MachineInfo GetMachineInfo(string name)
+    {
+        if (machinesDict.TryGetValue(name, out MachineInfo machineInfo))
+        {
+            return machineInfo;
+        }
+        return null;
+    }
+
+    public MachineGroupInfo GetMachineGroup(string name)
+    {
+        if (machineGroupsDict.TryGetValue(name, out MachineGroupInfo machineGroup))
+        {
+            return machineGroup;
+        }
+        return null;
+    }
+
+#if UNITY_EDITOR
+    public static ScriptableObjectMasterList LoadAsset()
+    {
+        return AssetDatabase.LoadAssetAtPath<ScriptableObjectMasterList>(
+            AssetDatabase.FindAssets("ObjectMasterList t:ScriptableObjectMasterList", new[] { "Assets/Resources" })
+            .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
+            .SingleOrDefault());
+    }
+#endif
 }

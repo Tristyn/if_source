@@ -16,8 +16,7 @@ public struct AssembleSlot
 public sealed class MachineInfo : ScriptableObject
 {
     public string machineName => name;
-    public string machineGroup = string.Empty;
-    public float groupOrder;
+    public MachineGroupInfo machineGroup;
     public float cost;
     public float placeInterval;
     public Vector3Int size = new Vector3Int(2, 1, 2);
@@ -32,6 +31,7 @@ public sealed class MachineInfo : ScriptableObject
 
     public AssembleSlot[] assembleInputs;
     public AssembleSlot assembleOutput;
+
 #if UNITY_EDITOR
     void OnValidate()
     {
@@ -47,10 +47,7 @@ public sealed class MachineInfo : ScriptableObject
             }
         }
 
-        ScriptableObjectMasterList masterList = AssetDatabase.LoadAssetAtPath<ScriptableObjectMasterList>(
-            AssetDatabase.FindAssets("ObjectMasterList t:ScriptableObjectMasterList", new[] { "Assets/Objects" })
-            .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
-            .SingleOrDefault());
+        ScriptableObjectMasterList masterList = ScriptableObjectMasterList.LoadAsset();
         if (!masterList)
         {
             return;
@@ -61,28 +58,49 @@ public sealed class MachineInfo : ScriptableObject
             masterList.machines = masterList.machines.Append(this);
         }
 
-        masterList.GroupMachines();
-
-        if (machineGroup != string.Empty)
+        if (machineGroup)
         {
-            if (groupOrder != 0)
+            if (assembler && !machineGroup.assemblers.Contains(this))
             {
-                masterList.SetMachineGroupOrder(machineGroup, groupOrder);
+                machineGroup.assemblers = machineGroup.assemblers.Append(this).ToArray();
             }
-            else
+            if (purchaseItem.itemInfo != null && !machineGroup.purchasers.Contains(this))
             {
-                for (int i = 0, len = masterList.machineGroups.Length; i < len; ++i)
+                machineGroup.purchasers = machineGroup.purchasers.Append(this).ToArray();
+            }
+            if (sellItem.itemInfo != null && !machineGroup.sellers.Contains(this))
+            {
+                machineGroup.sellers = machineGroup.sellers.Append(this).ToArray();
+            }
+
+            machineGroup.BuildMembersArray();
+        }
+        else
+        {
+            for (int i = 0, len = masterList.machineGroups.Length; i < len; i++)
+            {
+                MachineGroupInfo machineGroup = masterList.machineGroups[i];
+                if (machineGroup.members.Contains(this))
                 {
-                    MachineGroup group = masterList.machineGroups[i];
-                    if (group.groupName == machineGroup)
+                    if (machineGroup.assemblers.Contains(this))
                     {
-                        groupOrder = group.groupOrder;
+                        machineGroup.assemblers = machineGroup.assemblers.Except(this).ToArray();
                     }
+                    if (machineGroup.purchasers.Contains(this))
+                    {
+                        machineGroup.purchasers = machineGroup.purchasers.Except(this).ToArray();
+                    }
+                    if (machineGroup.sellers.Contains(this))
+                    {
+                        machineGroup.sellers = machineGroup.sellers.Except(this).ToArray();
+                    }
+                    machineGroup.BuildMembersArray();
                 }
             }
         }
 
         EditorUtility.SetDirty(this);
+        EditorUtility.SetDirty(machineGroup);
         EditorUtility.SetDirty(masterList);
     }
 #endif

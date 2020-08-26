@@ -8,6 +8,7 @@ public sealed class MachineSeller : MonoBehaviour
 
     AssembleSlot sellItem;
     Inventory inventory;
+    MachineGroupInfo machineGroup;
     float placeInterval;
 
     [NonSerialized]
@@ -22,9 +23,11 @@ public sealed class MachineSeller : MonoBehaviour
     public void Initialize()
     {
         save.nextAssembleTime = GameTime.fixedTime;
-        placeInterval = machine.machineInfo.placeInterval;
-        sellItem = machine.machineInfo.sellItem;
+        MachineInfo machineInfo = machine.machineInfo;
+        sellItem = machineInfo.sellItem;
         inventory = machine.inventory;
+        machineGroup = machineInfo.machineGroup;
+        placeInterval = machineInfo.placeInterval;
     }
 
     private void FixedUpdate()
@@ -37,7 +40,8 @@ public sealed class MachineSeller : MonoBehaviour
             Assert.IsTrue(slot.valid);
             if (slot.TryRemove(sellItem.count))
             {
-                CurrencySystem.instance.ItemSold(sellItem.itemInfo, sellItem.count, machine.bounds.topCenter);
+                CurrencySystem.instance.MachineSellerSellItem(sellItem.itemInfo, sellItem.count, machine.bounds.topCenter);
+                MachineGroupAchievements.instance.OnMachineItemSold(machineGroup);
             }
         }
     }

@@ -15,6 +15,7 @@ public sealed class MachineAssembler : MonoBehaviour
     public struct Save
     {
         public float nextAssembleTime;
+        public long numAssembled;
     }
     [NonSerialized]
     public Save save;
@@ -40,6 +41,7 @@ public sealed class MachineAssembler : MonoBehaviour
                 if (outputSlot.TryAdd(output.count))
                 {
                     inventory.DeductItems(inputs);
+                    save.numAssembled++;
                 }
             }
         }

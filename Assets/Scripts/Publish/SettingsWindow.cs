@@ -1,94 +1,33 @@
 #if UNITY_EDITOR
 using System;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-
-/* Easiest way to check if we're running 5.4 or lower. */
-#if UNITY_5_5_OR_NEWER
-#else
-namespace UnityEditor
-{
-	public struct BuildPlayerOptions
-	{
-		public string[] scenes { get; set; }
-		public string locationPathName { get; set; }
-		public string assetBundleManifestPath { get; set; }
-		public BuildTargetGroup targetGroup { get; set; }
-		public BuildTarget target { get; set; }
-		public BuildOptions options { get; set; }
-	}
-}
-#endif
 
 namespace MultiBuild
 {
     public sealed class SettingsWindow : EditorWindow
     {
-
-        // Manually format the descriptive names
-        // Simpler than DescriptionAttribute style IMO
-        static Dictionary<TargetType, string> _targetNames;
-        public static Dictionary<TargetType, string> TargetNames
+        string _buildNumber;
+        string BuildNumber
         {
             get
             {
-                if (_targetNames == null)
+                if (_buildNumber == null)
                 {
-                    _targetNames = new Dictionary<TargetType, string> {
-                        {TargetType.Android, "Android"},
-                        {TargetType.iOS, "iOS"},
-                        {TargetType.Linux64, "Linux 64-bit"},
-                        {TargetType.Mac32, "Mac 32-bit"},
-                        {TargetType.Mac64, "Mac 64-bit"},
-                        {TargetType.MacUniversal, "Mac Universal"},
-                        {TargetType.WebGL, "WebGL"},
-                        {TargetType.Win32, "Windows 32-bit"},
-                        {TargetType.Win64, "Windows 64-bit"},
-                        {TargetType.WinStore, "Windows Store App"},
-                        {TargetType.PS4, "Playstation 4"},
-                        {TargetType.XboxOne, "Xbox One"},
-                        {TargetType.SamsungTV, "Samsung TV"},
-                        {TargetType.tvOS, "tvOS"},
-#if UNITY_5_6_OR_NEWER
-                        {TargetType.Switch, "Nintendo Switch"},
-#endif
-                    };
-                }
-                return _targetNames;
-            }
-        }
-
-        // Because we need to sort and Unity Popup doesn't have a data tag
-        Dictionary<string, TargetType> _targetNameToValue;
-        Dictionary<string, TargetType> TargetNameToValue
-        {
-            get
-            {
-                if (_targetNameToValue == null)
-                {
-                    _targetNameToValue = new Dictionary<string, TargetType>();
-                    foreach (var target in TargetNames.Keys)
+                    Version version = new Version(PlayerSettings.bundleVersion);
+                    DateTime date = DateTime.Now; // Local date
+                    int revision = version.Revision;
+                    if (date.Month != version.Minor || date.Day != version.Build)
                     {
-                        _targetNameToValue[TargetNames[target]] = target;
+                        revision = 0;
                     }
+
+                    version = new Version(version.Major, date.Month, date.Day, revision);
+                    _buildNumber = version.ToString();
+
+                    PlayerSettings.bundleVersion = _buildNumber;
                 }
-                return _targetNameToValue;
-            }
-        }
-
-
-
-        TargetType[] _targets;
-        TargetType[] Targets
-        {
-            get
-            {
-                if (_targets == null)
-                {
-                    _targets = (TargetType[])Enum.GetValues(typeof(TargetType));
-                }
-                return _targets;
+                return _buildNumber;
             }
         }
 
@@ -124,6 +63,7 @@ namespace MultiBuild
         {
             get
             {
+
                 if (_removeButtonContainerStyle == null)
                 {
                     _removeButtonContainerStyle = new GUIStyle();
@@ -132,10 +72,8 @@ namespace MultiBuild
                 return _removeButtonContainerStyle;
             }
         }
-        List<string> _targetNamesNotAdded;
-        int _targetToAddIndex;
 
-        //[MenuItem("File/MultiBuild...", priority = 205)]
+        [MenuItem("File/MultiBuild...", priority = 205)]
         public static void ShowWindow()
         {
             EditorWindow.GetWindow(typeof(SettingsWindow), false, "MultiBuild");
@@ -143,18 +81,33 @@ namespace MultiBuild
 
         void OnGUI()
         {
+            EditorGUILayout.LabelField("Build Number: " + BuildNumber);
+
             EditorGUILayout.Space();
             EditorGUILayout.Space();
             GUI.backgroundColor = new Color(0, 0.6f, 0, 1);
             if (GUILayout.Button("Build Selected Platforms", ActionButtonStyle, GUILayout.MinHeight(30)))
             {
-                // do eet
-                Build();
+                bool ok = false;
+                try
+                {
+                    // do eet
+                    ok = Build();
+                }
+                finally
+                {
+                    if (ok)
+                    {
+                        Version version = new Version(PlayerSettings.bundleVersion);
+                        version = new Version(version.Major, version.Minor, version.Build, version.Revision + 1);
+                        _buildNumber = version.ToString();
+                        PlayerSettings.bundleVersion = _buildNumber;
+                    }
+                }
             }
         }
 
-        [MenuItem("File/MultiBuild", priority = 205)]
-        public static void Build()
+        public static bool Build()
         {
             var savedTarget = EditorUserBuildSettings.activeBuildTarget;
             bool ok = true;
@@ -198,6 +151,7 @@ namespace MultiBuild
             {
                 EditorUserBuildSettings.SwitchActiveBuildTargetAsync(Builder.GroupForTarget(savedTarget), savedTarget);
             }
+            return ok;
         }
 
     }
