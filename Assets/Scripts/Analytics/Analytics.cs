@@ -21,7 +21,7 @@ public sealed class Analytics : Singleton<Analytics>
     // Resource analytics are summed and sent before saving.
     Dictionary<CurrencyEvent, long> currencyEventSums = new Dictionary<CurrencyEvent, long>();
     // UI events are tallied and send before saving if a milestone has been reached since last save
-    long[] currentUiEventCounts = new long[EnumUtils<UiEventId>.valuesLength];
+    long[] currentUiEventCounts = new long[EnumUtil<UiEventId>.valuesLength];
     HashSet<(string, MachineGroupAchievementCategory)> queuedMachineGroupProgressionEvents = new HashSet<(string, MachineGroupAchievementCategory)>();
 
     public struct Save
@@ -34,7 +34,7 @@ public sealed class Analytics : Singleton<Analytics>
     protected override void Awake()
     {
         base.Awake();
-        save.uiEventCounts = new long[EnumUtils<UiEventId>.valuesLength];
+        save.uiEventCounts = new long[EnumUtil<UiEventId>.valuesLength];
         Init.Configure += Configure;
         Init.PreSave += PreSave;
         Init.PostLoad += PostLoad;
@@ -65,9 +65,9 @@ public sealed class Analytics : Singleton<Analytics>
         {
             save.uiEventCounts = Array.Empty<long>();
         }
-        if (EnumUtils<UiEventId>.valuesLength != save.uiEventCounts.Length)
+        if (EnumUtil<UiEventId>.valuesLength != save.uiEventCounts.Length)
         {
-            long[] resizedUiEventCounts = new long[EnumUtils<UiEventId>.valuesLength];
+            long[] resizedUiEventCounts = new long[EnumUtil<UiEventId>.valuesLength];
             Array.Copy(save.uiEventCounts, resizedUiEventCounts, Mathf.Min(save.uiEventCounts.Length, resizedUiEventCounts.Length));
             save.uiEventCounts = resizedUiEventCounts;
         }
@@ -82,8 +82,8 @@ public sealed class Analytics : Singleton<Analytics>
             if (sum != 0)
             {
                 CurrencyEvent currencyEvent = entry.Key;
-                string currencyType = EnumUtils<CurrencyType>.names[(int)currencyEvent.currencyType];
-                string currencyEventType = EnumUtils<CurrencyEventType>.names[(int)currencyEvent.currencyEventType];
+                string currencyType = EnumUtil<CurrencyType>.names[(int)currencyEvent.currencyType];
+                string currencyEventType = EnumUtil<CurrencyEventType>.names[(int)currencyEvent.currencyEventType];
                 GameAnalytics.NewResourceEvent(currencyEvent.flowType, currencyType, sum, currencyEventType, currencyEvent.eventItemId);
             }
         }
@@ -106,7 +106,7 @@ public sealed class Analytics : Singleton<Analytics>
 
         foreach ((string machineGroupName, MachineGroupAchievementCategory machineGroupProgressionEvent) in queuedMachineGroupProgressionEvents)
         {
-            GameAnalytics.NewProgressionEvent(GAProgressionStatus.Complete, "machine_groups", machineGroupName, EnumUtils<MachineGroupAchievementCategory>.names[(int)machineGroupProgressionEvent]);
+            GameAnalytics.NewProgressionEvent(GAProgressionStatus.Complete, "machine_groups", machineGroupName, EnumUtil<MachineGroupAchievementCategory>.names[(int)machineGroupProgressionEvent]);
         }
     }
 

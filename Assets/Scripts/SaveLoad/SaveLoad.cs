@@ -82,7 +82,7 @@ public static class SaveLoad
             {
                 File.Move(tempFilePath, path);
             }
-#if UNITY_WEBGL
+#if UNITY_WEBGL && !UNITY_EDITOR
 #pragma warning disable CS0618 // Type or member is obsolete
             Application.ExternalEval("_JS_FileSystem_Sync();");
 #pragma warning restore CS0618 // Type or member is obsolete

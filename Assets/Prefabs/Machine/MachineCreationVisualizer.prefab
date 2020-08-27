@@ -41,7 +41,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1505385919703939668}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8356148e4da4e544581fc81b4e84cf9d, type: 3}
+  m_Script: {fileID: 11500000, guid: 367bd1f100110b346b583dfe43d1bb68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   hologramMaterial: {fileID: 2100000, guid: 2b306cef564e38f45872e41d708919f6, type: 2}

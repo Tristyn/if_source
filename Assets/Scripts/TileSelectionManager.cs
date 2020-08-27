@@ -218,7 +218,7 @@ public sealed class TileSelectionManager : Singleton<TileSelectionManager>
 
     private Conveyor TryGetAnyInput(Conveyor conveyor)
     {
-        Directions[] directions = EnumUtils<Directions>.values;
+        Directions[] directions = EnumUtil<Directions>.values;
         int directionsLen = directions.Length;
         for (int j = 0; j < directionsLen; ++j)
         {

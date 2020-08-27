@@ -34,7 +34,7 @@ MonoBehaviour:
   - e00b85d58cfce098519e8184fd2cad4c0f34522d
   - 39ee15af8c736fe8801187050f8b366690c830ba
   Build:
-  - 0.8.18.1
+  - 0.8.25.3
   - 0.1
   - 0.1
   SelectedPlatformOrganization:
@@ -72,11 +72,17 @@ MonoBehaviour:
   CustomDimensions01: []
   CustomDimensions02: []
   CustomDimensions03: []
-  ResourceItemTypes: []
-  ResourceCurrencies: []
+  ResourceItemTypes:
+  - MachineSellerRevenue
+  - MachinePurchaserFees
+  - ItemRefunded
+  - ProgressionReward
+  ResourceCurrencies:
+  - Money
+  - Xp
   LastCreatedGamePlatform: -1
   Platforms: 0b0000000200000011000000
-  CurrentInspectorState: 3
+  CurrentInspectorState: 1
   ClosedHints: 
   DisplayHints: 0
   DisplayHintsScrollState: {x: 0, y: 0}
@@ -106,5 +112,5 @@ MonoBehaviour:
   CustomDimensions01FoldOut: 1
   CustomDimensions02FoldOut: 0
   CustomDimensions03FoldOut: 0
-  ResourceItemTypesFoldOut: 0
-  ResourceCurrenciesFoldOut: 0
+  ResourceItemTypesFoldOut: 1
+  ResourceCurrenciesFoldOut: 1

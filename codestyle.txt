@@ -1,0 +1,45 @@
+For loops:
+- assign array and array length to local variable, as well as i. Increment with ++i e.g.
+public class Machine
+{
+	public Conveyor[] conveyors;
+
+	void RecycleConveyors()
+	{
+		Conveyor[] conveyors = this.conveyors;
+		for (int i = 0, len = conveyors.Length; i < len; ++i)
+		{
+			Conveyor conveyor = conveyors[i];
+			conveyor.Demolish();
+		}
+		this.conveyors = Array.Empty<Conveyor>();
+	}
+}
+
+There are many small arrays that are iterated over frequently but modified infrequently including most of building machines/conveyors. Opt to resize arrays over using List.Add and List.Remove. It's better to take the GC hit for a faster update and locality. There are extensions methods to modify arrays e.g.
+public class Machine
+{
+	public Conveyor[] conveyors;
+
+	void LinkConveyor(Conveyor conveyor)
+	{
+		conveyors = conveyors.Append(conveyor);
+	}
+	
+	void UnlinkConveyor(Conveyor conveyor)
+	{
+		conveyors = conveyors.Remove(conveyor);
+	}
+}
+
+Use structs with ref/in/out syntax for better locality
+
+There are core classes defined. GameTime, Init, ObjectPooler, ItemPooler (specialized), Singleton, MainUpdate. Every update should be called from MainUpdate, but most systems don't use it right now. Machines and Items are defined by 'info' scriptable objects, and they are automatically accessible from ScriptableObjects.instance at runtime
+
+Define every class as sealed that can have it.
+
+No namespaces because why not.
+
+Use File>Multibuild to build all platforms to Build/, push the local git repo to deploy
+
+Editor will auto save every 5 minutes.

@@ -42,7 +42,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 767634413751375545}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b5fee729fc9d3140ae1ebbf9d258a45, type: 3}
+  m_Script: {fileID: 11500000, guid: 1558b66a53695e84e9740c5461b616d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   createMachineClip: {fileID: 8300000, guid: 6e94a89b2b8882f4ab4415c543944819, type: 3}
@@ -82,7 +82,6 @@ GameObject:
   - component: {fileID: 1377630774726580450}
   - component: {fileID: 1377630774726580448}
   - component: {fileID: 1377630774726580446}
-  - component: {fileID: 1377630774726580449}
   - component: {fileID: 1377630774726580442}
   - component: {fileID: 1377630774726580447}
   - component: {fileID: 1377630774726580445}
@@ -97,6 +96,9 @@ GameObject:
   - component: {fileID: 6959869754596593112}
   - component: {fileID: 7823837483173332736}
   - component: {fileID: 3054280759666208902}
+  - component: {fileID: 2505729766359951478}
+  - component: {fileID: 3132871875981262792}
+  - component: {fileID: 1574542010878729653}
   m_Layer: 0
   m_Name: GlobalControllers
   m_TagString: Untagged
@@ -143,21 +145,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90969735235504341af7061bfffb8d52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1377630774726580449
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1377630774726580451}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7bf91ea3a5e6d6498c21fd515d3c856, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  createConveyorClip: {fileID: 8300000, guid: 9dc958029235c134b955c3ff2a4c0f6d, type: 3}
-  demolishConveyorClip: {fileID: 8300000, guid: 75bc47a71fb314342b9a7e56a95133d5,
-    type: 3}
 --- !u!114 &1377630774726580442
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -318,7 +305,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1377630774726580451}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3cb0f71d2de06041b89c9e07b11baf1, type: 3}
+  m_Script: {fileID: 11500000, guid: efe8399ea5eaf4b4eb2e52da46f532d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1377630774239326337
@@ -381,3 +368,43 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   masterList: {fileID: 11400000, guid: 903d92d67fe0f754cb71d46212159d63, type: 2}
+--- !u!114 &2505729766359951478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377630774726580451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 120b5d4c800b0d946bafab1c0bb6ad23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3132871875981262792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377630774726580451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7f9966216f81f44fb2286dc1d34bacd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uiEventMilestones: 05000000000000003200000000000000f401000000000000d0070000000000008813000000000000
+--- !u!114 &1574542010878729653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377630774726580451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31348f3a1de845b4a8cb304fb9065bce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  createConveyorClip: {fileID: 8300000, guid: 9dc958029235c134b955c3ff2a4c0f6d, type: 3}
+  demolishConveyorClip: {fileID: 8300000, guid: 75bc47a71fb314342b9a7e56a95133d5,
+    type: 3}

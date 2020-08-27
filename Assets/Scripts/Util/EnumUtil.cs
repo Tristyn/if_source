@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public static class EnumUtils<T> where T : Enum
+public static class EnumUtil<T> where T : Enum
 {
     public static T[] values;
     public static int valuesLength;
@@ -11,7 +11,7 @@ public static class EnumUtils<T> where T : Enum
     public static string[] names;
     public static string[] nonZeroNames;
 
-    static EnumUtils()
+    static EnumUtil()
     {
         names = Enum.GetNames(typeof(T));
         Array valueEnums = (T[])Enum.GetValues(typeof(T));

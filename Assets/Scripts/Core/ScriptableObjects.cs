@@ -1,4 +1,6 @@
-﻿public sealed class ScriptableObjects : Singleton<ScriptableObjectMasterList>
+﻿using UnityEngine;
+
+public sealed class ScriptableObjects : Singleton<ScriptableObjectMasterList>
 {
     public ScriptableObjectMasterList masterList;
 

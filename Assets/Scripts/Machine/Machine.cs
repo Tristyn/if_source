@@ -287,7 +287,7 @@ public sealed class Machine : MonoBehaviour
         using (ListPool<Conveyor>.Get(out List<Conveyor> toRecycle))
         {
             Assert.IsTrue(toRecycle.Count == 0);
-            Directions[] directions = EnumUtils<Directions>.values;
+            Directions[] directions = EnumUtil<Directions>.values;
             int directionsLen = directions.Length;
 
             for (int i = conveyors.Length - 1; i >= 0; i--)

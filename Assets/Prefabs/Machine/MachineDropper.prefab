@@ -41,7 +41,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1209358145579854465}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2335e79c84f5f5641a02555417715c5d, type: 3}
+  m_Script: {fileID: 11500000, guid: 69532df49eebb7d41a4d68e8a9eac33d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   machineDropSmoke: {fileID: 6582741925768885364}

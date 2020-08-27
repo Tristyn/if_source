@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public sealed class MainUpdate : MonoBehaviour
+public sealed class Updater : MonoBehaviour
 {
     void Update()
     {

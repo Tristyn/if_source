@@ -316,7 +316,7 @@ PrefabInstance:
     - target: {fileID: 105762282075030632, guid: 6a483ddc073a7ec4586c3d146f6b9d2a,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 105762282075030632, guid: 6a483ddc073a7ec4586c3d146f6b9d2a,
         type: 3}
@@ -385,7 +385,7 @@ PrefabInstance:
     - target: {fileID: 771754889319989056, guid: b71797122feb7dc4fa5f6be59f67d4d0,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 771754889319989056, guid: b71797122feb7dc4fa5f6be59f67d4d0,
         type: 3}
@@ -493,37 +493,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a3ef118f6f33e8b4aa9aead000484ce8, type: 3}
---- !u!1 &1377630774239326336 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1377630774726580451, guid: a3ef118f6f33e8b4aa9aead000484ce8,
-    type: 3}
-  m_PrefabInstance: {fileID: 1377630774239326335}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1377630774239326337
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1377630774239326336}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 120b5d4c800b0d946bafab1c0bb6ad23, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1377630774239326338
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1377630774239326336}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7f9966216f81f44fb2286dc1d34bacd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  uiEventMilestones: 05000000000000003200000000000000f401000000000000d0070000000000008813000000000000
 --- !u!1001 &5027804981409948946
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -569,7 +538,7 @@ PrefabInstance:
     - target: {fileID: 5027804980594526284, guid: df25bdaeed714e54593ca72929ef6b69,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5027804980594526284, guid: df25bdaeed714e54593ca72929ef6b69,
         type: 3}

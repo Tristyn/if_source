@@ -19,11 +19,10 @@ public static class ArrayExtensions
         T[] ret = new T[array.Length - 1];
         for (int i = -1, arrayIndex = 0, len = array.Length; i < len; ++arrayIndex)
         {
-            if (array[i] == element)
+            if (array[i] != element)
             {
-                continue;
+                ret[++i] = array[arrayIndex];
             }
-            ret[++i] = array[arrayIndex];
         }
         return ret;
     }

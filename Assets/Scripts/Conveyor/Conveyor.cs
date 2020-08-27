@@ -54,9 +54,9 @@ public sealed class Conveyor : MonoBehaviour
     [NonSerialized]
     public Inventory machineInventory;
 
-    public OpenQueue<ConveyorItem>[] outputQueues = new OpenQueue<ConveyorItem>[EnumUtils<Directions>.valuesLength];
-    public ConveyorLink[] outputLinks = new ConveyorLink[EnumUtils<Directions>.valuesLength];
-    public Conveyor[] outputConveyors = new Conveyor[EnumUtils<Directions>.valuesLength];
+    public OpenQueue<ConveyorItem>[] outputQueues = new OpenQueue<ConveyorItem>[EnumUtil<Directions>.valuesLength];
+    public ConveyorLink[] outputLinks = new ConveyorLink[EnumUtil<Directions>.valuesLength];
+    public Conveyor[] outputConveyors = new Conveyor[EnumUtil<Directions>.valuesLength];
 
     public const float minItemDistance = 0.5000001f;
     public const float queueDistance = 1f;
@@ -95,7 +95,7 @@ public sealed class Conveyor : MonoBehaviour
         save.hasRouterInput = false;
 
         // Remove neighbors
-        Directions[] directions = EnumUtils<Directions>.values;
+        Directions[] directions = EnumUtil<Directions>.values;
         for (int i = 0, len = directions.Length; i < len; ++i)
         {
             Directions direction = directions[i];
@@ -130,7 +130,7 @@ public sealed class Conveyor : MonoBehaviour
     {
         if (this.save.outputs.Any())
         {
-            Directions[] directions = EnumUtils<Directions>.values;
+            Directions[] directions = EnumUtil<Directions>.values;
             int lenDirections = directions.Length;
             var saveOutputQueues = new ConveyorItem.Save[lenDirections][];
             this.save.outputQueues = saveOutputQueues;
@@ -331,7 +331,7 @@ public sealed class Conveyor : MonoBehaviour
 
     public bool HasAnyLinks()
     {
-        Directions[] directions = EnumUtils<Directions>.values;
+        Directions[] directions = EnumUtil<Directions>.values;
         for (int i = 0, len = directions.Length; i < len; ++i)
         {
             Directions direction = directions[i];
@@ -578,7 +578,7 @@ public sealed class Conveyor : MonoBehaviour
          */
 
         DirectionsFlag outputFlags = this.save.outputs;
-        DirectionsFlag[] directionsFlags = EnumUtils<DirectionsFlag>.values;
+        DirectionsFlag[] directionsFlags = EnumUtil<DirectionsFlag>.values;
         Vector3 position_local = transform.localPosition;
         for (int i = 0, len = directionsFlags.Length; i < len; ++i)
         {

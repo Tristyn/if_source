@@ -42,7 +42,7 @@ public sealed class MachineGroupAchievements : Singleton<MachineGroupAchievement
 
     public void SetSave(in Save save)
     {
-        int numCategories = EnumUtils<MachineGroupAchievementCategory>.valuesLength;
+        int numCategories = EnumUtil<MachineGroupAchievementCategory>.valuesLength;
         achievements.Clear();
         if (save.machineGroups != null)
         {
@@ -122,7 +122,7 @@ public sealed class MachineGroupAchievements : Singleton<MachineGroupAchievement
     {
         if (!achievements.TryGetValue(machineGroup, out bool[] categories))
         {
-            categories = new bool[EnumUtils<MachineGroupAchievementCategory>.valuesLength];
+            categories = new bool[EnumUtil<MachineGroupAchievementCategory>.valuesLength];
             achievements.Add(machineGroup, categories);
         }
         if (!categories[(int)machineGroupAchievementCategory])
