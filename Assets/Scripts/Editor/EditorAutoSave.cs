@@ -33,6 +33,11 @@ class EditorAutoSave
                 }
             }
         };
+
+        EditorApplication.playModeStateChanged += PlayModeStateChange =>
+        {
+            lastAutoSave = DateTime.UtcNow + TimeSpan.FromMinutes(5);
+        };
     }
 }
 #endif

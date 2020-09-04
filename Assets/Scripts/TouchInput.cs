@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -172,7 +173,7 @@ public sealed class TouchInput : Singleton<TouchInput>
             TouchInfo webGLTouchInfo = new TouchInfo
             {
                 valid = true,
-                canvas = EventSystem.current.IsPointerOverGameObject(),
+                canvas = IsPointerConsumedByUI(),
                 press = touch,
                 now = touch,
             };
@@ -241,5 +242,14 @@ public sealed class TouchInput : Singleton<TouchInput>
         {
             return;
         }
+    }
+
+    /// <summary>
+    /// Returns true if mouse or touch pointer is consumed by either Canvas or the legacy GUI system.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsPointerConsumedByUI()
+    {
+        return EventSystem.current.IsPointerOverGameObject() || GUIUtility.hotControl != 0;
     }
 }

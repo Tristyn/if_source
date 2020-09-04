@@ -97,9 +97,6 @@ public sealed class Machine : MonoBehaviour
             }
         }
 
-        MachineSystem.instance.Add(this);
-        MachineGroupAchievements.instance.OnMachineCreated(machineInfo.machineGroup);
-
         if (machinePurchaser)
         {
             machinePurchaser.Initialize();
@@ -134,23 +131,6 @@ public sealed class Machine : MonoBehaviour
 
         FindConveyors();
         RecycleInvalidConveyors();
-    }
-
-    public static Machine CreateMachine(MachineInfo machineInfo, Vector3 bottomCenter)
-    {
-        Bounds3Int bounds = bottomCenter.PositionBottomToBounds(machineInfo.size);
-        if (MachineSystem.instance.MachineExists(bounds))
-        {
-            return null;
-        }
-
-        GameObject gameObject = new GameObject(machineInfo.machineName);
-        Machine machine = gameObject.AddComponent<Machine>();
-        machine.bounds = bounds;
-        machine.machineInfo = machineInfo;
-        machine.Initialize();
-
-        return machine;
     }
 
     public void GetSave(out Save save)
@@ -208,7 +188,7 @@ public sealed class Machine : MonoBehaviour
         Assert.IsTrue(conveyors.Length == 0);
         Assert.IsTrue(conveyorLinks.Length == 0);
 
-        MachineSystem.instance.Remove(this);
+        MachineSystem.instance.Deleted(this);
 
         Destroy(gameObject);
     }

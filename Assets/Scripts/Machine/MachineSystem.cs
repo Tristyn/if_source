@@ -47,25 +47,57 @@ public sealed class MachineSystem : Singleton<MachineSystem>
         Init.PostLoad -= PostLoad;
     }
 
-    public void Add(Machine machine)
+    public bool CanCreateMachine(MachineInfo machineInfo, Bounds3Int bounds)
+    {
+        return !MachineExists(bounds) && LandSystem.instance.CanBuild(bounds);
+    }
+
+    public Machine CreateMachine(MachineInfo machineInfo, Vector3 bottomCenter)
+    {
+        Bounds3Int bounds = bottomCenter.PositionBottomToBounds(machineInfo.size);
+        if (CanCreateMachine(machineInfo, bounds))
+        {
+            return DoCreateMachine(machineInfo, bounds);
+        }
+        return null;
+    }
+
+    Machine DoCreateMachine(MachineInfo machineInfo, Bounds3Int bounds)
+    {
+        GameObject gameObject = new GameObject(machineInfo.machineName);
+        Machine machine = gameObject.AddComponent<Machine>();
+        machine.bounds = bounds;
+        machine.machineInfo = machineInfo;
+        
+        Add(machine);
+
+        machine.Initialize();
+
+        MachineGroupAchievements.instance.OnMachineCreated(machineInfo.machineGroup);
+
+        return machine;
+    }
+
+    void Add(Machine machine)
     {
         Assert.IsFalse(machineSpatialHash.Overlaps(machine.bounds));
         machines.Add(machine);
         machineSpatialHash.Add(machine, machine.bounds);
         MachineInfo machineInfo = machine.machineInfo;
-        if (machinesMetaData.TryGetValue(machineInfo, out MachineMetaData machineMetaData))
-        {
-            machineMetaData.numInstances++;
+
+        bool machinesMetaDataExists = machinesMetaData.TryGetValue(machineInfo, out MachineMetaData machineMetaData);
+        machineMetaData.numInstances++;
+        if(machinesMetaDataExists)
+        { 
             machinesMetaData[machineInfo] = machineMetaData;
         }
         else
         {
-            machineMetaData.numInstances++;
             machinesMetaData.Add(machineInfo, machineMetaData);
         }
     }
 
-    public void Remove(Machine machine)
+    public void Deleted(Machine machine)
     {
         bool exists = machines.Remove(machine);
         Assert.IsTrue(exists);
@@ -84,6 +116,7 @@ public sealed class MachineSystem : Singleton<MachineSystem>
             Assert.IsTrue(exists);
         }
     }
+
     public bool MachineExists(Bounds3Int bounds)
     {
         return machineSpatialHash.Overlaps(bounds);
@@ -96,7 +129,7 @@ public sealed class MachineSystem : Singleton<MachineSystem>
 
     public Machine GetMachine(Vector3Int tile)
     {
-        return machineSpatialHash.GetSingle(tile);
+        return machineSpatialHash.GetFirst(tile);
     }
 
     void PreSave()
@@ -131,14 +164,14 @@ public sealed class MachineSystem : Singleton<MachineSystem>
 
     void PostLoad()
     {
-        Machine.Save[] saveMachines = save.machines;
+        Machine.Save[] saveMachines = save.machines ?? Array.Empty<Machine.Save>();
         for (int i = 0, len = saveMachines.Length; i < len; ++i)
         {
             ref Machine.Save saveMachine = ref saveMachines[i];
             MachineInfo machineInfo = ScriptableObjects.instance.GetMachineInfo(saveMachine.machineName);
             if (machineInfo)
             {
-                Machine machine = Machine.CreateMachine(machineInfo, saveMachine.bounds.bottomCenter);
+                Machine machine = DoCreateMachine(machineInfo, saveMachine.bounds);
                 machine.SetSave(in saveMachine);
             }
             else

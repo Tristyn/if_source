@@ -58,7 +58,6 @@ public sealed class BackgroundMusic : Singleton<BackgroundMusic>
                 return;
             }
         }
-        Debug.Log("Could not find music track when loading " + clipName, this);
         NextTrack();
     }
 

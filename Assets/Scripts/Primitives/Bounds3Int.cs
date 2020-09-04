@@ -107,7 +107,7 @@ public struct Bounds3Int
 
     public static bool operator !=(Bounds3Int a, Bounds3Int b)
     {
-        return a.min == b.min && a.max == b.max;
+        return a.min != b.min || a.max != b.max;
     }
 
     public override bool Equals(object obj)

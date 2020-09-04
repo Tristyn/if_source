@@ -9,6 +9,7 @@ public sealed class SaveFile
     public string version;
     public GameTime.Save gameTime;
     public CurrencySystem.Save currency;
+    public LandSystem.Save land;
     public ConveyorSystem.Save conveyor;
     public MachineSystem.Save machine;
     public TileSelectionManager.Save tileSelection;
@@ -60,6 +61,24 @@ public static class SaveLoad
         File.Move(path, newPath);
     }
 
+    public static void NewSaveGame()
+    {
+        SaveFile newSave = new SaveFile();
+        Load(newSave);
+        UIMessageBox.MessageBox("Save and quit", "Are you sure you want to quit the game?", new UIMessageBoxAction[]{
+            new UIMessageBoxAction
+            {
+                text = "Campaign",
+                action = GameModeInitializer.InitializeCampaign
+            },
+            new UIMessageBoxAction
+            {
+                text="Sandbox",
+                action = GameModeInitializer.InitializeSandbox
+            }
+        });
+    }
+
     public static void Save(SaveOptions saveOptions = null)
     {
         try
@@ -84,6 +103,7 @@ public static class SaveLoad
             }
 #if UNITY_WEBGL && !UNITY_EDITOR
 #pragma warning disable CS0618 // Type or member is obsolete
+            // Required to flush the WebGL file cache to IndexedDB. This will annoyingly log the command
             Application.ExternalEval("_JS_FileSystem_Sync();");
 #pragma warning restore CS0618 // Type or member is obsolete
 #endif
@@ -115,9 +135,7 @@ public static class SaveLoad
                 ApplicationException log = new ApplicationException("Exception when loading corrupt save file. Now attemping to load the starter save.", ex);
                 Debug.LogException(log);
                 BackupCorruptSave(path);
-                Init.InvokePreLoad();
-                StarterSave.SuperimposeStarterSave();
-                Init.InvokeLoadComplete();
+                NewSaveGame();
             }
             return true;
         }
@@ -142,6 +160,7 @@ public static class SaveLoad
         InterfaceSelectionManager.instance.GetSave(out save.interfaceSelection);
         MachineGroupAchievements.instance.GetSave(out save.machineGroupAchievements);
         ProgressionSystem.instance.GetSave(out save.progressionSystem);
+        LandSystem.instance.GetSave(out save.land);
         Init.InvokePostSave();
 
         return save;
@@ -162,6 +181,7 @@ public static class SaveLoad
         InterfaceSelectionManager.instance.SetSave(in saveFile.interfaceSelection);
         MachineGroupAchievements.instance.SetSave(in saveFile.machineGroupAchievements);
         ProgressionSystem.instance.SetSave(in saveFile.progressionSystem);
+        LandSystem.instance.SetSave(in saveFile.land);
         Init.InvokePostLoad();
         Init.InvokeLoadComplete();
     }

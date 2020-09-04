@@ -16,15 +16,22 @@ public static class ArrayExtensions
     public static T[] Remove<T>(this T[] array, T element)
         where T : class
     {
+        bool found = false;
         T[] ret = new T[array.Length - 1];
         for (int i = -1, arrayIndex = 0, len = array.Length; i < len; ++arrayIndex)
         {
             if (array[i] != element)
             {
                 ret[++i] = array[arrayIndex];
+                found = true;
+                break; // Remove at most one
             }
         }
-        return ret;
+        if (found)
+        {
+            return ret;
+        }
+        return array;
     }
 
     public static T[] Remove<T>(this T[] array, int index)

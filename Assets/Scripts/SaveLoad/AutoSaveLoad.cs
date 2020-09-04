@@ -80,7 +80,7 @@ public sealed class AutoSaveLoad : MonoBehaviour
     {
         if (!SaveLoad.Load())
         {
-            StarterSave.SuperimposeStarterSave();
+            SaveLoad.NewSaveGame();
         }
     }
 }

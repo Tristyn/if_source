@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public enum PickMask
 {
@@ -61,7 +60,7 @@ public sealed class Picker : Singleton<Picker>
         Vector3Int pickerTile;
 
         InterfaceState interfaceState = InterfaceSelectionManager.instance.state;
-        if (Input.GetKeyDown(KeyCode.Mouse0) && !EventSystem.current.IsPointerOverGameObject())
+        if (Input.GetKeyDown(KeyCode.Mouse0) && !TouchInput.IsPointerConsumedByUI())
         {
             if (GetPickerTile(Input.mousePosition, PickMask.Construct, out pickerTile))
             {
@@ -103,11 +102,11 @@ public sealed class Picker : Singleton<Picker>
         }
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
-            if (!mouseDraggingConveyor && interfaceState.mode == InterfaceMode.Machine && !EventSystem.current.IsPointerOverGameObject())
+            if (!mouseDraggingConveyor && interfaceState.mode == InterfaceMode.Machine && !TouchInput.IsPointerConsumedByUI())
             {
                 if (GetPickerPosition(Input.mousePosition, PickMask.Construct, out pickerPosition))
                 {
-                    Machine machine = Machine.CreateMachine(interfaceState.machineInfo, pickerPosition);
+                    Machine machine = MachineSystem.instance.CreateMachine(interfaceState.machineInfo, pickerPosition);
                     if (machine)
                     {
                         machine.Drop();
@@ -131,7 +130,7 @@ public sealed class Picker : Singleton<Picker>
             machineCreationVisualizer.SetVisible(false);
         }
 
-        if (Input.GetKey(KeyCode.Mouse2) && !EventSystem.current.IsPointerOverGameObject())
+        if (Input.GetKey(KeyCode.Mouse2) && !TouchInput.IsPointerConsumedByUI())
         {
             if (GetPickerTile(Input.mousePosition, PickMask.Demolish, out pickerTile))
             {
@@ -197,7 +196,7 @@ public sealed class Picker : Singleton<Picker>
                             Machine machine = MachineSystem.instance.GetMachine(pickerTile);
                             if (!machine)
                             {
-                                machine = Machine.CreateMachine(interfaceState.machineInfo, pickerTile);
+                                machine = MachineSystem.instance.CreateMachine(interfaceState.machineInfo, pickerTile);
                             }
                             if (machine)
                             {

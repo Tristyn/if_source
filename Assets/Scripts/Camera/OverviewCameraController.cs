@@ -65,7 +65,8 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
     void PostLoad()
     {
         SetZoomIncrement(save.zoomIncrement);
-        save.interpolatingCameraState.UpdateTransform(transform);
+        save.targetCameraState.UpdateTransform(transform);
+        save.interpolatingCameraState = save.targetCameraState;
     }
 
     Vector3 GetKeyboardTranslationDirection()
@@ -127,7 +128,7 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
 
     public void SetZoomIncrement(int zoomIncrement)
     {
-        this.save.zoomIncrement = Mathf.Clamp(zoomIncrement, 0, zoomIncrements.Length - 1);
+        save.zoomIncrement = Mathf.Clamp(zoomIncrement, 0, zoomIncrements.Length - 1);
 
         save.targetCameraState.position.y = zoomIncrements[this.save.zoomIncrement].height;
         save.targetCameraState.eulerAngles.x = zoomIncrements[this.save.zoomIncrement].pitch;

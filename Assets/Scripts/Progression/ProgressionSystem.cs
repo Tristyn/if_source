@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -97,15 +96,18 @@ public class ProgressionSystem : Singleton<ProgressionSystem>
     public void SetSave(in Save save)
     {
         completedProgressionIds.Clear();
-        for (int i = 0, len = save.completedProgressionIds.Length; i < len; ++i)
+        if (save.completedProgressionIds != null)
         {
-            if (!completedProgressionIds.Contains(save.completedProgressionIds[i]))
+            for (int i = 0, len = save.completedProgressionIds.Length; i < len; ++i)
             {
-                completedProgressionIds.Add(save.completedProgressionIds[i]);
-            }
-            else
-            {
-                Debug.LogWarning("Found progression id more than once in save file. " + save.completedProgressionIds[i]);
+                if (!completedProgressionIds.Contains(save.completedProgressionIds[i]))
+                {
+                    completedProgressionIds.Add(save.completedProgressionIds[i]);
+                }
+                else
+                {
+                    Debug.LogWarning("Found progression id more than once in save file. " + save.completedProgressionIds[i]);
+                }
             }
         }
     }

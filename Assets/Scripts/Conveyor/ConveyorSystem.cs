@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -21,7 +20,6 @@ public sealed class ConveyorSystem : Singleton<ConveyorSystem>
 
     public struct Save
     {
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public Conveyor.Save[] conveyors;
     }
     public Save save;
@@ -76,7 +74,7 @@ public sealed class ConveyorSystem : Singleton<ConveyorSystem>
 
     void PostLoad()
     {
-        Conveyor.Save[] saveConveyors = save.conveyors;
+        Conveyor.Save[] saveConveyors = save.conveyors ?? Array.Empty<Conveyor.Save>();
         for (int i = 0, len = saveConveyors.Length; i < len; i++)
         {
             DoCreateConveyor(saveConveyors[i].position_local);
@@ -93,7 +91,7 @@ public sealed class ConveyorSystem : Singleton<ConveyorSystem>
 
     public bool CanCreate(Vector3Int position)
     {
-        return !MachineSystem.instance.GetMachine(position);
+        return !MachineSystem.instance.GetMachine(position) && LandSystem.instance.CanBuild(position);
     }
 
     public bool CanLink(Vector3Int from, Vector3Int to)
@@ -111,6 +109,11 @@ public sealed class ConveyorSystem : Singleton<ConveyorSystem>
 
         // Cannot link from machine to machine, or within the same machine
         if (toMachine && fromMachine)
+        {
+            return false;
+        }
+
+        if (!LandSystem.instance.CanBuild(from) || !LandSystem.instance.CanBuild(to))
         {
             return false;
         }

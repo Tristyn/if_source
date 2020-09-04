@@ -99,9 +99,9 @@ namespace GameAnalyticsSDK
         private static extern void onQuit();
 #endif
 
+#if (!UNITY_EDITOR && !UNITY_IOS && !UNITY_ANDROID && !UNITY_TVOS && !UNITY_WEBGL && !UNITY_TIZEN)
         void OnApplicationQuit()
         {
-#if (!UNITY_EDITOR && !UNITY_IOS && !UNITY_ANDROID && !UNITY_TVOS && !UNITY_WEBGL && !UNITY_TIZEN)
 #if (UNITY_WSA)
             onQuit();
 #else
@@ -110,8 +110,8 @@ namespace GameAnalyticsSDK
 #if UNITY_STANDALONE
             System.Threading.Thread.Sleep(1500);
 #endif
-#endif
         }
+#endif
 
 #endregion
 
@@ -250,7 +250,9 @@ namespace GameAnalyticsSDK
             else
             {
                 GameAnalytics._hasInitializeBeenCalled = true;
+#if !UNITY_EDITOR
                 Debug.LogWarning("GameAnalytics: Unsupported platform (events will not be sent in editor; or missing platform in settings): " + Application.platform);
+#endif
             }
         }
 

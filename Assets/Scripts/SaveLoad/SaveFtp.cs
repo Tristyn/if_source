@@ -1,6 +1,4 @@
-﻿using System;
-using System.Net;
-
+﻿
 //public static class SaveFtp
 //{
 //    public const string FTP_HOST = "70.66.184.22";

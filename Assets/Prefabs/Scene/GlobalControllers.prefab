@@ -99,6 +99,7 @@ GameObject:
   - component: {fileID: 2505729766359951478}
   - component: {fileID: 3132871875981262792}
   - component: {fileID: 1574542010878729653}
+  - component: {fileID: 7352876012298268399}
   m_Layer: 0
   m_Name: GlobalControllers
   m_TagString: Untagged
@@ -408,3 +409,16 @@ MonoBehaviour:
   createConveyorClip: {fileID: 8300000, guid: 9dc958029235c134b955c3ff2a4c0f6d, type: 3}
   demolishConveyorClip: {fileID: 8300000, guid: 75bc47a71fb314342b9a7e56a95133d5,
     type: 3}
+--- !u!114 &7352876012298268399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377630774726580451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cabb2d1ffe8bf6d41bcf66946048582a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  landParcelsList: []
