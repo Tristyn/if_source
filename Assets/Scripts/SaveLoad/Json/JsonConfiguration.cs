@@ -16,6 +16,7 @@ public static class JsonConfiguration
                 // From https://github.com/jilleJr/Newtonsoft.Json-for-Unity.Converters/blob/master/Doc/Compatability-table.md
                 new Vector3Converter(),
                 new Vector3IntConverter(),
+                new ColorConverter(),
 
                 new Bounds3IntConverter()
             }

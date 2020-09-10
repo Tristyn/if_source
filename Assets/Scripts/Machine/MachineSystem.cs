@@ -135,9 +135,8 @@ public sealed class MachineSystem : Singleton<MachineSystem>
     void PreSave()
     {
         HashSet<Machine> machines = this.machines;
+        Machine.Save[] machineSaves = new Machine.Save[machines.Count];
         int i = 0;
-        int len = machines.Count;
-        Machine.Save[] machineSaves = new Machine.Save[len];
         foreach (Machine machine in machines)
         {
             machine.GetSave(out machineSaves[i]);

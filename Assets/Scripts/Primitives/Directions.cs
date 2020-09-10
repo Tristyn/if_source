@@ -65,6 +65,23 @@ public static class DirectionsExtensions
         }
     }
 
+    public static Vector3Int ToOffsetInt(this Directions direction, int scale)
+    {
+        switch (direction)
+        {
+            case Directions.North:
+                return new Vector3Int(scale, 0, 0);
+            case Directions.East:
+                return new Vector3Int(0, 0, -scale);
+            case Directions.South:
+                return new Vector3Int(-scale, 0, 0);
+            case Directions.West:
+                return new Vector3Int(0, 0, scale);
+            default:
+                throw new ArgumentOutOfRangeException("Value: " + (int)direction);
+        }
+    }
+
     public static bool IsNeighbor(this Vector3Int from, Vector3Int to)
     {
         Vector3Int offset = to - from;
@@ -125,6 +142,20 @@ public static class DirectionsExtensions
             }
         }
         return (false, Directions.North);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Directions Left(this Directions direction)
+    {
+        int result = ((byte)direction - 1) & 0b11;
+        return (Directions)result;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Directions Right(this Directions direction)
+    {
+        int result = ((byte)direction + 1) & 0b11;
+        return (Directions)result;
     }
 
     public static Directions Inverse(this Directions direction)

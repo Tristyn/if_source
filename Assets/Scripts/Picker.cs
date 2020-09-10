@@ -286,7 +286,7 @@ public sealed class Picker : Singleton<Picker>
         }
         if (Physics.Raycast(mainCamera.ScreenPointToRay(pixelCoordinates), out RaycastHit hitInfo, 100, layerMask))
         {
-            pickerTile = hitInfo.point.RoundToTile();
+            pickerTile = hitInfo.point.RoundDown();
             pickerTile.y = 0;
             return true;
         }

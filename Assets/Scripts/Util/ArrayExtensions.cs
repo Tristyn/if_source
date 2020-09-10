@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 
 public static class ArrayExtensions
 {
@@ -61,5 +62,18 @@ public static class ArrayExtensions
             }
         }
         return false;
+    }
+
+    public static void ThrowOnNullOrEmpty<T>(this T[] array)
+    {
+        // seperate throws so the callstack will say which exception
+        if(array == null)
+        {
+            throw new ArgumentNullException();
+        }
+        if (array.Length == 0)
+        {
+            throw new ArgumentException();
+        }
     }
 }

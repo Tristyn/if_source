@@ -58,6 +58,36 @@ PrefabInstance:
       propertyPath: m_Name
       value: SelectionHighlighter
       objectReference: {fileID: 0}
+    - target: {fileID: 4354625580939424391, guid: 05b05f9728e67c14389acd06cd41ade4,
+        type: 3}
+      propertyPath: buildColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4354625580939424391, guid: 05b05f9728e67c14389acd06cd41ade4,
+        type: 3}
+      propertyPath: buildColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4354625580939424391, guid: 05b05f9728e67c14389acd06cd41ade4,
+        type: 3}
+      propertyPath: buildColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4354625580939424391, guid: 05b05f9728e67c14389acd06cd41ade4,
+        type: 3}
+      propertyPath: invalidColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4354625580939424391, guid: 05b05f9728e67c14389acd06cd41ade4,
+        type: 3}
+      propertyPath: invalidColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4354625580939424391, guid: 05b05f9728e67c14389acd06cd41ade4,
+        type: 3}
+      propertyPath: invalidColor.b
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4354625580939424392, guid: 05b05f9728e67c14389acd06cd41ade4,
         type: 3}
       propertyPath: m_LocalPosition.x

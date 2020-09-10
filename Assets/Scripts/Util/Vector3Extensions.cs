@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Runtime.CompilerServices;
+using UnityEngine;
 
 public static class Vector3Extensions
 {
-    public static Vector3Int RoundToTile(this Vector3 vector3)
+    public static Vector3Int RoundDown(this Vector3 vector3)
     {
         return new Vector3Int(Mathf.FloorToInt(vector3.x), Mathf.FloorToInt(vector3.y), Mathf.FloorToInt(vector3.z));
     }
@@ -10,6 +11,18 @@ public static class Vector3Extensions
     public static Vector3 RoundToTileCenter(this Vector3 vector3)
     {
         return new Vector3(Mathf.Floor(vector3.x) + 0.5f, Mathf.Floor(vector3.y), Mathf.Floor(vector3.z) + 0.5f);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2Int ToVector2XZ(this Vector3Int vector)
+    {
+        return new Vector2Int(vector.x, vector.z);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2Int ToVector3XY(this Vector3Int vector)
+    {
+        return new Vector2Int(vector.x, vector.y);
     }
 
     public static Bounds3Int PositionBottomToBounds(this Vector3 tileCenter, Vector3Int size)

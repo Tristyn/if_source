@@ -1,64 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 public sealed class LandSystem : Singleton<LandSystem>
 {
-    public struct Save
-    {
-        public LandParcel[] landParcels;
-    }
-
-    public LandParcel[] landParcelsList;
-    [HideInInspector]
-    public SpatialHash<LandParcel> landParcels;
+    public HashSet<LandParcel> landParcelSet = new HashSet<LandParcel>();
+    public SpatialHash<LandParcel> landParcelHash;
 
     protected override void Awake()
     {
         base.Awake();
-        landParcels.Initialize();
-        for (int i = 0, len = landParcelsList.Length; i < len; ++i)
+        landParcelHash.Initialize();
+        foreach (LandParcel landParcel in landParcelSet)
         {
-            landParcels.Add(landParcelsList[i], landParcelsList[i].bounds);
-        }
-    }
-
-    public void GetSave(out Save save)
-    {
-        save.landParcels = landParcelsList;
-    }
-
-    public void SetSave(in Save save)
-    {
-        landParcelsList = save.landParcels ?? Array.Empty<LandParcel>();
-
-        landParcels.Clear();
-        if (save.landParcels != null)
-        {
-            for (int i = 0, len = save.landParcels.Length; i < len; ++i)
-            {
-                LandParcel landParcel = save.landParcels[i];
-                landParcels.Add(landParcel, landParcel.bounds);
-            }
+            landParcelHash.Add(landParcel, landParcel.bounds);
         }
     }
 
     public void AddLandParcel(LandParcel land)
     {
-        if (landParcelsList.Contains(land))
+        if (landParcelSet.Contains(land))
         {
             Debug.LogWarning("Land parcel added twice", this);
             return;
         }
-        landParcelsList = landParcelsList.Append(land);
-        landParcels.Add(land, land.bounds);
+        landParcelSet.Add(land);
+        landParcelHash.Add(land, land.bounds);
     }
 
     public void RemoveLandParcel(LandParcel land)
     {
-        landParcelsList = landParcelsList.Remove(land);
-        landParcels.Remove(land, land.bounds);
+        landParcelSet.Remove(land);
+        landParcelHash.Remove(land, land.bounds);
     }
 
     public bool CanBuild(Bounds3Int bounds)
@@ -84,18 +57,18 @@ public sealed class LandSystem : Singleton<LandSystem>
 
     public bool CanBuild(Vector3Int position)
     {
-        List<LandParcel> results = landParcels.GetOverlap(position);
+        List<LandParcel> results = landParcelHash.GetOverlap(position);
         bool valid = false;
 
         // Need to check that every point in the machine is within valid parcels
         for (int i = 0, len = results.Count; i < len; ++i)
         {
             LandParcel landParcel = results[i];
-            if (landParcel.Flags == LandParcelFlags.Restricted)
+            if (landParcel.flags == LandParcelFlags.Restricted)
             {
                 return false;
             }
-            if (landParcel.Flags == LandParcelFlags.Valid)
+            if (landParcel.flags == LandParcelFlags.Valid)
             {
                 valid = true;
             }
@@ -107,15 +80,28 @@ public sealed class LandSystem : Singleton<LandSystem>
 
     void OnDrawGizmosSelected()
     {
-        landParcels.Initialize();
+        landParcelHash.Initialize();
         Gizmos.color = Color.white;
-        foreach (List<SpatialHashEntry<LandParcel>> bucket in landParcels.buckets.Values)
+        foreach (List<SpatialHashEntry<LandParcel>> bucket in landParcelHash.buckets.Values)
         {
             for (int i = 0, len = bucket.Count; i < len; ++i)
             {
                 Bounds3Int bounds = bucket[i].bounds;
                 Gizmos.DrawWireCube(bounds.center, bounds.size);
             }
+        }
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F5))
+        {
+            Bounds3Int[] spacePlatformBounds = AddonGen.Addon();
+            SpacePlatform spacePlatform = new SpacePlatform();
+            spacePlatform.save.bounds = spacePlatformBounds;
+            spacePlatform.save.color = new Color(Random.value, Random.value, Random.value);
+            spacePlatform.Initialize();
+            OverviewCameraController.instance.MoveTo(spacePlatform.visual.floors[0].transform.position);
         }
     }
 }

@@ -44,7 +44,6 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
     protected override void Awake()
     {
         base.Awake();
-        SetZoomIncrement(zoomIncrements.Length - 1);
         Init.PostLoad += PostLoad;
     }
 
@@ -110,6 +109,23 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
     public void MoveWorld(Vector3 translation_world)
     {
         save.targetCameraState.TranslateWorld(translation_world);
+    }
+
+    /// <summary>
+    /// Translates the target position in world space
+    /// </summary>
+    public void MoveTo(Vector3 position_world)
+    {
+        position_world.y = save.targetCameraState.position.y;
+        save.targetCameraState.position = position_world;
+    }
+
+    public void SetRotation(float angle)
+    {
+        Vector3 eulerRotation = new Vector3(0, angle, 0);
+
+        save.interpolatingCameraState.eulerAngles = eulerRotation;
+        save.targetCameraState.eulerAngles = eulerRotation;
     }
 
     public void Rotate(float angle)

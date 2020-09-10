@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 [Serializable]
@@ -12,6 +13,25 @@ public struct Bounds3Int
     {
         this.min = min;
         this.max = max;
+    }
+
+    public Bounds3Int(int minx, int miny, int minz, int maxx, int maxy, int maxz)
+    {
+        min = new Vector3Int(minx,miny,minz);
+        max = new Vector3Int(maxx,maxy,maxz);
+    }
+
+    public static Bounds3Int FromPoints(Vector3Int a, Vector3Int b)
+    {
+        return new Bounds3Int(
+            new Vector3Int(
+                Mathf.Min(a.x, b.x),
+                Mathf.Min(a.y, b.y),
+                Mathf.Min(a.z, b.z)),
+            new Vector3Int(
+                Mathf.Max(a.x, b.x),
+                Mathf.Max(a.y, b.y),
+                Mathf.Max(a.z, b.z)));
     }
 
     public Vector3 center => min + ((Vector3)(max - min) * 0.5f) + new Vector3(0.5f, 0.5f, 0.5f);
@@ -38,6 +58,24 @@ public struct Bounds3Int
 
     public Vector3Int size => max - min + Vector3Int.one;
 
+    public int volume
+    {
+        get
+        {
+            Vector3Int size = this.size;
+            return size.x * size.y * size.z;
+        }
+    }
+
+    public int area
+    {
+        get
+        {
+            Vector3Int size = this.size;
+            return size.x * size.z;
+        }
+    }
+
     public bool Contains(Vector3Int position)
     {
         return position.x >= min.x && position.y >= min.y && position.z >= min.z
@@ -51,19 +89,69 @@ public struct Bounds3Int
             && max.z >= b.min.z && b.max.z >= min.z;
     }
 
-    public bool Perimeter(Vector3Int vector)
+    public bool Overlaps(Bounds3Int[] b)
     {
-        if (vector.x == min.x || vector.x == max.x)
+        for (int i = 0, len = b.Length; i < len; ++i)
         {
-            if (vector.y == min.y || vector.y == max.y)
+            if (Overlaps(b[i]))
             {
-                if (vector.z == min.z || vector.z == max.z)
-                {
-                    return true;
-                }
+                return true;
             }
         }
         return false;
+    }
+
+    public bool Overlaps(List<Bounds3Int> b)
+    {
+        for (int i = 0, len = b.Count; i < len; ++i)
+        {
+            if (Overlaps(b[i]))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Gets the minimum vector
+    public Vector3Int GetMin(Directions direction)
+    {
+        switch (direction)
+        {
+            case Directions.North:
+                return new Vector3Int(max.x, min.y, min.z);
+            case Directions.East:
+                return min;
+            case Directions.South:
+                return min;
+            case Directions.West:
+                return new Vector3Int(min.x, min.y, max.z);
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    public Vector3Int GetMax(Directions direction)
+    {
+        switch (direction)
+        {
+            case Directions.North:
+                return max;
+            case Directions.East:
+                return new Vector3Int(max.x, max.y, min.z);
+            case Directions.South:
+                return new Vector3Int(min.x, max.y, max.z);
+            case Directions.West:
+                return max;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Bounds3Int Translate(Vector3Int translation)
+    {
+        return new Bounds3Int(min + translation, max + translation);
     }
 
     public IEnumerable<(Vector3Int outerTile, Vector3Int innerTile)> EnumeratePerimeter()

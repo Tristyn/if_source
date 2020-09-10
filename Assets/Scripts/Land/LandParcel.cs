@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 
 [Flags]
 public enum LandParcelFlags
@@ -12,6 +11,7 @@ public enum LandParcelFlags
 [Serializable]
 public class LandParcel
 {
-    public LandParcelFlags Flags;
+    public SpacePlatform spacePlatform;
+    public LandParcelFlags flags;
     public Bounds3Int[] bounds = Array.Empty<Bounds3Int>();
 }

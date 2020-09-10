@@ -179,6 +179,8 @@ MonoBehaviour:
   - {fileID: 7418500504231909687, guid: 772d08ecd31f241429262a7b33a4d7e7, type: 3}
   - {fileID: 1197622272763815322, guid: 8c34770edbbdc3042a16b716f601cf61, type: 3}
   - {fileID: 2022674743856735774, guid: baeced884239dfd4db1e974d910b2c5e, type: 3}
+  - {fileID: 4856015240372045562, guid: 6a483ddc073a7ec4586c3d146f6b9d2a, type: 3}
+  - {fileID: 4044242951745887269, guid: 6176b8a0e5dcaf54f9d0c97a20e06347, type: 3}
 --- !u!114 &1377630774726580445
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -421,4 +423,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cabb2d1ffe8bf6d41bcf66946048582a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  landParcelsList: []

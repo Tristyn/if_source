@@ -9,7 +9,6 @@ public sealed class SaveFile
     public string version;
     public GameTime.Save gameTime;
     public CurrencySystem.Save currency;
-    public LandSystem.Save land;
     public ConveyorSystem.Save conveyor;
     public MachineSystem.Save machine;
     public TileSelectionManager.Save tileSelection;
@@ -20,6 +19,7 @@ public sealed class SaveFile
     public InterfaceSelectionManager.Save interfaceSelection;
     public MachineGroupAchievements.Save machineGroupAchievements;
     public ProgressionSystem.Save progressionSystem;
+    public SpacePlatform.Saves spacePlatforms;
 }
 
 public static class SaveLoad
@@ -160,7 +160,7 @@ public static class SaveLoad
         InterfaceSelectionManager.instance.GetSave(out save.interfaceSelection);
         MachineGroupAchievements.instance.GetSave(out save.machineGroupAchievements);
         ProgressionSystem.instance.GetSave(out save.progressionSystem);
-        LandSystem.instance.GetSave(out save.land);
+        SpacePlatform.GetSave(out save.spacePlatforms);
         Init.InvokePostSave();
 
         return save;
@@ -181,7 +181,7 @@ public static class SaveLoad
         InterfaceSelectionManager.instance.SetSave(in saveFile.interfaceSelection);
         MachineGroupAchievements.instance.SetSave(in saveFile.machineGroupAchievements);
         ProgressionSystem.instance.SetSave(in saveFile.progressionSystem);
-        LandSystem.instance.SetSave(in saveFile.land);
+        SpacePlatform.SetSave(in saveFile.spacePlatforms);
         Init.InvokePostLoad();
         Init.InvokeLoadComplete();
     }
