@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public sealed class MachineAssembler : MonoBehaviour
+public sealed class MachineAssembler : MonoBehaviour, IFixedUpdate
 {
     public Machine machine;
 
@@ -27,23 +28,36 @@ public sealed class MachineAssembler : MonoBehaviour
         inputs = machine.machineInfo.assembleInputs;
         output = machine.machineInfo.assembleOutput;
         inventory = machine.inventory;
+        Updater.machineAssemblers.Add(this);
     }
 
-    private void FixedUpdate()
+    public void Delete()
+    {
+        Updater.machineAssemblers.Remove(this);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void DoFixedUpdate()
     {
         if (save.nextAssembleTime <= GameTime.fixedTime)
         {
             save.nextAssembleTime += placeInterval;
+
+            bool operated = false;
+
             if (inventory.HasItems(inputs))
             {
                 ref InventorySlot outputSlot = ref inventory.GetSlot(output.itemInfo);
                 Assert.IsTrue(outputSlot.valid);
                 if (outputSlot.TryAdd(output.count))
                 {
+                    operated = true;
                     inventory.DeductItems(inputs);
                     save.numAssembled++;
                 }
             }
+
+            machine.machineEfficiency.Tick(operated);
         }
     }
 }

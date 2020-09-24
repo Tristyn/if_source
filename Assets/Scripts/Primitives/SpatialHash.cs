@@ -421,4 +421,17 @@ public struct SpatialHash<T> where T : class
             position.y & SpatialHash.CELL_MASK,
             position.z & SpatialHash.CELL_MASK);
     }
+
+    public void DrawGizmos()
+    {
+        Gizmos.color = Color.white;
+        foreach (List<SpatialHashEntry<T>> bucket in buckets.Values)
+        {
+            for (int i = 0, len = bucket.Count; i < len; ++i)
+            {
+                Bounds3Int bounds = bucket[i].bounds;
+                Gizmos.DrawWireCube(bounds.center, bounds.size);
+            }
+        }
+    }
 }

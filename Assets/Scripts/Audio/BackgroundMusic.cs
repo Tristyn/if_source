@@ -27,7 +27,7 @@ public sealed class BackgroundMusic : Singleton<BackgroundMusic>
         };
     }
 
-    void FixedUpdate()
+    public void DoUpdate()
     {
         if (!audioSource.isPlaying)
         {

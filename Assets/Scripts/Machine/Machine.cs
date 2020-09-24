@@ -23,7 +23,8 @@ public sealed class Machine : MonoBehaviour
     [NonSerialized]
     public MachineInfo machineInfo;
     public Inventory inventory = Inventory.empty;
-
+	public MachineEfficiency machineEfficiency;
+	
     public bool canOutput;
     public bool canInput;
     public MachinePurchaser machinePurchaser;
@@ -177,6 +178,25 @@ public sealed class Machine : MonoBehaviour
 
     public void Delete()
     {
+        Events.machineDeleted?.Invoke(this);
+
+        if (machinePurchaser)
+        {
+            machinePurchaser.Delete();
+        }
+        if (machineSeller)
+        {
+            machineSeller.Delete();
+        }
+        if (machineAssembler)
+        {
+            machineAssembler.Delete();
+        }
+        if (machinePlacer)
+        {
+            machinePlacer.Delete();
+        }
+
         Conveyor[] conv = (Conveyor[])conveyors.Clone();
         for (int i = 0, len = conv.Length; i < len; ++i)
         {
@@ -187,8 +207,6 @@ public sealed class Machine : MonoBehaviour
 
         Assert.IsTrue(conveyors.Length == 0);
         Assert.IsTrue(conveyorLinks.Length == 0);
-
-        MachineSystem.instance.Deleted(this);
 
         Destroy(gameObject);
     }
@@ -201,7 +219,6 @@ public sealed class Machine : MonoBehaviour
     public void Drop()
     {
         MachineDropper machineDropper = ObjectPooler.instance.Get<MachineDropper>();
-        machineDropper.recycleComponentAfterDrop = true;
         machineDropper.Drop(bounds, instance.transform);
         AudioSystem.instance.PlayOneShot(MachineSystem.instance.createMachineClip, AudioCategory.Effect);
     }
@@ -350,7 +367,7 @@ public sealed class Machine : MonoBehaviour
                     if (spatialHash.buckets.TryGetValue(new Vector3Int(x, y, z), out var bucket) && bucket.Any(entry => entry.value == this))
                     {
                         Gizmos.color = Color.white;
-                        var bucketBounds = new Bounds3Int(new Vector3Int(x, y, z), new Vector3Int(x, y, z).Add(SpatialHash.CELL_SIZE) - Vector3Int.one);
+                        var bucketBounds = Bounds3Int.Create(new Vector3Int(x, y, z), new Vector3Int(SpatialHash.CELL_SIZE, SpatialHash.CELL_SIZE, SpatialHash.CELL_SIZE));
                         Gizmos.DrawWireCube(bucketBounds.center, bucketBounds.size);
                         Gizmos.color = Color.red;
                         Gizmos.DrawWireCube(bounds.center, bounds.size - new Vector3(0.2f, 0.2f, 0.2f));

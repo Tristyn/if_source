@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 /// <summary>
 /// The inspector for the GA prefab.
 /// </summary>
@@ -6,6 +7,8 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection.Emit;
+using System.Reflection;
 using System;
 using GameAnalyticsSDK.Utilities;
 using GameAnalyticsSDK.Setup;
@@ -891,8 +894,6 @@ namespace GameAnalyticsSDK.Editor
 
                                     EditorGUILayout.Space();
                                     break;
-                                default:
-                                    break;
                             }
 
                             if (ga.SelectedPlatformGameID[i] >= 0)
@@ -1627,7 +1628,9 @@ namespace GameAnalyticsSDK.Editor
                     }
                 }
 
-#if UNITY_2018_3_OR_NEWER
+#if UNITY_2020_1_OR_NEWER
+                if (!(www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError))
+#elif UNITY_2018_3_OR_NEWER
                 if (!(www.isNetworkError || www.isHttpError))
 #else
                 if (string.IsNullOrEmpty(www.error))
@@ -1749,7 +1752,9 @@ namespace GameAnalyticsSDK.Editor
                     }
                 }
 
-#if UNITY_2018_3_OR_NEWER
+#if UNITY_2020_1_OR_NEWER
+                if (!(www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError))
+#elif UNITY_2018_3_OR_NEWER
                 if (!(www.isNetworkError || www.isHttpError))
 #else
                 if (string.IsNullOrEmpty(www.error))
@@ -1847,7 +1852,9 @@ namespace GameAnalyticsSDK.Editor
                     }
                 }
 
-#if UNITY_2018_3_OR_NEWER
+#if UNITY_2020_1_OR_NEWER
+                if (!(www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError))
+#elif UNITY_2018_3_OR_NEWER
                 if (!(www.isNetworkError || www.isHttpError))
 #else
                 if (string.IsNullOrEmpty(www.error))
@@ -2025,7 +2032,9 @@ namespace GameAnalyticsSDK.Editor
                     }
                 }
 
-#if UNITY_2018_3_OR_NEWER
+#if UNITY_2020_1_OR_NEWER
+                if (!(www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError))
+#elif UNITY_2018_3_OR_NEWER
                 if (!(www.isNetworkError || www.isHttpError))
 #else
                 if (string.IsNullOrEmpty(www.error))
@@ -2178,7 +2187,9 @@ namespace GameAnalyticsSDK.Editor
                     }
                 }
 
-#if UNITY_2018_3_OR_NEWER
+#if UNITY_2020_1_OR_NEWER
+                if (!(www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError))
+#elif UNITY_2018_3_OR_NEWER
                 if (!(www.isNetworkError || www.isHttpError))
 #else
                 if (string.IsNullOrEmpty(www.error))
@@ -2362,7 +2373,9 @@ namespace GameAnalyticsSDK.Editor
 
             try
             {
-#if UNITY_2018_3_OR_NEWER
+#if UNITY_2020_1_OR_NEWER
+                if (!(www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError))
+#elif UNITY_2018_3_OR_NEWER
                 if (!(www.isNetworkError || www.isHttpError))
 #else
                 if (string.IsNullOrEmpty(www.error))
@@ -2412,7 +2425,9 @@ namespace GameAnalyticsSDK.Editor
 
             try
             {
-#if UNITY_2018_3_OR_NEWER
+#if UNITY_2020_1_OR_NEWER
+                if (!(www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError))
+#elif UNITY_2018_3_OR_NEWER
                 if (!(www.isNetworkError || www.isHttpError))
 #else
                 if (string.IsNullOrEmpty(www.error))
@@ -2767,3 +2782,4 @@ namespace GameAnalyticsSDK.Editor
 #endregion
     }
 }
+#endif

@@ -6,6 +6,7 @@ public static class GameModeInitializer
     {
         InitializeCommon();
         CurrencySystem.instance.SetMoney(100);
+        CurrencySystem.instance.SetItemsCostMoney(true);
         Bounds3Int bounds = new Bounds3Int(new Vector3Int(-10, 0, -10), new Vector3Int(9, 0, 9));
         Floor floor = ObjectPooler.instance.Get<Floor>();
         floor.Initialize(bounds);
@@ -19,10 +20,8 @@ public static class GameModeInitializer
     public static void InitializeCampaign()
     {
         InitializeCommon();
-        Bounds3Int[] spacePlatformBounds = AddonGen.Addon();
-        SpacePlatform spacePlatform = new SpacePlatform();
-        spacePlatform.save.bounds = spacePlatformBounds;
-        spacePlatform.Initialize();
+        CurrencySystem.instance.SetItemsCostMoney(false);
+        CampaignGoals.instance.BeginCampaign();
     }
 
     static void InitializeCommon()

@@ -150,7 +150,7 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
         save.targetCameraState.eulerAngles.x = zoomIncrements[this.save.zoomIncrement].pitch;
     }
 
-    void Update()
+    public void DoUpdate()
     {
         // Exit Sample
         if (Input.GetKey(KeyCode.Escape))

@@ -1,8 +1,7 @@
-﻿#if (UNITY_STANDALONE || UNITY_WP_8_1 || UNITY_SAMSUNGTV) && (!UNITY_EDITOR)
-using GameAnalyticsSDK.Utilities;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-#endif
+using GameAnalyticsSDK.Utilities;
 
 namespace GameAnalyticsSDK.Wrapper
 {

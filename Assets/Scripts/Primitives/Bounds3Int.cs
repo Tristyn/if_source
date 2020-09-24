@@ -17,8 +17,14 @@ public struct Bounds3Int
 
     public Bounds3Int(int minx, int miny, int minz, int maxx, int maxy, int maxz)
     {
-        min = new Vector3Int(minx,miny,minz);
-        max = new Vector3Int(maxx,maxy,maxz);
+        min = new Vector3Int(minx, miny, minz);
+        max = new Vector3Int(maxx, maxy, maxz);
+    }
+
+    public static Bounds3Int Create(Vector3Int min, Vector3Int size)
+    {
+        Vector3Int max = min + size - new Vector3Int(1, 1, 1);
+        return new Bounds3Int(min, max);
     }
 
     public static Bounds3Int FromPoints(Vector3Int a, Vector3Int b)
@@ -32,6 +38,24 @@ public struct Bounds3Int
                 Mathf.Max(a.x, b.x),
                 Mathf.Max(a.y, b.y),
                 Mathf.Max(a.z, b.z)));
+    }
+
+    /// <summary>
+    /// Returns a bounding box that encompasses all bounds
+    /// </summary>
+    public static Bounds3Int BoundingBox(Bounds3Int[] bounds)
+    {
+        if (bounds.Length == 0)
+        {
+            return new Bounds3Int(0, 0, 0, 0, 0, 0);
+        }
+        Bounds3Int boundingBox = bounds[0];
+        for (int i = 1, len = bounds.Length; i < len; ++i)
+        {
+            boundingBox.min = Vector3Int.Min(boundingBox.min, bounds[i].min);
+            boundingBox.max = Vector3Int.Max(boundingBox.max, bounds[i].max);
+        }
+        return boundingBox;
     }
 
     public Vector3 center => min + ((Vector3)(max - min) * 0.5f) + new Vector3(0.5f, 0.5f, 0.5f);
@@ -80,6 +104,37 @@ public struct Bounds3Int
     {
         return position.x >= min.x && position.y >= min.y && position.z >= min.z
             && position.x <= max.x && position.y <= max.y && position.z <= max.z;
+    }
+
+    public static bool Contains(Bounds3Int[] container, Bounds3Int bounds)
+    {
+        Vector3Int position = new Vector3Int(bounds.min.x, bounds.min.y, bounds.min.z);
+        for (position.y = bounds.min.y; position.y <= bounds.max.y; ++position.y)
+        {
+            for (position.x = bounds.min.x; position.x <= bounds.max.x; ++position.x)
+            {
+                for (position.z = bounds.min.z; position.z <= bounds.max.z; ++position.z)
+                {
+                    if(!Contains(container, position))
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    public static bool Contains(Bounds3Int[] container, Vector3Int position)
+    {
+        for (int i = 0, len = container.Length; i < len; ++i)
+        {
+            if (container[i].Contains(position))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public bool Overlaps(Bounds3Int b)

@@ -49,7 +49,7 @@ public sealed class Picker : Singleton<Picker>
         }
     }
 
-    void Update()
+    public void DoUpdate()
     {
         InputDesktop();
     }
@@ -106,7 +106,8 @@ public sealed class Picker : Singleton<Picker>
             {
                 if (GetPickerPosition(Input.mousePosition, PickMask.Construct, out pickerPosition))
                 {
-                    Machine machine = MachineSystem.instance.CreateMachine(interfaceState.machineInfo, pickerPosition);
+                    Bounds3Int bounds = pickerPosition.PositionBottomToBounds(interfaceState.machineInfo.size);
+                    Machine machine = MachineSystem.instance.CreateMachine(interfaceState.machineInfo, bounds);
                     if (machine)
                     {
                         machine.Drop();
@@ -188,15 +189,16 @@ public sealed class Picker : Singleton<Picker>
                 {
                     TouchPick touchPick = touchPicks[touchPickIndex];
                     RemoveTouchPick(touch.now.fingerId);
-                    if (GetPickerTile(touch.now.position, PickMask.Construct, out pickerTile) && touchPick.startingTile == pickerTile)
+                    if (GetPickerPosition(touch.now.position, PickMask.Construct, out Vector3 pickerPosition) && touchPick.startingTile == pickerPosition.RoundDown())
                     {
                         InterfaceState interfaceState = InterfaceSelectionManager.instance.state;
                         if (interfaceState.mode == InterfaceMode.Machine)
                         {
-                            Machine machine = MachineSystem.instance.GetMachine(pickerTile);
+                            Machine machine = MachineSystem.instance.GetMachine(pickerPosition.RoundDown());
                             if (!machine)
                             {
-                                machine = MachineSystem.instance.CreateMachine(interfaceState.machineInfo, pickerTile);
+                                Bounds3Int bounds = pickerPosition.PositionBottomToBounds(interfaceState.machineInfo.size);
+                                machine = MachineSystem.instance.CreateMachine(interfaceState.machineInfo, bounds);
                             }
                             if (machine)
                             {
@@ -215,16 +217,16 @@ public sealed class Picker : Singleton<Picker>
                             {
                                 foreach ((Vector3Int outerTile, Vector3Int innerTile) in selection.bounds.EnumeratePerimeter())
                                 {
-                                    if (outerTile == pickerTile)
+                                    if (outerTile == pickerPosition.RoundDown())
                                     {
-                                        conveyor = ConveyorSystem.instance.GetOrCreateConveyor(lastMouseDragPosition, pickerTile, ConveyorCreateFlags.SelectConveyor | ConveyorCreateFlags.PanRelative);
+                                        conveyor = ConveyorSystem.instance.GetOrCreateConveyor(lastMouseDragPosition, pickerPosition.RoundDown(), ConveyorCreateFlags.SelectConveyor | ConveyorCreateFlags.PanRelative);
                                         break;
                                     }
                                 }
                             }
                             if (!conveyor)
                             {
-                                conveyor = ConveyorSystem.instance.CreateConveyor(pickerTile, ConveyorCreateFlags.SelectConveyor);
+                                conveyor = ConveyorSystem.instance.CreateConveyor(pickerPosition.RoundDown(), ConveyorCreateFlags.SelectConveyor);
                             }
                             return true;
                         }

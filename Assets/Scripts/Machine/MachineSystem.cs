@@ -37,6 +37,7 @@ public sealed class MachineSystem : Singleton<MachineSystem>
         Init.PostSave += PostSave;
         Init.PreLoad += PreLoad;
         Init.PostLoad += PostLoad;
+        Events.machineDeleted += OnMachineDeleted;
     }
 
     protected override void OnDestroy()
@@ -45,6 +46,7 @@ public sealed class MachineSystem : Singleton<MachineSystem>
         Init.PostSave -= PostSave;
         Init.PreLoad -= PreLoad;
         Init.PostLoad -= PostLoad;
+        Events.machineDeleted -= OnMachineDeleted;
     }
 
     public bool CanCreateMachine(MachineInfo machineInfo, Bounds3Int bounds)
@@ -52,9 +54,13 @@ public sealed class MachineSystem : Singleton<MachineSystem>
         return !MachineExists(bounds) && LandSystem.instance.CanBuild(bounds);
     }
 
-    public Machine CreateMachine(MachineInfo machineInfo, Vector3 bottomCenter)
+    public Machine CreateMachine(MachineInfo machineInfo, Bounds3Int bounds)
     {
-        Bounds3Int bounds = bottomCenter.PositionBottomToBounds(machineInfo.size);
+        if (bounds.size != machineInfo.size)
+        {
+            Debug.LogWarning("Machine bounds does not match machine info");
+            bounds = Bounds3Int.Create(bounds.min, machineInfo.size);
+        }
         if (CanCreateMachine(machineInfo, bounds))
         {
             return DoCreateMachine(machineInfo, bounds);
@@ -72,8 +78,7 @@ public sealed class MachineSystem : Singleton<MachineSystem>
         Add(machine);
 
         machine.Initialize();
-
-        MachineGroupAchievements.instance.OnMachineCreated(machineInfo.machineGroup);
+        Events.machineCreated?.Invoke(machine);
 
         return machine;
     }
@@ -97,7 +102,7 @@ public sealed class MachineSystem : Singleton<MachineSystem>
         }
     }
 
-    public void Deleted(Machine machine)
+    void OnMachineDeleted(Machine machine)
     {
         bool exists = machines.Remove(machine);
         Assert.IsTrue(exists);
@@ -196,7 +201,7 @@ public sealed class MachineSystem : Singleton<MachineSystem>
         foreach (var bucket in machineSpatialHash.buckets)
         {
             Gizmos.color = Color.white;
-            var bounds = new Bounds3Int(bucket.Key, bucket.Key.Add(SpatialHash.CELL_SIZE) - Vector3Int.one);
+            var bounds = Bounds3Int.Create(bucket.Key, new Vector3Int(SpatialHash.CELL_SIZE, SpatialHash.CELL_SIZE, SpatialHash.CELL_SIZE));
             Gizmos.DrawWireCube(bounds.center, bounds.size);
             Gizmos.color = Color.red;
             foreach (var entry in bucket.Value)

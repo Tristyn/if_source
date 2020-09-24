@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using GameAnalyticsSDK.Wrapper;
 
 namespace GameAnalyticsSDK.Events
 {
-    public static class GA_Resource
+	public static class GA_Resource
 	{
 		#region public methods
 

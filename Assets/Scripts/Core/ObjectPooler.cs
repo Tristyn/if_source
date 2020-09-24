@@ -8,8 +8,8 @@ public sealed class ObjectPooler : Singleton<ObjectPooler>
     const int MAX_POOL_COUNT = 64;
 
     public Behaviour[] prefabs;
-    private Dictionary<Type, Behaviour> prefabMap = new Dictionary<Type, Behaviour>();
-    private Dictionary<Type, List<Behaviour>> pools = new Dictionary<Type, List<Behaviour>>();
+    private Dictionary<Type, Component> prefabMap = new Dictionary<Type, Component>();
+    private Dictionary<Type, List<Component>> pools = new Dictionary<Type, List<Component>>();
 
     protected override void Awake()
     {
@@ -18,15 +18,15 @@ public sealed class ObjectPooler : Singleton<ObjectPooler>
         {
             Behaviour prefab = prefabs[i];
             prefabMap.Add(prefab.GetType(), prefab);
-            pools.Add(prefab.GetType(), new List<Behaviour>(4));
+            pools.Add(prefab.GetType(), new List<Component>(4));
         }
     }
 
-    public T Get<T>() where T : Behaviour
+    public T Get<T>() where T : Component
     {
-        if(!pools.TryGetValue(typeof(T), out List<Behaviour> pool))
+        if(!pools.TryGetValue(typeof(T), out List<Component> pool))
         {
-            pool = new List<Behaviour>();
+            pool = new List<Component>();
             pools.Add(typeof(T), pool);
         }
 
@@ -51,7 +51,7 @@ public sealed class ObjectPooler : Singleton<ObjectPooler>
         obj.transform.SetParent(transform, false);
 
         Assert.IsTrue(pools.ContainsKey(poolKey));
-        List<Behaviour> pool = pools[poolKey];
+        List<Component> pool = pools[poolKey];
 
         if (pool.Count < MAX_POOL_COUNT)
         {

@@ -121,7 +121,7 @@ public sealed class Analytics : Singleton<Analytics>
         for (int i = 0, len = uiEventMilestones.Length; i < len; ++i)
         {
             long milestone = uiEventMilestones[i];
-            if (count >= milestone)
+            if (count > milestone)
             {
                 if (i + 1 < len)
                 {

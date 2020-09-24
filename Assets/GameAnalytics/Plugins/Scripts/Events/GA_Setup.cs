@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using GameAnalyticsSDK.Utilities;
 using GameAnalyticsSDK.Wrapper;
+using GameAnalyticsSDK.Validators;
 
 namespace GameAnalyticsSDK.Events
 {
-    public static class GA_Setup
+	public static class GA_Setup
 	{
 		#region public methods
 

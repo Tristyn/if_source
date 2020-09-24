@@ -1,13 +1,19 @@
+#if UNITY_EDITOR
 /// <summary>
 /// The inspector for the GA prefab.
 /// </summary>
 
 using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
+using System.Reflection.Emit;
+using System.Reflection;
+using System;
+using GameAnalyticsSDK.Setup;
 
 namespace GameAnalyticsSDK.Editor
 {
-    [CustomEditor(typeof(GameAnalytics))]
+	[CustomEditor(typeof(GameAnalytics))]
 	public class GameAnalyticsInspector : UnityEditor.Editor
 	{
 		private GUIContent _documentationLink		= new GUIContent("Help", "Opens the GameAnalytics Unity SDK documentation page in your browser.");
@@ -59,3 +65,4 @@ namespace GameAnalyticsSDK.Editor
 		}
 	}
 }
+#endif

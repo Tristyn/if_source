@@ -16,6 +16,7 @@ public sealed class UICurrency : MonoBehaviour
         Init.Bind += () =>
         {
             CurrencySystem.instance.moneyChanged.AddListener(OnMoneyChanged);
+            CurrencySystem.instance.freeItemsChanged.AddListener(OnFreeItemsChanged);
         };
     }
 
@@ -39,5 +40,10 @@ public sealed class UICurrency : MonoBehaviour
         textStringBuilder.Append('$');
         textStringBuilder.Append(amount);
         text.SetText(textStringBuilder);
+    }
+
+    void OnFreeItemsChanged()
+    {
+        gameObject.SetActive(CurrencySystem.instance.save.itemsCostMoney);
     }
 }

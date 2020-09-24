@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEngine;
+using System.Collections;
 using System;
 using System.Collections.Generic;
 
 namespace GameAnalyticsSDK.Editor
 {
-    public static class GA_EditorUtilities {
+	public static class GA_EditorUtilities {
 
 		private const string XCaller = "unity";
 		private const string XCallerKey = "X-Caller";
@@ -73,3 +75,4 @@ namespace GameAnalyticsSDK.Editor
 		Linux
 	}
 }
+#endif

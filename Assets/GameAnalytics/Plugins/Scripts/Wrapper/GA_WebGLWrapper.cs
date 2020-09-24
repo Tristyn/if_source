@@ -1,6 +1,7 @@
-﻿#if (UNITY_WEBGL) && (!UNITY_EDITOR)
+﻿using UnityEngine;
+using System.Collections;
 using System.Runtime.InteropServices;
-#endif
+using GameAnalyticsSDK.Utilities;
 
 namespace GameAnalyticsSDK.Wrapper
 {

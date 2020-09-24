@@ -4,6 +4,7 @@ using UnityEngine;
 
 public static class ListExtensions
 {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void RemoveAtSwapBack<T>(this List<T> list, int index)
     {
         int lastElement = list.Count - 1;
@@ -11,6 +12,7 @@ public static class ListExtensions
         list.RemoveAt(lastElement);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void AddList<T>(this List<T> list, List<T> range)
     {
         for (int i = 0, len = range.Count; i < len; ++i)
@@ -19,6 +21,7 @@ public static class ListExtensions
         }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void AddArray<T>(this List<T> list, T[] range)
     {
         for (int i = 0, len = range.Length; i < len; ++i)

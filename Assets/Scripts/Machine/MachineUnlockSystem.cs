@@ -5,7 +5,7 @@ using UnityEngine;
 public class MachineUnlockSystem : Singleton<MachineUnlockSystem>
 {
     [NonSerialized]
-    public HashSet<MachineInfo> unlocked;
+    public HashSet<MachineInfo> unlocked = new HashSet<MachineInfo>();
 
     public struct Save
     {

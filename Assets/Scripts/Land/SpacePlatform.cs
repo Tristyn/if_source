@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpacePlatform
+public sealed class SpacePlatform
 {
     public SpacePlatformVisual visual;
     public LandParcel landParcel;

@@ -1,10 +1,9 @@
-﻿#if (UNITY_ANDROID) && !(UNITY_EDITOR)
-using GameAnalyticsSDK.Utilities;
-using System;
-using System.Collections;
+﻿using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine;
-#endif
+using System.Collections;
+using System;
+using System.Runtime.InteropServices;
+using GameAnalyticsSDK.Utilities;
 
 namespace GameAnalyticsSDK.Wrapper
 {

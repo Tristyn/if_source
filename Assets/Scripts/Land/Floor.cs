@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Floor : MonoBehaviour
+public sealed class Floor : MonoBehaviour
 {
     public Color color;
     public void Initialize(Bounds3Int parcelBounds)

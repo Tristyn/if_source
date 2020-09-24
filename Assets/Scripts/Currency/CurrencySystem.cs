@@ -18,6 +18,7 @@ public sealed class CurrencySystem : Singleton<CurrencySystem>
         public long xp;
         public long level;
         public long levelPoints;
+        public bool itemsCostMoney;
     }
 
     [NonSerialized]
@@ -28,6 +29,7 @@ public sealed class CurrencySystem : Singleton<CurrencySystem>
     public UnityEvent moneyChanged;
     public UnityEvent xpChanged;
     public UnityEvent levelChanged;
+    public UnityEvent freeItemsChanged;
 
     protected override void Awake()
     {
@@ -49,63 +51,75 @@ public sealed class CurrencySystem : Singleton<CurrencySystem>
 
     public void MachineSellerSellItem(ItemInfo itemInfo, int count, Vector3 position)
     {
-        long value = itemInfo.value * count;
-        save.money += value;
+        if (save.itemsCostMoney)
+        {
+            long value = itemInfo.value * count;
+            save.money += value;
 
-        moneyChanged.Invoke();
+            moneyChanged.Invoke();
 
-        CurrencyMoney currency = ObjectPooler.instance.Get<CurrencyMoney>();
-        currency.Initialize(position);
+            CurrencyMoney currency = ObjectPooler.instance.Get<CurrencyMoney>();
+            currency.Initialize(position);
 
-        CurrencyEvent currencyEvent = new CurrencyEvent(GAResourceFlowType.Source, CurrencyType.Money, CurrencyEventType.MachineSellerRevenue, itemInfo);
-        Analytics.instance.NewCurrencyEvent(currencyEvent, value);
+            CurrencyEvent currencyEvent = new CurrencyEvent(GAResourceFlowType.Source, CurrencyType.Money, CurrencyEventType.MachineSellerRevenue, itemInfo);
+            Analytics.instance.NewCurrencyEvent(currencyEvent, value);
+        }
     }
 
     public void MachinePurchaserBuyItem(ItemInfo itemInfo, int count)
     {
-        long value = itemInfo.value * count;
-        save.money -= value;
+        if (save.itemsCostMoney)
+        {
+            long value = itemInfo.value * count;
+            save.money -= value;
 
-        moneyChanged.Invoke();
+            moneyChanged.Invoke();
 
-        CurrencyEvent currencyEvent = new CurrencyEvent(GAResourceFlowType.Sink, CurrencyType.Money, CurrencyEventType.MachinePurchaserFees, itemInfo);
-        Analytics.instance.NewCurrencyEvent(currencyEvent, value);
+            CurrencyEvent currencyEvent = new CurrencyEvent(GAResourceFlowType.Sink, CurrencyType.Money, CurrencyEventType.MachinePurchaserFees, itemInfo);
+            Analytics.instance.NewCurrencyEvent(currencyEvent, value);
+        }
     }
 
     public void RefundInventory(Inventory inventory)
     {
-        long valueSum = 0;
-        for (int i = 0, len = inventory.slots.Length; i < len; ++i)
+        if (save.itemsCostMoney)
         {
-            InventorySlot slot = inventory.slots[i];
-            if (slot.count > 0)
+            long valueSum = 0;
+            for (int i = 0, len = inventory.slots.Length; i < len; ++i)
             {
-                long value = slot.itemInfo.value * slot.count;
-                valueSum += value;
+                InventorySlot slot = inventory.slots[i];
+                if (slot.count > 0)
+                {
+                    long value = slot.itemInfo.value * slot.count;
+                    valueSum += value;
 
-                CurrencyEvent currencyEvent = new CurrencyEvent(GAResourceFlowType.Source, CurrencyType.Money, CurrencyEventType.ItemRefunded, slot.itemInfo);
-                Analytics.instance.NewCurrencyEvent(currencyEvent, value);
+                    CurrencyEvent currencyEvent = new CurrencyEvent(GAResourceFlowType.Source, CurrencyType.Money, CurrencyEventType.ItemRefunded, slot.itemInfo);
+                    Analytics.instance.NewCurrencyEvent(currencyEvent, value);
+                }
             }
-        }
 
-        save.money += valueSum;
-        moneyChanged.Invoke();
+            save.money += valueSum;
+            moneyChanged.Invoke();
+        }
     }
 
     public void RefundItem(ItemInfo itemInfo, int count)
     {
-        long value = itemInfo.value * count;
-        save.money += value;
+        if (save.itemsCostMoney)
+        {
+            long value = itemInfo.value * count;
+            save.money += value;
 
-        CurrencyEvent currencyEvent = new CurrencyEvent(GAResourceFlowType.Source, CurrencyType.Money, CurrencyEventType.ItemRefunded, itemInfo);
-        Analytics.instance.NewCurrencyEvent(currencyEvent, value);
+            CurrencyEvent currencyEvent = new CurrencyEvent(GAResourceFlowType.Source, CurrencyType.Money, CurrencyEventType.ItemRefunded, itemInfo);
+            Analytics.instance.NewCurrencyEvent(currencyEvent, value);
 
-        moneyChanged.Invoke();
+            moneyChanged.Invoke();
+        }
     }
 
     public void ProgressionReward(ProgressionInfo progressionInfo)
     {
-        if(progressionInfo.moneyReward > 0)
+        if (progressionInfo.moneyReward > 0)
         {
             long value = progressionInfo.moneyReward;
             save.money += value;
@@ -115,8 +129,8 @@ public sealed class CurrencySystem : Singleton<CurrencySystem>
 
             moneyChanged.Invoke();
         }
-        
-        if(progressionInfo.xpReward > 0)
+
+        if (progressionInfo.xpReward > 0)
         {
             long value = progressionInfo.xpReward;
             save.xp += value;
@@ -130,6 +144,11 @@ public sealed class CurrencySystem : Singleton<CurrencySystem>
 
     public bool CanPurchaseItem(ItemInfo itemInfo, int count)
     {
+        if (!save.itemsCostMoney)
+        {
+            return true;
+        }
+
         long value = itemInfo.value * count;
         return save.money >= value;
     }
@@ -138,5 +157,11 @@ public sealed class CurrencySystem : Singleton<CurrencySystem>
     {
         save.money = value;
         moneyChanged.Invoke();
+    }
+
+    public void SetItemsCostMoney(bool itemsCostMoney)
+    {
+        save.itemsCostMoney = itemsCostMoney;
+        freeItemsChanged.Invoke();
     }
 }

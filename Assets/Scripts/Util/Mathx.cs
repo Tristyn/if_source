@@ -45,4 +45,40 @@ public static class Mathx
     {
         return new Vector2(Mathf.Cos(radian), Mathf.Sin(radian));
     }
+
+    /// <summary>
+    /// Population count a.k.a. hamming weight. Count the number of high bits in an integer
+    /// </summary>
+    public static int PopCount(ulong x)
+    {
+        x = (x & 0x5555555555555555) + ((x >> 1) & 0x5555555555555555); //put count of each  2 bits into those  2 bits 
+        x = (x & 0x3333333333333333) + ((x >> 2) & 0x3333333333333333); //put count of each  4 bits into those  4 bits 
+        x = (x & 0x0f0f0f0f0f0f0f0f) + ((x >> 4) & 0x0f0f0f0f0f0f0f0f); //put count of each  8 bits into those  8 bits 
+        x = (x & 0x00ff00ff00ff00ff) + ((x >> 8) & 0x00ff00ff00ff00ff); //put count of each 16 bits into those 16 bits 
+        x = (x & 0x0000ffff0000ffff) + ((x >> 16) & 0x0000ffff0000ffff); //put count of each 32 bits into those 32 bits 
+        x = (x & 0x00000000ffffffff) + ((x >> 32) & 0x00000000ffffffff); //put count of each 64 bits into those 64 bits 
+        return (int)x;
+    }
+
+    /// <summary>
+    /// Population count a.k.a. hamming weight. Count the number of high bits in an integer
+    /// </summary>
+    public static int PopCount(uint x)
+    {
+        x = (x & 0x55555555) + ((x >> 1) & 0x55555555); //put count of each  2 bits into those  2 bits 
+        x = (x & 0x33333333) + ((x >> 2) & 0x33333333); //put count of each  4 bits into those  4 bits 
+        x = (x & 0x0f0f0f0f) + ((x >> 4) & 0x0f0f0f0f); //put count of each  8 bits into those  8 bits 
+        x = (x & 0x00ff00ff) + ((x >> 8) & 0x00ff00ff); //put count of each 16 bits into those 16 bits 
+        x = (x & 0x0000ffff) + ((x >> 16) & 0x0000ffff); //put count of each 32 bits into those 32 bits 
+        return (int)x;
+    }
+
+    public static void PopulateRange(int[] array, int start)
+    {
+        for(int i = 0, len = array.Length; i < len; ++i)
+        {
+            array[i] = start;
+            ++start;
+        }
+    }
 }

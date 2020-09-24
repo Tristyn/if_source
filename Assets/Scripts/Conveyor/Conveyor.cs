@@ -48,7 +48,7 @@ public struct ConveyorItem
     }
 }
 
-public sealed class Conveyor : MonoBehaviour
+public sealed class Conveyor : MonoBehaviour, IFixedUpdate
 {
     public Machine machine;
     [NonSerialized]
@@ -88,6 +88,7 @@ public sealed class Conveyor : MonoBehaviour
             LinkMachine(machine);
             machine.FindConveyors();
         }
+        Updater.conveyors.Add(this);
     }
 
     public void Recycle()
@@ -123,6 +124,7 @@ public sealed class Conveyor : MonoBehaviour
         {
             UnlinkMachine();
         }
+        Updater.conveyors.Remove(this);
         ObjectPooler.instance.Recycle(this);
     }
 
@@ -566,7 +568,8 @@ public sealed class Conveyor : MonoBehaviour
         return false;
     }
 
-    void FixedUpdate()
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void DoFixedUpdate()
     {
         /* Updating a conveyor queue updates 4 types of items
          * - The outgoing item transitioning to the machine, the router or another conveyor

@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class ProgressionSystem : Singleton<ProgressionSystem>
 {
     struct MachineCondition
     {
         public ProgressionInfo progressionInfo;
-        public uint machineUnlocksIndex;
+        public int machineUnlocksIndex;
     }
 
     public struct Save
@@ -59,7 +58,7 @@ public class ProgressionSystem : Singleton<ProgressionSystem>
         {
             ProgressionInfo progression = progressionInfos[i];
             MachineInfo[] machineUnlockConditions = progression.machineUnlockConditions;
-            for (uint j = 0, jlen = (uint)machineUnlockConditions.Length; j < jlen; ++j)
+            for (int j = 0, jlen = machineUnlockConditions.Length; j < jlen; ++j)
             {
                 MachineInfo machineUnlock = machineUnlockConditions[j];
                 if (!machineConditions.TryGetValue(machineUnlock, out List<MachineCondition> conditions))
@@ -127,7 +126,7 @@ public class ProgressionSystem : Singleton<ProgressionSystem>
             ProgressionInfo progressionInfo = progressionInfos[i];
             BitArray32 machineUnlockConditionsMet = new BitArray32();
             MachineInfo[] machines = progressionInfo.machineUnlockConditions;
-            for (uint j = 0, lenj = (uint)machines.Length; j < lenj; ++j)
+            for (int j = 0, lenj = machines.Length; j < lenj; ++j)
             {
                 if (unlocked.Contains(machines[j]))
                 {

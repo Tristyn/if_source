@@ -100,6 +100,7 @@ GameObject:
   - component: {fileID: 3132871875981262792}
   - component: {fileID: 1574542010878729653}
   - component: {fileID: 7352876012298268399}
+  - component: {fileID: 7550240302882179556}
   m_Layer: 0
   m_Name: GlobalControllers
   m_TagString: Untagged
@@ -423,3 +424,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cabb2d1ffe8bf6d41bcf66946048582a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7550240302882179556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377630774726580451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1f6787e6dae52d479deea8ece280b6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  goals:
+  - {fileID: 11400000, guid: 50dfa5698452c384391fde0dd655074e, type: 2}
+  - {fileID: 11400000, guid: 1995409f78c386a4694df8a12e0347e1, type: 2}
+  - {fileID: 11400000, guid: 61f41fad928abba40a57c234f7c48aa4, type: 2}
+  - {fileID: 11400000, guid: 15db4fb5972992f4f9ff914f22693e7d, type: 2}
+  - {fileID: 11400000, guid: 32c4b5e37747a5e4e8a5ccd76bfa25ce, type: 2}
+  - {fileID: 11400000, guid: 815f51105a2590b41843760a051aaf58, type: 2}
+  - {fileID: 11400000, guid: 258eb96b4b6bf4846b71af76b4da2315, type: 2}
+  goalIndex: 0

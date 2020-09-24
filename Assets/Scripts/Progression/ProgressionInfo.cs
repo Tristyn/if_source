@@ -4,7 +4,6 @@ using System.Linq;
 using UnityEditor;
 #endif
 using UnityEngine;
-using UnityEngine.Rendering;
 
 [CreateAssetMenu(fileName = "ProgressionInfo", menuName = "Progression Info", order = 30)]
 public class ProgressionInfo : ScriptableObject

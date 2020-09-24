@@ -43,7 +43,7 @@ public static class ArrayExtensions
             ret[i] = array[i];
         }
         int retIndex = index;
-        for(int i = index + 1, len = array.Length; i < len; ++i, ++retIndex)
+        for (int i = index + 1, len = array.Length; i < len; ++i, ++retIndex)
         {
             ret[retIndex] = array[i];
         }
@@ -51,10 +51,30 @@ public static class ArrayExtensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void RemoveAtSwapBack<T>(this T[] array, int index, int lastElement)
+    {
+        array[index] = array[lastElement];
+        array[lastElement] = default;
+    }
+
+    public static void Shuffle<T>(this T[] array)
+    {
+        int n = array.Length;
+        while (n > 1)
+        {
+            n--;
+            int k = UnityEngine.Random.Range(0, n);
+            T value = array[k];
+            array[k] = array[n];
+            array[n] = value;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Contains<T>(this T[] array, T element)
         where T : class
     {
-        for(int i = 0, len = array.Length; i < len; ++i)
+        for (int i = 0, len = array.Length; i < len; ++i)
         {
             if (array[i] == element)
             {
@@ -67,7 +87,7 @@ public static class ArrayExtensions
     public static void ThrowOnNullOrEmpty<T>(this T[] array)
     {
         // seperate throws so the callstack will say which exception
-        if(array == null)
+        if (array == null)
         {
             throw new ArgumentNullException();
         }

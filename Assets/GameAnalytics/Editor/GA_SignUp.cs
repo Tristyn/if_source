@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using System.Collections;
 using UnityEditor;
@@ -1379,7 +1380,9 @@ namespace GameAnalyticsSDK.Editor
 
             try
             {
-#if UNITY_2018_3_OR_NEWER
+#if UNITY_2020_1_OR_NEWER
+                if (!(www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError))
+#elif UNITY_2018_3_OR_NEWER
                 if (!(www.isNetworkError || www.isHttpError))
 #else
                 if (string.IsNullOrEmpty(www.error))
@@ -1479,7 +1482,9 @@ namespace GameAnalyticsSDK.Editor
 
             try
             {
-#if UNITY_2018_3_OR_NEWER
+#if UNITY_2020_1_OR_NEWER
+                if (!(www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError))
+#elif UNITY_2018_3_OR_NEWER
                 if (!(www.isNetworkError || www.isHttpError))
 #else
                 if (string.IsNullOrEmpty(www.error))
@@ -1504,3 +1509,4 @@ namespace GameAnalyticsSDK.Editor
         }
     }
 }
+#endif

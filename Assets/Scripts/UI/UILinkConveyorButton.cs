@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+﻿using System.Runtime.CompilerServices;
+using UnityEngine;
 using UnityEngine.UI;
 
-public sealed class UILinkConveyorButton : MonoBehaviour
+public sealed class UILinkConveyorButton : MonoBehaviour, IUpdate
 {
     public Sprite MachineOutputMaterial;
     public Sprite MachineInputMaterial;
@@ -18,16 +19,19 @@ public sealed class UILinkConveyorButton : MonoBehaviour
         button.onClick.AddListener(OnClick);
     }
 
-    void Update()
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void DoUpdate()
     {
         UpdatePosition();
     }
 
     public void Initialize()
     {
+        Updater.linkConveyorButtons.Add(this);
         UpdatePosition();
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void UpdatePosition()
     {
         ((RectTransform)transform).position = MainCamera.instance.WorldToScreenPoint(position.RoundToTileCenter());
@@ -50,6 +54,7 @@ public sealed class UILinkConveyorButton : MonoBehaviour
 
     public void Recycle()
     {
+        Updater.linkConveyorButtons.Remove(this);
         ObjectPooler.instance.Recycle(this);
     }
 }

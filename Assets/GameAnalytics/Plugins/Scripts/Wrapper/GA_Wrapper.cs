@@ -216,7 +216,7 @@ namespace GameAnalyticsSDK.Wrapper
         private static void setEnabledInfoLog (bool enabled)
         {
             if (GameAnalytics.SettingsGA.InfoLogEditor) {
-                //Debug.Log ("GameAnalytics setInfoLog(" + enabled + ")\nInfo logs can be deactivated in the Advanced section of the Settings object.");
+                Debug.Log ("GameAnalytics setInfoLog(" + enabled + ")\nInfo logs can be deactivated in the Advanced section of the Settings object.");
             }
         }
 

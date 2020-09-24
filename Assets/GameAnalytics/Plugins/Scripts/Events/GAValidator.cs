@@ -1,10 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using GameAnalyticsSDK.State;
 
 namespace GameAnalyticsSDK.Validators
 {
-    internal static class GAValidator
+	internal static class GAValidator
 	{
 		#region Public methods
 

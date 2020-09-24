@@ -17,7 +17,7 @@ public sealed class CameraShake : Singleton<CameraShake>
         Harmonic.CalcDampedSpringMotionParams(out spring, TimeHelper.fixedTimeStep, angularFrequency, dampingRatio);
     }
 
-    void Update()
+    public void DoUpdate()
     {
         Vector3 targetPosition_local = Vector3.zero;
         Harmonic.UpdateDampedSpringMotion(ref position_local, ref velocity_local, in targetPosition_local, in spring);

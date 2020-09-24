@@ -1,7 +1,12 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using System;
 using GameAnalyticsSDK.Events;
+using GameAnalyticsSDK.Setup;
 using GameAnalyticsSDK.Wrapper;
+using GameAnalyticsSDK.State;
+using System.Runtime.InteropServices;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -99,9 +104,9 @@ namespace GameAnalyticsSDK
         private static extern void onQuit();
 #endif
 
-#if (!UNITY_EDITOR && !UNITY_IOS && !UNITY_ANDROID && !UNITY_TVOS && !UNITY_WEBGL && !UNITY_TIZEN)
         void OnApplicationQuit()
         {
+#if (!UNITY_EDITOR && !UNITY_IOS && !UNITY_ANDROID && !UNITY_TVOS && !UNITY_WEBGL && !UNITY_TIZEN && !UNITY_SWITCH && !UNITY_PS4 && !UNITY_XBOXONE)
 #if (UNITY_WSA)
             onQuit();
 #else
@@ -110,8 +115,8 @@ namespace GameAnalyticsSDK
 #if UNITY_STANDALONE
             System.Threading.Thread.Sleep(1500);
 #endif
-        }
 #endif
+        }
 
 #endregion
 
@@ -250,9 +255,7 @@ namespace GameAnalyticsSDK
             else
             {
                 GameAnalytics._hasInitializeBeenCalled = true;
-#if !UNITY_EDITOR
                 Debug.LogWarning("GameAnalytics: Unsupported platform (events will not be sent in editor; or missing platform in settings): " + Application.platform);
-#endif
             }
         }
 

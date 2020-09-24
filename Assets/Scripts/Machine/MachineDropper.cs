@@ -1,12 +1,12 @@
-﻿using UnityEngine;
+﻿using System.Runtime.CompilerServices;
+using UnityEngine;
 
-public sealed class MachineDropper : MonoBehaviour
+public sealed class MachineDropper : MonoBehaviour, IUpdate
 {
     public MachineLandedSmoke machineDropSmoke;
 
     public float initialHeight = 2f;
     public Vector3 initialVelocity = new Vector3(0, -18f, 0);
-    public bool recycleComponentAfterDrop = true;
 
     ParticleSystem smokeParticleSystem;
     Transform machineTransform;
@@ -18,7 +18,8 @@ public sealed class MachineDropper : MonoBehaviour
         smokeParticleSystem = machineDropSmoke.smokeParticleSystem;
     }
 
-    void Update()
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void DoUpdate()
     {
         if (!landed)
         {
@@ -40,11 +41,7 @@ public sealed class MachineDropper : MonoBehaviour
         {
             if (!smokeParticleSystem.IsAlive())
             {
-                enabled = false;
-                if (recycleComponentAfterDrop)
-                {
-                    Recycle();
-                }
+                Recycle();
             }
         }
     }
@@ -58,9 +55,9 @@ public sealed class MachineDropper : MonoBehaviour
         Vector3 position_local = machineTransform.localPosition;
         position_local.y = initialHeight;
         machineTransform.localPosition = position_local;
-        
+
         landed = false;
-        enabled = true;
+        Updater.machineDroppers.Add(this);
     }
 
     void Land()
@@ -69,8 +66,10 @@ public sealed class MachineDropper : MonoBehaviour
         machineDropSmoke.Landed();
     }
 
-    public void Recycle()
+    void Recycle()
     {
+        Updater.machineDroppers.Remove(this);
         ObjectPooler.instance.Recycle(this);
+        machineTransform = null;
     }
 }

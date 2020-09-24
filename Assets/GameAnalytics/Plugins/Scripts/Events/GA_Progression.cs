@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using GameAnalyticsSDK.Wrapper;
 
 namespace GameAnalyticsSDK.Events
 {
-    public static class GA_Progression
+	public static class GA_Progression
 	{
 		#region public methods
 

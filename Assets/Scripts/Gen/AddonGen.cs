@@ -3,38 +3,43 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+[Serializable]
+public struct AddonParameters
+{
+    public int minArea;
+    public Vector3Int primarySizeMin;
+    public Vector3Int primarySizeMax;
+    public Vector3Int secondarySizeMin;
+    public Vector3Int secondarySizeMax;
+}
+
 public static class AddonGen
 {
-    public static Bounds3Int[] Addon()
+    public static Bounds3Int[] Addon(AddonParameters addonParameters)
     {
-        Bounds3Int[] addon = GenerateAddon(minArea: 200);
+        Bounds3Int[] addon = GenerateAddon(addonParameters);
         Bounds3Int[] placedAddon = PlaceAddon(addon, LandSystem.instance.landParcelHash);
         return placedAddon;
     }
 
-    public static Bounds3Int[] GenerateAddon(int minArea)
+    public static Bounds3Int[] GenerateAddon(AddonParameters addonParameters)
     {
         using (ListPool<Bounds3Int>.Get(out List<Bounds3Int> addons))
         {
-            Vector3Int sizeMin = new Vector3Int(7, 1, 7);
-            Vector3Int sizeMax = new Vector3Int(10, 1, 10);
 
             Bounds3Int addonBounds;
             using (ListPool<Bounds3Int>.Get(out List<Bounds3Int> stub))
             {
                 stub.Add(new Bounds3Int(0, 0, 0, 1, 1, 1));
-                addonBounds = IterateAddonBounds(stub, sizeMin, sizeMax, addons);
+                addonBounds = IterateAddonBounds(stub, addonParameters.primarySizeMin, addonParameters.primarySizeMax, addons);
             }
 
             int area = addonBounds.area;
             addons.Add(addonBounds);
 
-            Vector3Int size2Min = new Vector3Int(4, 1, 4);
-            Vector3Int size2Max = new Vector3Int(7, 1, 7);
-
-            while (area < minArea)
+            while (area < addonParameters.minArea)
             {
-                Bounds3Int subAddon = IterateAddonBounds(addons, size2Min, size2Max, addons);
+                Bounds3Int subAddon = IterateAddonBounds(addons, addonParameters.secondarySizeMin, addonParameters.secondarySizeMax, addons);
                 area += subAddon.area;
                 addons.Add(subAddon);
             }

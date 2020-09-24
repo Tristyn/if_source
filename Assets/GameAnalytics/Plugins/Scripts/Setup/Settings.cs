@@ -1,7 +1,10 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 #if UNITY_EDITOR
+using UnityEditor;
 #endif
 
 namespace GameAnalyticsSDK.Setup
@@ -50,7 +53,7 @@ namespace GameAnalyticsSDK.Setup
         /// The version of the GA Unity Wrapper plugin
         /// </summary>
         [HideInInspector]
-        public static string VERSION = "6.3.0";
+        public static string VERSION = "6.3.1";
 
         [HideInInspector]
         public static bool CheckingForUpdates = false;

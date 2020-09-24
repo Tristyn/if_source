@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public sealed class MachineSeller : MonoBehaviour
+public sealed class MachineSeller : MonoBehaviour, IFixedUpdate
 {
     public Machine machine;
 
@@ -28,21 +29,33 @@ public sealed class MachineSeller : MonoBehaviour
         inventory = machine.inventory;
         machineGroup = machineInfo.machineGroup;
         placeInterval = machineInfo.placeInterval;
+        Updater.machineSellers.Add(this);
     }
 
-    private void FixedUpdate()
+    public void Delete()
+    {
+        Updater.machineSellers.Remove(this);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void DoFixedUpdate()
     {
         if (save.nextAssembleTime <= GameTime.fixedTime)
         {
             save.nextAssembleTime += placeInterval;
 
+            bool operated = false;
+
             ref InventorySlot slot = ref inventory.GetSlot(sellItem.itemInfo);
             Assert.IsTrue(slot.valid);
             if (slot.TryRemove(sellItem.count))
             {
+                operated = true;
                 CurrencySystem.instance.MachineSellerSellItem(sellItem.itemInfo, sellItem.count, machine.bounds.topCenter);
                 MachineGroupAchievements.instance.OnMachineItemSold(machineGroup);
             }
+
+            machine.machineEfficiency.Tick(operated);
         }
     }
 }

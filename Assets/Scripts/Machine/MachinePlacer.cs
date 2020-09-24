@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
-public sealed class MachinePlacer : MonoBehaviour
+public sealed class MachinePlacer : MonoBehaviour, IFixedUpdate
 {
     public Machine machine;
 
@@ -32,9 +33,16 @@ public sealed class MachinePlacer : MonoBehaviour
         {
             itemInfo = machine.machineInfo.assembleOutput.itemInfo;
         }
+        Updater.machinePlacers.Add(this);
     }
 
-    void FixedUpdate()
+    public void Delete()
+    {
+        Updater.machinePlacers.Remove(this);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void DoFixedUpdate()
     {
         if (save.nextPlaceTime <= GameTime.fixedTime)
         {

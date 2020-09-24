@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public sealed class MachinePurchaser : MonoBehaviour
+public sealed class MachinePurchaser : MonoBehaviour, IFixedUpdate
 {
     public Machine machine;
 
@@ -25,13 +26,22 @@ public sealed class MachinePurchaser : MonoBehaviour
         inventory = machine.inventory;
         purchaseItem = machine.machineInfo.purchaseItem;
         placeInterval = machine.machineInfo.placeInterval;
+        Updater.machinePurchasers.Add(this);
     }
 
-    void FixedUpdate()
+    public void Delete()
+    {
+        Updater.machinePurchasers.Remove(this);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void DoFixedUpdate()
     {
         if (save.nextPlaceTime <= GameTime.fixedTime)
         {
             save.nextPlaceTime += placeInterval;
+
+            bool operated = false;
 
             CurrencySystem currencySystem = CurrencySystem.instance;
             if (currencySystem.CanPurchaseItem(purchaseItem.itemInfo, purchaseItem.count))
@@ -40,9 +50,12 @@ public sealed class MachinePurchaser : MonoBehaviour
                 Assert.IsTrue(slot.valid);
                 if (slot.TryAdd(purchaseItem.count))
                 {
+                    operated = true;
                     currencySystem.MachinePurchaserBuyItem(purchaseItem.itemInfo, purchaseItem.count);
                 }
             }
+
+            machine.machineEfficiency.Tick(operated);
         }
     }
 }

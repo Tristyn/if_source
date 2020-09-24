@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 
-public sealed class AutoSaveLoad : MonoBehaviour
+public sealed class AutoSaveLoad : Singleton<AutoSaveLoad>
 {
     public float autoSaveInterval = 30f;
     float nextAutoSaveTime;
     bool autosaveDisable;
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         nextAutoSaveTime = GameTime.time + autoSaveInterval;
         Init.StartupLoad += StartupLoad;
         Init.LoadComplete += LoadComplete;
@@ -17,19 +18,20 @@ public sealed class AutoSaveLoad : MonoBehaviour
         var saveDirectory = new SaveLoad.SaveOptions().directory;
     }
 
-    void OnDestroy()
+    protected override void OnDestroy()
     {
+        base.OnDestroy();
         Init.LoadComplete -= LoadComplete;
         Application.focusChanged -= FocusChanged;
         Application.quitting -= Save;
     }
 
-    private void LoadComplete()
+    void LoadComplete()
     {
         nextAutoSaveTime = GameTime.time + autoSaveInterval;
     }
 
-    void Update()
+    public void DoUpdate()
     {
         if (GameTime.time > nextAutoSaveTime && !autosaveDisable)
         {
@@ -37,6 +39,7 @@ public sealed class AutoSaveLoad : MonoBehaviour
             SaveLoad.Save();
         }
 
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.F9))
         {
             SaveLoad.Save();
@@ -53,6 +56,7 @@ public sealed class AutoSaveLoad : MonoBehaviour
         {
             autosaveDisable = false;
         }
+#endif
     }
 
     void OnApplicationPause(bool paused)

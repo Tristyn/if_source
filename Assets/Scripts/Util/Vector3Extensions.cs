@@ -33,7 +33,7 @@ public static class Vector3Extensions
             Mathf.RoundToInt(min.x),
             Mathf.FloorToInt(tileCenter.y),
             Mathf.RoundToInt(min.z));
-        Bounds3Int bounds = new Bounds3Int(boundsMin, boundsMin + size - Vector3Int.one);
+        Bounds3Int bounds = Bounds3Int.Create(boundsMin, size);
         return bounds;
     }
 

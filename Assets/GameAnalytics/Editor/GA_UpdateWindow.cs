@@ -1,9 +1,13 @@
+#if UNITY_EDITOR
 using UnityEngine;
+using System.Collections;
 using UnityEditor;
+using System.Collections.Generic;
+using GameAnalyticsSDK.Setup;
 
 namespace GameAnalyticsSDK.Editor
 {
-    public class GA_UpdateWindow : EditorWindow
+	public class GA_UpdateWindow : EditorWindow
 	{
 		private GUIContent _close					= new GUIContent("Skip", "Skip this version.");
 		private GUIContent _download				= new GUIContent("Download Page", "Open the GameAnalytics download support page.");
@@ -108,3 +112,4 @@ namespace GameAnalyticsSDK.Editor
 		}
 	}
 }
+#endif

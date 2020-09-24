@@ -44,7 +44,7 @@ public sealed class TouchInput : Singleton<TouchInput>
         enabled = supported;
     }
 
-    void Update()
+    public void DoUpdate()
     {
         InputTouch();
     }

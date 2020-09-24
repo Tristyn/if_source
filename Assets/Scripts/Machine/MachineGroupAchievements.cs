@@ -26,6 +26,19 @@ public sealed class MachineGroupAchievements : Singleton<MachineGroupAchievement
         public bool[] categories;
     }
 
+    protected override void Awake()
+    {
+        base.Awake();
+        Events.machineCreated += OnMachineCreated;
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        Events.machineCreated -= OnMachineCreated;
+    }
+
+
     public void GetSave(out Save save)
     {
         List<MachineGroupSave> machineGroups = new List<MachineGroupSave>(achievements.Count);
@@ -66,10 +79,14 @@ public sealed class MachineGroupAchievements : Singleton<MachineGroupAchievement
         Achieve(machineGroup, MachineGroupAchievementCategory.Unlock);
     }
 
-    public void OnMachineCreated(MachineGroupInfo machineGroup)
+    public void OnMachineCreated(Machine machine)
     {
-        Achieve(machineGroup, MachineGroupAchievementCategory.Created);
+        if (machine.machineInfo && machine.machineInfo.machineGroup)
+        {
+            Achieve(machine.machineInfo.machineGroup, MachineGroupAchievementCategory.Created);
+        }
     }
+
     public void OnAssemblerLinkedToAssembler(Machine from, Machine to)
     {
 

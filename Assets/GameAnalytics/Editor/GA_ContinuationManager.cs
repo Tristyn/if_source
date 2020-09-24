@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+using UnityEngine;
 using System.Collections;
 
 using System;
@@ -7,8 +9,8 @@ using UnityEditor;
 
 namespace GameAnalyticsSDK
 {
-    //Inspired from answer on answers.unity3d.com: http://answers.unity3d.com/questions/221651/yielding-with-www-in-editor.html
-    public static class GA_ContinuationManager
+	//Inspired from answer on answers.unity3d.com: http://answers.unity3d.com/questions/221651/yielding-with-www-in-editor.html
+	public static class GA_ContinuationManager
 	{
 		private class EditorCoroutine
 		{
@@ -61,3 +63,4 @@ namespace GameAnalyticsSDK
 		}
 	}
 }
+#endif
