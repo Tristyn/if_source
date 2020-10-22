@@ -26,12 +26,12 @@ public sealed class MachinePurchaser : MonoBehaviour, IFixedUpdate
         inventory = machine.inventory;
         purchaseItem = machine.machineInfo.purchaseItem;
         placeInterval = machine.machineInfo.placeInterval;
-        Updater.machinePurchasers.Add(this);
+        Updates.machinePurchasers.Add(this);
     }
 
     public void Delete()
     {
-        Updater.machinePurchasers.Remove(this);
+        Updates.machinePurchasers.Remove(this);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

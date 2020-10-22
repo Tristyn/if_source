@@ -9,10 +9,12 @@ public sealed class SpacePlatform
 
     public static HashSet<SpacePlatform> spacePlatforms = new HashSet<SpacePlatform>();
 
+    [Serializable]
     public struct Saves
     {
         public Save[] spacePlatforms;
     }
+    [Serializable]
     public struct Save
     {
         public Bounds3Int[] bounds;

@@ -1,0 +1,43 @@
+Iron
+- Iron ore
+- Iron
+
+Steel
+- Coal
+- Steel
+
+Cannon
+- Bullet
+ - Explosives
+ = Steel
+= Steel
+* Research Input
+
+Plastic
+- Oil (big buyer)
+- Natural Gas
+* Research input
+
+Electronics
+- Silicon
+- Copper
+ - Copper Ore
+= Plastic
+
+Engine
+- Lubricant
+ = Oil
+= Steel
+= Electronics
+
+Petroleum
+= Oil
+= Natural Gas
+* Research input
+
+Tank
+= Cannon
+- Tank Hull
+ = Engine
+ = Steel
+ = Petroleum

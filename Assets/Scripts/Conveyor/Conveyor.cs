@@ -88,7 +88,7 @@ public sealed class Conveyor : MonoBehaviour, IFixedUpdate
             LinkMachine(machine);
             machine.FindConveyors();
         }
-        Updater.conveyors.Add(this);
+        Updates.conveyors.Add(this);
     }
 
     public void Recycle()
@@ -124,7 +124,7 @@ public sealed class Conveyor : MonoBehaviour, IFixedUpdate
         {
             UnlinkMachine();
         }
-        Updater.conveyors.Remove(this);
+        Updates.conveyors.Remove(this);
         ObjectPooler.instance.Recycle(this);
     }
 
@@ -216,6 +216,7 @@ public sealed class Conveyor : MonoBehaviour, IFixedUpdate
     public void Demolish()
     {
         ConveyorSystem.instance.PlayDemolishAudio();
+        CurrencySystem.instance.SellConveyor();
         Recycle();
     }
 

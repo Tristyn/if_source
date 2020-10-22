@@ -11,6 +11,7 @@ public sealed class ScriptableObjectMasterList : ScriptableObject
 {
     public ItemInfo[] items;
     public MachineInfo[] machines;
+    public MachineVisual machineVisualDefault;
     public MachineGroupInfo[] machineGroups;
     public ProgressionInfo[] progressionInfos;
     [ReadOnly]
@@ -22,6 +23,15 @@ public sealed class ScriptableObjectMasterList : ScriptableObject
     public Dictionary<string, MachineInfo> machinesDict;
     [NonSerialized]
     public Dictionary<string, MachineGroupInfo> machineGroupsDict;
+
+    public void OnValidate()
+    {
+        items = items.Where(item => item).ToArray();
+        machines = machines.Where(machine => machine).ToArray();
+        machineGroups = machineGroups.Where(machineGroup => machineGroup).ToArray();
+        progressionInfos = progressionInfos.Where(progressionInfo => progressionInfo).ToArray();
+        EditorUtility.SetDirty(this);
+    }
 
     public void Initialize()
     {
@@ -50,6 +60,7 @@ public sealed class ScriptableObjectMasterList : ScriptableObject
         for (int i = 0, len = machines.Length; i < len; ++i)
         {
             MachineInfo machineInfo = machines[i];
+            machineInfo.Initialize();
             machinesDict.Add(machineInfo.name, machineInfo);
         }
 
@@ -98,10 +109,12 @@ public sealed class ScriptableObjectMasterList : ScriptableObject
 #if UNITY_EDITOR
     public static ScriptableObjectMasterList LoadAsset()
     {
-        return AssetDatabase.LoadAssetAtPath<ScriptableObjectMasterList>(
+        var masterList = AssetDatabase.LoadAssetAtPath<ScriptableObjectMasterList>(
             AssetDatabase.FindAssets("ObjectMasterList t:ScriptableObjectMasterList", new[] { "Assets/Resources" })
             .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
             .SingleOrDefault());
+        masterList.OnValidate();
+        return masterList;
     }
 #endif
 }

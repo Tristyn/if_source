@@ -51,7 +51,7 @@ public sealed class MachineSystem : Singleton<MachineSystem>
 
     public bool CanCreateMachine(MachineInfo machineInfo, Bounds3Int bounds)
     {
-        return !MachineExists(bounds) && LandSystem.instance.CanBuild(bounds);
+        return !MachineExists(bounds) && LandSystem.instance.CanBuild(bounds) && CurrencySystem.instance.CanBuildMachine(machineInfo);
     }
 
     public Machine CreateMachine(MachineInfo machineInfo, Bounds3Int bounds)
@@ -70,6 +70,8 @@ public sealed class MachineSystem : Singleton<MachineSystem>
 
     Machine DoCreateMachine(MachineInfo machineInfo, Bounds3Int bounds)
     {
+        CurrencySystem.instance.BuildMachine(machineInfo);
+
         GameObject gameObject = new GameObject(machineInfo.machineName);
         Machine machine = gameObject.AddComponent<Machine>();
         machine.bounds = bounds;

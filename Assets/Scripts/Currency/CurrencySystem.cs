@@ -24,6 +24,8 @@ public sealed class CurrencySystem : Singleton<CurrencySystem>
     [NonSerialized]
     public Save save;
 
+    public long conveyorCost = 10;
+
     public Vector3 currencySpawnOffset;
 
     public UnityEvent moneyChanged;
@@ -47,6 +49,83 @@ public sealed class CurrencySystem : Singleton<CurrencySystem>
     {
         moneyChanged.Invoke();
         xpChanged.Invoke();
+    }
+
+    public void BuildMachine(MachineInfo machineInfo)
+    {
+        if (save.itemsCostMoney)
+        {
+            long value = machineInfo.cost;
+            save.money -= value;
+
+            moneyChanged.Invoke();
+
+            CurrencyEvent currencyEvent = new CurrencyEvent(GAResourceFlowType.Sink, CurrencyType.Money, CurrencyEventType.MachinePurchased, machineInfo);
+            Analytics.instance.NewCurrencyEvent(currencyEvent, value);
+        }
+    }
+
+    public void SellMachine(MachineInfo machineInfo)
+    {
+        if (save.itemsCostMoney)
+        {
+            long value = machineInfo.cost;
+            save.money += value;
+
+            moneyChanged.Invoke();
+
+            CurrencyEvent currencyEvent = new CurrencyEvent(GAResourceFlowType.Source, CurrencyType.Money, CurrencyEventType.MachineSold, machineInfo);
+            Analytics.instance.NewCurrencyEvent(currencyEvent, value);
+        }
+    }
+
+    public bool CanBuildMachine(MachineInfo machineInfo)
+    {
+        if (!save.itemsCostMoney)
+        {
+            return true;
+        }
+
+        return save.money >= machineInfo.cost;
+    }
+
+    public void BuildConveyor()
+    {
+        if (save.itemsCostMoney)
+        {
+            long value = conveyorCost;
+            save.money -= value;
+
+            moneyChanged.Invoke();
+
+            CurrencyEvent currencyEvent = new CurrencyEvent(GAResourceFlowType.Sink, CurrencyType.Money, CurrencyEventType.ConveyorPurchased, "Conveyor");
+            Analytics.instance.NewCurrencyEvent(currencyEvent, value);
+        }
+    }
+
+    public void SellConveyor()
+    {
+        if (save.itemsCostMoney)
+        {
+            long value = conveyorCost;
+            save.money += value;
+
+            moneyChanged.Invoke();
+
+            CurrencyEvent currencyEvent = new CurrencyEvent(GAResourceFlowType.Source, CurrencyType.Money, CurrencyEventType.ConveyorSold, "Conveyor");
+            Analytics.instance.NewCurrencyEvent(currencyEvent, value);
+        }
+    }
+
+    public bool CanBuyConveyor(int count)
+    {
+        if (!save.itemsCostMoney)
+        {
+            return true;
+        }
+
+        long value = conveyorCost * count;
+        return save.money >= value;
     }
 
     public void MachineSellerSellItem(ItemInfo itemInfo, int count, Vector3 position)

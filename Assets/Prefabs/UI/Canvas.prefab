@@ -100,6 +100,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &6731946001353062092
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -253,6 +254,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: RotateLeftButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 362126591246984746, guid: 7656c81b8fbc1064bbfd9cbcbf291060,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 362126591246984747, guid: 7656c81b8fbc1064bbfd9cbcbf291060,
         type: 3}
@@ -609,6 +615,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: RotateRightButton
       objectReference: {fileID: 0}
+    - target: {fileID: 3003919211598887423, guid: 09fbc2fd05d26e646aef6428656a6ea7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 09fbc2fd05d26e646aef6428656a6ea7, type: 3}
 --- !u!224 &6731946002693276400 stripped
@@ -733,6 +744,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8166866726449339817, guid: 6cf79f9d1c44a7045a8730a52ed946b4,
+        type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8166866726449339817, guid: 6cf79f9d1c44a7045a8730a52ed946b4,
+        type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 8166866726449339817, guid: 6cf79f9d1c44a7045a8730a52ed946b4,
+        type: 3}
+      propertyPath: m_textAlignment
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 8166866726449339817, guid: 6cf79f9d1c44a7045a8730a52ed946b4,
+        type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6cf79f9d1c44a7045a8730a52ed946b4, type: 3}

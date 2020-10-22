@@ -79,7 +79,7 @@ public sealed class ConveyorSystem : Singleton<ConveyorSystem>
         {
             DoCreateConveyor(saveConveyors[i].position_local);
         }
-        
+
         for (int i = 0, len = saveConveyors.Length; i < len; i++)
         {
             ref Conveyor.Save saveConveyor = ref saveConveyors[i];
@@ -91,7 +91,7 @@ public sealed class ConveyorSystem : Singleton<ConveyorSystem>
 
     public bool CanCreate(Vector3Int position)
     {
-        return !MachineSystem.instance.GetMachine(position) && LandSystem.instance.CanBuild(position);
+        return !MachineSystem.instance.GetMachine(position) && LandSystem.instance.CanBuild(position) && CurrencySystem.instance.CanBuyConveyor(1);
     }
 
     public bool CanLink(Vector3Int from, Vector3Int to)
@@ -117,6 +117,12 @@ public sealed class ConveyorSystem : Singleton<ConveyorSystem>
         {
             return false;
         }
+
+        if (!CurrencySystem.instance.CanBuyConveyor(2))
+        {
+            return false;
+        }
+
         return true;
     }
 

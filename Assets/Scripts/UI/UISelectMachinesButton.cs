@@ -22,18 +22,20 @@ public sealed class UISelectMachinesButton : MonoBehaviour
 
         MachineGroupInfo[] machineGroups = ScriptableObjects.instance.machineGroups;
         children = new GameObject[ScriptableObjects.instance.machines.Length + 1]; // The magic number +1 is for conveyor
-        int childrenIndex = -1;
+        int childrenIndex = 0;
+
+        groupOffset.y += entryOffset.y;
+
+        UISelectMachineButton conveyorButton = Instantiate(machineButtonPrefab, transform);
+        conveyorButton.isConveyor = true;
+        conveyorButton.transform.localPosition = groupOffset;
+        conveyorButton.Initialize();
+        children[childrenIndex] = conveyorButton.gameObject;
+        childrenIndex++;
+        groupOffset.y += entryOffset.y;
+
         for (int i = 0, len = machineGroups.Length; i < len; ++i)
         {
-            groupOffset.y += entryOffset.y;
-
-            UISelectMachineButton conveyorButton = Instantiate(machineButtonPrefab, transform);
-            conveyorButton.isConveyor = true;
-            conveyorButton.transform.localPosition = groupOffset;
-            conveyorButton.Initialize();
-            children[++childrenIndex] = conveyorButton.gameObject;
-            groupOffset.y += entryOffset.y;
-
             MachineGroupInfo machineGroup = machineGroups[i];
             for (int j = 0, lenJ = machineGroup.members.Length; j < lenJ; ++j)
             {
@@ -41,9 +43,12 @@ public sealed class UISelectMachinesButton : MonoBehaviour
                 machineButton.machineInfo = machineGroup.members[j];
                 machineButton.transform.localPosition = groupOffset;
                 machineButton.Initialize();
-                children[++childrenIndex] = machineButton.gameObject;
+                children[childrenIndex] = machineButton.gameObject;
+                childrenIndex++;
                 groupOffset.x += entryOffset.x;
             }
+            groupOffset.x = 0;
+            groupOffset.y += entryOffset.y;
         }
 
         CollapseList();

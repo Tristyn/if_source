@@ -1,22 +1,24 @@
-﻿using ICSharpCode.NRefactory.Ast;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-public struct FastRemoveList<T>
+public class FastRemoveList<T>
 {
     public T[] array;
     public Dictionary<T, int> keys;
     public int size;
 
-    public static FastRemoveList<T> New(int capacity)
+    public FastRemoveList()
     {
-        return new FastRemoveList<T>
-        {
-            array = new T[capacity],
-            keys = new Dictionary<T, int>(capacity)
-        };
+        array = Array.Empty<T>();
+        keys = new Dictionary<T, int>();
+    }
+
+    public FastRemoveList(int capacity)
+    {
+        array = new T[capacity];
+        keys = new Dictionary<T, int>(capacity);
     }
 
     /// <summary>
@@ -75,7 +77,7 @@ public struct FastRemoveList<T>
 public static class FastRemoveListExtensions
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void DoFixedUpdate<T>(this in FastRemoveList<T> list) where T : IFixedUpdate
+    public static void DoFixedUpdate<T>(this FastRemoveList<T> list) where T : IFixedUpdate
     {
         T[] components = list.array;
         for (int i = 0, len = list.size; i < len; ++i)
@@ -84,7 +86,7 @@ public static class FastRemoveListExtensions
         }
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void DoUpdate<T>(this in FastRemoveList<T> list) where T : IUpdate
+    public static void DoUpdate<T>(this FastRemoveList<T> list) where T : IUpdate
     {
         T[] components = list.array;
         for (int i = 0, len = list.size; i < len; ++i)

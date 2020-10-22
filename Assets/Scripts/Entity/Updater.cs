@@ -2,24 +2,6 @@
 
 public sealed class Updater : MonoBehaviour
 {
-    static BackgroundMusic backgroundMusic;
-    static TouchInput touchInput;
-    static Picker picker;
-    static AutoSaveLoad autoSaveLoad;
-
-    public static FastRemoveList<UILinkConveyorButton> linkConveyorButtons = FastRemoveList<UILinkConveyorButton>.New(16);
-    public static FastRemoveList<MachineDropper> machineDroppers = FastRemoveList<MachineDropper>.New(1);
-
-    static OverviewCameraController overviewCameraController;
-    static CameraShake cameraShake;
-
-
-    public static FastRemoveList<Conveyor> conveyors = FastRemoveList<Conveyor>.New(128);
-    public static FastRemoveList<MachinePurchaser> machinePurchasers = FastRemoveList<MachinePurchaser>.New(16);
-    public static FastRemoveList<MachineSeller> machineSellers = FastRemoveList<MachineSeller>.New(16);
-    public static FastRemoveList<MachineAssembler> machineAssemblers = FastRemoveList<MachineAssembler>.New(16);
-    public static FastRemoveList<MachinePlacer> machinePlacers = FastRemoveList<MachinePlacer>.New(32);
-    public static CampaignGoals campaignGoals;
 
     void Awake()
     {
@@ -28,45 +10,45 @@ public sealed class Updater : MonoBehaviour
 
     void Bind()
     {
-        backgroundMusic = BackgroundMusic.instance;
-        touchInput = TouchInput.instance;
-        picker = Picker.instance;
-        autoSaveLoad = AutoSaveLoad.instance;
+        Updates.backgroundMusic = BackgroundMusic.instance;
+        Updates.touchInput = TouchInput.instance;
+        Updates.picker = Picker.instance;
+        Updates.autoSaveLoad = AutoSaveLoad.instance;
 
-        overviewCameraController = OverviewCameraController.instance;
-        cameraShake = CameraShake.instance;
+        Updates.overviewCameraController = OverviewCameraController.instance;
+        Updates.cameraShake = CameraShake.instance;
 
-        campaignGoals = CampaignGoals.instance;
+        Updates.campaignGoals = CampaignGoals.instance;
     }
 
     void Update()
     {
         GameTime.DoUpdate();
-        autoSaveLoad.DoUpdate();
+        Updates.autoSaveLoad.DoUpdate();
 
-        backgroundMusic.DoUpdate();
-        machineDroppers.DoUpdate();
+        Updates.backgroundMusic.DoUpdate();
+        Updates.machineDroppers.DoUpdate();
 
         // Camera transform stack
-        overviewCameraController.DoUpdate();
-        cameraShake.DoUpdate();
+        Updates.overviewCameraController.DoUpdate();
+        Updates.cameraShake.DoUpdate();
 
         // Rely on camera position
-        linkConveyorButtons.DoUpdate();
-        picker.DoUpdate();
-        touchInput.DoUpdate();
+        Updates.linkConveyorButtons.DoUpdate();
+        Updates.picker.DoUpdate();
+        Updates.touchInput.DoUpdate();
     }
 
     void FixedUpdate()
     {
         GameTime.DoFixedUpdate();
 
-        conveyors.DoFixedUpdate();
-        machinePurchasers.DoFixedUpdate();
-        machineSellers.DoFixedUpdate();
-        machineAssemblers.DoFixedUpdate();
-        machinePlacers.DoFixedUpdate();
+        Updates.conveyors.DoFixedUpdate();
+        Updates.machinePurchasers.DoFixedUpdate();
+        Updates.machineSellers.DoFixedUpdate();
+        Updates.machineAssemblers.DoFixedUpdate();
+        Updates.machinePlacers.DoFixedUpdate();
 
-        campaignGoals.DoFixedUpdate();
+        Updates.campaignGoals.DoFixedUpdate();
     }
 }

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e2837fb1745eeb42a6d8f7463defcf0, type: 3}
+  m_Name: Steel
+  m_EditorClassIdentifier: 
+  groupOrder: 20
+  members:
+  - {fileID: 11400000, guid: dc35b6edb2dc15a48baf3c0fbad38027, type: 2}
+  - {fileID: 11400000, guid: b567c0419d5f1ad4dbd51544ed62fc5f, type: 2}
+  - {fileID: 11400000, guid: 26065af99ff105748b1b9f16a7dda710, type: 2}
+  assemblers:
+  - {fileID: 11400000, guid: b567c0419d5f1ad4dbd51544ed62fc5f, type: 2}
+  purchasers:
+  - {fileID: 11400000, guid: dc35b6edb2dc15a48baf3c0fbad38027, type: 2}
+  sellers:
+  - {fileID: 11400000, guid: 26065af99ff105748b1b9f16a7dda710, type: 2}

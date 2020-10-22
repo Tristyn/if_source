@@ -51,7 +51,7 @@ public sealed class Machine : MonoBehaviour
 
         if (machineInfo.prefab)
         {
-            instance = Instantiate(machineInfo.prefab, transform);
+            instance = MachineVisual.Create(machineInfo, transform);
         }
         else
         {

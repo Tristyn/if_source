@@ -17,12 +17,36 @@ public sealed class MachineInfo : ScriptableObject
 {
     public string machineName => name;
     public MachineGroupInfo machineGroup;
-    public float cost;
-    public float placeInterval;
+    public long cost;
+    public float placeInterval = 1;
     public Vector3Int size = new Vector3Int(2, 1, 2);
+#pragma warning disable 0649
+    [SerializeField]
+    MachineVisual _prefab;
+#pragma warning restore 0649
+    [NonSerialized]
     public MachineVisual prefab;
     public Sprite sprite;
-    public Color spriteColor = Color.white;
+
+    public Color spriteColor
+    {
+        get
+        {
+            if (sellItem.itemInfo)
+            {
+                return sellItem.itemInfo.color;
+            }
+            if (assembler && assembleOutput.itemInfo)
+            {
+                return assembleOutput.itemInfo.color;
+            }
+            if (purchaseItem.itemInfo)
+            {
+                return purchaseItem.itemInfo.color;
+            }
+            return Color.white;
+        }
+    }
 
     public AssembleSlot purchaseItem;
     public AssembleSlot sellItem;
@@ -31,6 +55,18 @@ public sealed class MachineInfo : ScriptableObject
 
     public AssembleSlot[] assembleInputs;
     public AssembleSlot assembleOutput;
+
+    public void Initialize()
+    {
+        if (_prefab)
+        {
+            prefab = _prefab;
+        }
+        else
+        {
+            prefab = ScriptableObjects.instance.machineVisualDefault;
+        }
+    }
 
 #if UNITY_EDITOR
     void OnValidate()
@@ -48,14 +84,13 @@ public sealed class MachineInfo : ScriptableObject
         }
 
         ScriptableObjectMasterList masterList = ScriptableObjectMasterList.LoadAsset();
-        if (!masterList)
+        if (masterList)
         {
-            return;
-        }
-
-        if (!masterList.machines.Any(machine => machine.machineName == machineName))
-        {
-            masterList.machines = masterList.machines.Append(this);
+            if (!masterList.machines.Any(machine => machine.machineName == machineName))
+            {
+                masterList.machines = masterList.machines.Append(this);
+                EditorUtility.SetDirty(masterList);
+            }
         }
 
         if (machineGroup)
@@ -74,6 +109,7 @@ public sealed class MachineInfo : ScriptableObject
             }
 
             machineGroup.BuildMembersArray();
+            EditorUtility.SetDirty(machineGroup);
         }
         else
         {
@@ -95,13 +131,12 @@ public sealed class MachineInfo : ScriptableObject
                         machineGroup.sellers = machineGroup.sellers.Except(this).ToArray();
                     }
                     machineGroup.BuildMembersArray();
+                    EditorUtility.SetDirty(machineGroup);
                 }
             }
         }
 
         EditorUtility.SetDirty(this);
-        EditorUtility.SetDirty(machineGroup);
-        EditorUtility.SetDirty(masterList);
     }
 #endif
 }

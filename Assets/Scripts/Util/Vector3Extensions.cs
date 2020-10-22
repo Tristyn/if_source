@@ -20,7 +20,7 @@ public static class Vector3Extensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2Int ToVector3XY(this Vector3Int vector)
+    public static Vector2Int ToVector2XY(this Vector3Int vector)
     {
         return new Vector2Int(vector.x, vector.y);
     }
@@ -45,9 +45,16 @@ public static class Vector3Extensions
         return point; // return it
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3 Subtract(this Vector3 vector, float value)
     {
         return new Vector3(vector.x - value, vector.y - value, vector.z - value);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector3 Scale(this Vector3Int vector, float value)
+    {
+        return new Vector3(vector.x * value, vector.y * value, vector.z * value);
     }
 
     public static bool AllLessThan(this Vector3 vector, float value)

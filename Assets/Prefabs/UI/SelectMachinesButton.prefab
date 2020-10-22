@@ -52,7 +52,7 @@ MonoBehaviour:
   current: {fileID: 8856741839018027157}
   machineButtonPrefab: {fileID: 1900787790664568874, guid: d12657a1280848d49b35380bab29d6e7,
     type: 3}
-  entryOffset: {x: 260, y: -240, z: 0}
+  entryOffset: {x: 200, y: -210, z: 0}
   expandListClip: {fileID: 8300000, guid: a13255c53c59cf148a61d8b8985f43d7, type: 3}
 --- !u!1001 &6956235872898676927
 PrefabInstance:

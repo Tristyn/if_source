@@ -3,6 +3,10 @@ using UnityEngine.Assertions;
 
 public enum CurrencyEventType : byte
 {
+    ConveyorPurchased,
+    ConveyorSold,
+    MachinePurchased,
+    MachineSold,
     MachineSellerRevenue,
     MachinePurchaserFees,
     ItemRefunded,
@@ -16,6 +20,16 @@ public struct CurrencyEvent
     public CurrencyEventType currencyEventType;
     public string eventItemId;
 
+    public CurrencyEvent(GAResourceFlowType flowType, CurrencyType currencyType, CurrencyEventType currencyEventType, string eventItemId)
+    {
+        Assert.IsNotNull(eventItemId);
+        Assert.IsTrue(flowType != GAResourceFlowType.Undefined);
+        this.flowType = flowType;
+        this.currencyType = currencyType;
+        this.currencyEventType = currencyEventType;
+        this.eventItemId = eventItemId;
+    }
+
     public CurrencyEvent(GAResourceFlowType flowType, CurrencyType currencyType, CurrencyEventType currencyEventType, ItemInfo itemInfo)
     {
         Assert.IsNotNull(itemInfo);
@@ -24,6 +38,16 @@ public struct CurrencyEvent
         this.currencyType = currencyType;
         this.currencyEventType = currencyEventType;
         eventItemId = itemInfo.itemName;
+    }
+
+    public CurrencyEvent(GAResourceFlowType flowType, CurrencyType currencyType, CurrencyEventType currencyEventType, MachineInfo machineInfo)
+    {
+        Assert.IsNotNull(machineInfo);
+        Assert.IsTrue(flowType != GAResourceFlowType.Undefined);
+        this.flowType = flowType;
+        this.currencyType = currencyType;
+        this.currencyEventType = currencyEventType;
+        eventItemId = machineInfo.machineName;
     }
 
     public CurrencyEvent(GAResourceFlowType flowType, CurrencyType currencyType, CurrencyEventType currencyEventType, ProgressionInfo progressionInfo)

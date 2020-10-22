@@ -100,7 +100,7 @@ public sealed class Analytics : Singleton<Analytics>
                 {
                     count = nextMilestone.Value;
                 }
-            } while (nextMilestone.HasValue && count >= nextMilestone);
+            } while (nextMilestone.HasValue && count > nextMilestone);
             save.uiEventCounts[i] = currentUiEventCounts[i];
         }
 

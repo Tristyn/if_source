@@ -36,7 +36,7 @@ public sealed class MachineCreationVisualizer : MonoBehaviour
 
     void InitializeHologram()
     {
-        instance = Instantiate(machineInfo.prefab, transform);
+        instance = MachineVisual.Create(machineInfo, transform);
         Renderer[] machineRenderers = instance.machineRenderers;
         for (int i = 0, len = machineRenderers.Length; i < len; ++i)
         {
@@ -44,11 +44,8 @@ public sealed class MachineCreationVisualizer : MonoBehaviour
             machineRenderer.sharedMaterial = hologramMaterial;
             machineRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         }
-        Renderer[] infoRenderers = instance.infoRenderers;
-        for (int i = 0, len = infoRenderers.Length; i < len; ++i)
-        {
-            infoRenderers[i].enabled = false;
-        }
+        instance.categoryRenderer.enabled = false;
+        instance.textRenderer.enabled = false;
     }
 
     public void SetVisible(bool visible)

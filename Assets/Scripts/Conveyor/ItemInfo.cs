@@ -33,7 +33,7 @@ public sealed class ItemInfo : ScriptableObject
             return;
         }
 
-        if (!masterList.items.Any(item => item.itemName == itemName))
+        if (!masterList.items.Any(item => item && item.itemName == itemName))
         {
             masterList.items = masterList.items.Append(this);
         }

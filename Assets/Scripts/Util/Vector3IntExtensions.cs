@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Runtime.CompilerServices;
+using UnityEngine;
 
 public static class Vector3IntExtensions
 {
@@ -7,11 +8,13 @@ public static class Vector3IntExtensions
         return new Vector3(Mathf.Floor(vector3.x) + 0.5f, Mathf.Floor(vector3.y), Mathf.Floor(vector3.z) + 0.5f);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Bounds3Int ToBounds(this Vector3Int vector)
     {
         return new Bounds3Int(vector, vector);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3Int Add(this Vector3Int vector, int value)
     {
         return new Vector3Int(vector.x + value, vector.y + value, vector.z + value);

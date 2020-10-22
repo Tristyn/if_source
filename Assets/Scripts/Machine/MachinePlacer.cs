@@ -33,12 +33,12 @@ public sealed class MachinePlacer : MonoBehaviour, IFixedUpdate
         {
             itemInfo = machine.machineInfo.assembleOutput.itemInfo;
         }
-        Updater.machinePlacers.Add(this);
+        Updates.machinePlacers.Add(this);
     }
 
     public void Delete()
     {
-        Updater.machinePlacers.Remove(this);
+        Updates.machinePlacers.Remove(this);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
