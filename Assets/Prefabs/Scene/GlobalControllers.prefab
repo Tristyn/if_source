@@ -92,12 +92,10 @@ GameObject:
   - component: {fileID: 8256295186933584317}
   - component: {fileID: 4333293523213517532}
   - component: {fileID: 1377630774239326338}
-  - component: {fileID: 1377630774239326337}
   - component: {fileID: 6959869754596593112}
   - component: {fileID: 7823837483173332736}
   - component: {fileID: 3054280759666208902}
   - component: {fileID: 2505729766359951478}
-  - component: {fileID: 3132871875981262792}
   - component: {fileID: 1574542010878729653}
   - component: {fileID: 7352876012298268399}
   - component: {fileID: 7550240302882179556}
@@ -312,18 +310,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efe8399ea5eaf4b4eb2e52da46f532d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1377630774239326337
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1377630774726580451}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9827779e5e7be7f4dbc31662cd6db73e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &6959869754596593112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -336,6 +322,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0560eaa1c075af4d82d6e666850a2ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  conveyorCost: 10
   currencySpawnOffset: {x: 0, y: 0.5, z: 0}
   moneyChanged:
     m_PersistentCalls:
@@ -344,6 +331,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   levelChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  freeItemsChanged:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &7823837483173332736
@@ -384,19 +374,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 120b5d4c800b0d946bafab1c0bb6ad23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3132871875981262792
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1377630774726580451}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7f9966216f81f44fb2286dc1d34bacd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  uiEventMilestones: 05000000000000003200000000000000f401000000000000d0070000000000008813000000000000
 --- !u!114 &1574542010878729653
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -35,7 +35,8 @@ public sealed class Analytics : Singleton<Analytics>
     {
         base.Awake();
         save.uiEventCounts = new long[EnumUtil<UiEventId>.valuesLength];
-        Init.Configure += Configure;
+        GameAnalytics.Initialize();
+        ConsoleLogger.PipeConsoleToGameAnalytics();
         Init.PreSave += PreSave;
         Init.PostLoad += PostLoad;
     }
@@ -45,11 +46,6 @@ public sealed class Analytics : Singleton<Analytics>
         base.OnDestroy();
         Init.PreSave -= PreSave;
         Init.PostLoad -= PostLoad;
-    }
-
-    void Configure()
-    {
-        GameAnalytics.Initialize();
     }
 
     void PreSave()
@@ -161,5 +157,10 @@ public sealed class Analytics : Singleton<Analytics>
         {
             queuedMachineGroupProgressionEvents.Add(tuple);
         }
+    }
+
+    public void NewErrorEvent(GAErrorSeverity severity, string message)
+    {
+        GameAnalytics.NewErrorEvent(severity, message);
     }
 }

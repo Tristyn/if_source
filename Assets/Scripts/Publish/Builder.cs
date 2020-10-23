@@ -7,6 +7,7 @@ using System.IO;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 using System.IO.Compression;
+using UnityEditor.Callbacks;
 
 namespace MultiBuild
 {
@@ -293,6 +294,18 @@ namespace MultiBuild
             o.options = opts;
 
             return o;
+        }
+
+        [PostProcessBuild(10)]
+        public static void RemoveWebGLMobileStartupWarning(BuildTarget target, string targetPath)
+        {
+            var path = Path.Combine(targetPath, "Build/UnityLoader.js");
+            if (File.Exists(path))
+            {
+                var text = File.ReadAllText(path);
+                text = text.Replace("UnityLoader.SystemInfo.mobile", "false");
+                File.WriteAllText(path, text);
+            }
         }
     }
 }
