@@ -4,7 +4,9 @@ public sealed class AutoSaveLoad : Singleton<AutoSaveLoad>
 {
     public float autoSaveInterval = 30f;
     float nextAutoSaveTime;
+#pragma warning disable 0649
     bool autosaveDisable;
+#pragma warning restore 0649
 
     protected override void Awake()
     {

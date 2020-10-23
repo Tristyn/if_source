@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-#if UNITY_EDITOR
 using System.Linq;
+#if UNITY_EDITOR
 using UnityEditor;
 #endif
 using UnityEngine;
@@ -24,6 +24,7 @@ public sealed class ScriptableObjectMasterList : ScriptableObject
     [NonSerialized]
     public Dictionary<string, MachineGroupInfo> machineGroupsDict;
 
+#if UNITY_EDITOR
     public void OnValidate()
     {
         items = items.Where(item => item).ToArray();
@@ -32,6 +33,7 @@ public sealed class ScriptableObjectMasterList : ScriptableObject
         progressionInfos = progressionInfos.Where(progressionInfo => progressionInfo).ToArray();
         EditorUtility.SetDirty(this);
     }
+#endif
 
     public void Initialize()
     {
