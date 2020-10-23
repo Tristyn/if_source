@@ -11,6 +11,13 @@ public static class HashSetExtensions
             set.Add(list[i]);
         }
     }
+    public static void AddArray<T>(this HashSet<T> set, T[] array)
+    {
+        for (int i = 0, len = array.Length; i < len; ++i)
+        {
+            set.Add(array[i]);
+        }
+    }
 
     public static T[] ToArray<T>(this HashSet<T> set)
     {

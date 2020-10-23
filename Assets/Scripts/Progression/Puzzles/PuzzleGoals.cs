@@ -1,4 +1,4 @@
-﻿public sealed class CampaignGoals : Singleton<CampaignGoals>
+﻿public sealed class PuzzleGoals : Singleton<PuzzleGoals>
 {
     public GoalInfo[] goals;
 

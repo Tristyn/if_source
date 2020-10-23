@@ -89,11 +89,11 @@ public sealed class CurrencySystem : Singleton<CurrencySystem>
         return save.money >= machineInfo.cost;
     }
 
-    public void BuildConveyor()
+    public void BuyConveyors(int count)
     {
         if (save.itemsCostMoney)
         {
-            long value = conveyorCost;
+            long value = conveyorCost * count;
             save.money -= value;
 
             moneyChanged.Invoke();

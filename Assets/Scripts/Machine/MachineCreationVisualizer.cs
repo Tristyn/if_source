@@ -4,7 +4,7 @@ public sealed class MachineCreationVisualizer : MonoBehaviour
 {
     public Material hologramMaterial;
     public SelectionHighlighter selectionHighlighter;
-    
+
     MachineInfo machineInfo;
     MachineVisual instance;
 

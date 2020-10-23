@@ -171,8 +171,16 @@ public sealed class Machine : MonoBehaviour
     public void Demolish()
     {
         CurrencySystem.instance.RefundInventory(inventory);
+        CurrencySystem.instance.SellMachine(machineInfo);
         MachineGroupAchievements.instance.OnMachineDemolished(machineInfo.machineGroup);
         PlayDemolishAudio();
+        Conveyor[] conv = (Conveyor[])conveyors.Clone();
+        for (int i = 0, len = conv.Length; i < len; ++i)
+        {
+            Assert.IsNotNull(conv[i].machine);
+            Assert.IsTrue(conv[i].machine == this);
+            conv[i].Demolish();
+        }
         Delete();
     }
 
@@ -342,7 +350,7 @@ public sealed class Machine : MonoBehaviour
             for (int i = 0; i < numRecycled; ++i)
             {
                 Conveyor conveyor = toRecycle[i];
-                conveyor.Recycle();
+                conveyor.Demolish();
             }
             return numRecycled > 0;
         }

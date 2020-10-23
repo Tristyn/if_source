@@ -18,7 +18,7 @@ public sealed class Updater : MonoBehaviour
         Updates.overviewCameraController = OverviewCameraController.instance;
         Updates.cameraShake = CameraShake.instance;
 
-        Updates.campaignGoals = CampaignGoals.instance;
+        Updates.puzzleeGoals = PuzzleGoals.instance;
     }
 
     void Update()
@@ -49,6 +49,6 @@ public sealed class Updater : MonoBehaviour
         Updates.machineAssemblers.DoFixedUpdate();
         Updates.machinePlacers.DoFixedUpdate();
 
-        Updates.campaignGoals.DoFixedUpdate();
+        Updates.puzzleeGoals.DoFixedUpdate();
     }
 }

@@ -18,7 +18,7 @@ public sealed class SaveFile
     public BackgroundMusic.Save backgroundMusic;
     public InterfaceSelectionManager.Save interfaceSelection;
     public MachineGroupAchievements.Save machineGroupAchievements;
-    public ProgressionSystem.Save progressionSystem;
+    public ProgressionStore.Save progressionSystem;
     public SpacePlatform.Saves spacePlatforms;
 }
 
@@ -65,17 +65,22 @@ public static class SaveLoad
     {
         SaveFile newSave = new SaveFile();
         Load(newSave);
-        UIMessageBox.MessageBox("Save and quit", "Are you sure you want to quit the game?", new UIMessageBoxAction[]{
+        UIMessageBox.MessageBox("Idle Factory", "New freeplay game?", new UIMessageBoxAction[]{
             new UIMessageBoxAction
             {
-                text = "Campaign",
-                action = GameModeInitializer.InitializeCampaign
+                text="Freeplay",
+                action = GameModeInitializer.InitializeFreePlay
             },
             new UIMessageBoxAction
             {
                 text="Sandbox",
                 action = GameModeInitializer.InitializeSandbox
-            }
+            },
+            new UIMessageBoxAction
+            {
+                text = "Puzzles",
+                action = GameModeInitializer.InitializePuzzles
+            },
         });
     }
 
@@ -159,7 +164,7 @@ public static class SaveLoad
         BackgroundMusic.instance.GetSave(out save.backgroundMusic);
         InterfaceSelectionManager.instance.GetSave(out save.interfaceSelection);
         MachineGroupAchievements.instance.GetSave(out save.machineGroupAchievements);
-        ProgressionSystem.instance.GetSave(out save.progressionSystem);
+        ProgressionStore.instance.GetSave(out save.progressionSystem);
         SpacePlatform.GetSave(out save.spacePlatforms);
         Init.InvokePostSave();
 
@@ -180,7 +185,7 @@ public static class SaveLoad
         BackgroundMusic.instance.SetSave(in saveFile.backgroundMusic);
         InterfaceSelectionManager.instance.SetSave(in saveFile.interfaceSelection);
         MachineGroupAchievements.instance.SetSave(in saveFile.machineGroupAchievements);
-        ProgressionSystem.instance.SetSave(in saveFile.progressionSystem);
+        ProgressionStore.instance.SetSave(in saveFile.progressionSystem);
         SpacePlatform.SetSave(in saveFile.spacePlatforms);
         Init.InvokePostLoad();
         Init.InvokeLoadComplete();

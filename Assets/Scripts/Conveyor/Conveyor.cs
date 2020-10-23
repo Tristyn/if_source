@@ -217,6 +217,13 @@ public sealed class Conveyor : MonoBehaviour, IFixedUpdate
     {
         ConveyorSystem.instance.PlayDemolishAudio();
         CurrencySystem.instance.SellConveyor();
+        for (int i = 0, len = outputQueues.Length; i < len; ++i)
+        {
+            if (outputQueues[i] != null)
+            {
+                ClearItemQueue(outputQueues[i]);
+            }
+        }
         Recycle();
     }
 

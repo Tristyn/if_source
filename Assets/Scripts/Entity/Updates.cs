@@ -19,7 +19,7 @@ public static class Updates
     public static FastRemoveList<MachineSeller> machineSellers = NewUpdateList<MachineSeller>(16);
     public static FastRemoveList<MachineAssembler> machineAssemblers = NewUpdateList<MachineAssembler>(16);
     public static FastRemoveList<MachinePlacer> machinePlacers = NewUpdateList<MachinePlacer>(32);
-    public static CampaignGoals campaignGoals;
+    public static PuzzleGoals puzzleeGoals;
 
     static Dictionary<Type, object> componentToUpdateList = new Dictionary<Type, object>();
     static Dictionary<Type, object> componentToFixedUpdateList = new Dictionary<Type, object>();

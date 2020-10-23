@@ -117,8 +117,11 @@ public sealed class ConveyorSystem : Singleton<ConveyorSystem>
         {
             return false;
         }
+        int numConveyors = 0;
+        numConveyors += conveyors.ContainsKey(from) ? 1 : 0;
+        numConveyors += conveyors.ContainsKey(to) ? 1 : 0;
 
-        if (!CurrencySystem.instance.CanBuyConveyor(2))
+        if (!CurrencySystem.instance.CanBuyConveyor(numConveyors))
         {
             return false;
         }
@@ -154,6 +157,7 @@ public sealed class ConveyorSystem : Singleton<ConveyorSystem>
             return conveyor;
         }
 
+        CurrencySystem.instance.BuyConveyors(1);
         conveyor = DoCreateConveyor(position);
 
         Assert.IsFalse((flags & ConveyorCreateFlags.PanRelative) != 0, "Pan relative does nothing here");
@@ -193,6 +197,8 @@ public sealed class ConveyorSystem : Singleton<ConveyorSystem>
             from.Link(to);
             wereConveyorsLinked = true;
         }
+
+        CurrencySystem.instance.BuyConveyors(numConveyorsCreated);
 
         ProcessFlags(flags, numConveyorsCreated, wereConveyorsLinked, from, to);
         return to;

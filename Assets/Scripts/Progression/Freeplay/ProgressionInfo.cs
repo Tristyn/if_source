@@ -13,8 +13,6 @@ public class ProgressionInfo : ScriptableObject
     public int progressionId;
 
     public MachineInfo[] machineUnlockConditions;
-    [NonSerialized]
-    public BitArray32 machineUnlockConditionsMet;
     public long moneyCondition;
     public long levelCondition;
 

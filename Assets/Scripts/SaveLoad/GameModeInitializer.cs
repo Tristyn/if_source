@@ -2,7 +2,7 @@
 
 public static class GameModeInitializer
 {
-    public static void InitializeSandbox()
+    public static void InitializeFreePlay()
     {
         InitializeCommon();
         CurrencySystem.instance.SetMoney(500);
@@ -13,12 +13,22 @@ public static class GameModeInitializer
         spacePlatform.save.bounds = bounds;
         spacePlatform.Initialize();
     }
-
-    public static void InitializeCampaign()
+    public static void InitializeSandbox()
     {
         InitializeCommon();
         CurrencySystem.instance.SetItemsCostMoney(false);
-        CampaignGoals.instance.BeginCampaign();
+
+        Bounds3Int[] bounds = new[] { new Bounds3Int(new Vector3Int(-10, 0, -10), new Vector3Int(9, 0, 9)) };
+        SpacePlatform spacePlatform = new SpacePlatform();
+        spacePlatform.save.bounds = bounds;
+        spacePlatform.Initialize();
+    }
+
+    public static void InitializePuzzles()
+    {
+        InitializeCommon();
+        CurrencySystem.instance.SetItemsCostMoney(false);
+        PuzzleGoals.instance.BeginCampaign();
     }
 
     static void InitializeCommon()

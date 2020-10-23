@@ -34,7 +34,7 @@ MonoBehaviour:
   - e00b85d58cfce098519e8184fd2cad4c0f34522d
   - 39ee15af8c736fe8801187050f8b366690c830ba
   Build:
-  - 0.8.25.3
+  - 0.10.22.5
   - 0.1
   - 0.1
   SelectedPlatformOrganization:
@@ -77,6 +77,10 @@ MonoBehaviour:
   - MachinePurchaserFees
   - ItemRefunded
   - ProgressionReward
+  - ConveyorPurchased
+  - ConveyorSold
+  - MachinePurchased
+  - MachineSold
   ResourceCurrencies:
   - Money
   - Xp
