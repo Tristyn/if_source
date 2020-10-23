@@ -28,16 +28,19 @@ public class MachineUnlockSystem : Singleton<MachineUnlockSystem>
     {
         unlocked.Clear();
         string[] unlockedSave = save.unlocked;
-        for (int i = 0, len = unlockedSave.Length; i < len; ++i)
+        if (unlockedSave != null)
         {
-            MachineInfo machineInfo = ScriptableObjects.instance.GetMachineInfo(unlockedSave[i]);
-            if (machineInfo)
+            for (int i = 0, len = unlockedSave.Length; i < len; ++i)
             {
-                unlocked.Add(machineInfo);
-            }
-            else
-            {
-                Debug.LogWarning($"Failed to find machine info {unlockedSave[i]} while loading machine unlock.");
+                MachineInfo machineInfo = ScriptableObjects.instance.GetMachineInfo(unlockedSave[i]);
+                if (machineInfo)
+                {
+                    unlocked.Add(machineInfo);
+                }
+                else
+                {
+                    Debug.LogWarning($"Failed to find machine info {unlockedSave[i]} while loading machine unlock.");
+                }
             }
         }
     }
@@ -47,7 +50,16 @@ public class MachineUnlockSystem : Singleton<MachineUnlockSystem>
         if (!unlocked.Contains(machineInfo))
         {
             unlocked.Add(machineInfo);
-            MachineGroupAchievements.instance.OnMachineUnlocked(machineInfo.machineGroup);
+            Events.machineUnlocked?.Invoke(machineInfo);
+        }
+    }
+
+    public void UnlockAll()
+    {
+        MachineInfo[] machines = ScriptableObjects.instance.machines;
+        for (int i = 0, len = machines.Length; i < len; ++i)
+        {
+            Unlock(machines[i]);
         }
     }
 }

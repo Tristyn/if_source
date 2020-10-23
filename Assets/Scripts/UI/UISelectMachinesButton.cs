@@ -8,7 +8,7 @@ public sealed class UISelectMachinesButton : MonoBehaviour
 
     public AudioClip expandListClip;
 
-    GameObject[] children;
+    UISelectMachineButton[] children;
     bool expanded;
 
     void Awake()
@@ -21,7 +21,7 @@ public sealed class UISelectMachinesButton : MonoBehaviour
         Vector3 groupOffset = Vector3.zero;
 
         MachineGroupInfo[] machineGroups = ScriptableObjects.instance.machineGroups;
-        children = new GameObject[ScriptableObjects.instance.machines.Length + 1]; // The magic number +1 is for conveyor
+        children = new UISelectMachineButton[ScriptableObjects.instance.machines.Length + 1]; // The magic number +1 is for conveyor
         int childrenIndex = 0;
 
         groupOffset.y += entryOffset.y;
@@ -30,7 +30,7 @@ public sealed class UISelectMachinesButton : MonoBehaviour
         conveyorButton.isConveyor = true;
         conveyorButton.transform.localPosition = groupOffset;
         conveyorButton.Initialize();
-        children[childrenIndex] = conveyorButton.gameObject;
+        children[childrenIndex] = conveyorButton;
         childrenIndex++;
         groupOffset.y += entryOffset.y;
 
@@ -43,7 +43,7 @@ public sealed class UISelectMachinesButton : MonoBehaviour
                 machineButton.machineInfo = machineGroup.members[j];
                 machineButton.transform.localPosition = groupOffset;
                 machineButton.Initialize();
-                children[childrenIndex] = machineButton.gameObject;
+                children[childrenIndex] = machineButton;
                 childrenIndex++;
                 groupOffset.x += entryOffset.x;
             }
@@ -59,7 +59,8 @@ public sealed class UISelectMachinesButton : MonoBehaviour
         expanded = true;
         for (int i = 0, len = children.Length; i < len; ++i)
         {
-            children[i].SetActive(true);
+            UISelectMachineButton machineButton = children[i];
+            children[i].gameObject.SetActive(true);
         }
     }
 
@@ -68,7 +69,7 @@ public sealed class UISelectMachinesButton : MonoBehaviour
         expanded = false;
         for (int i = 0, len = children.Length; i < len; ++i)
         {
-            children[i].SetActive(false);
+            children[i].gameObject.SetActive(false);
         }
     }
 

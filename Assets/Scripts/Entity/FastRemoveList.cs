@@ -72,6 +72,20 @@ public class FastRemoveList<T>
         }
         return false;
     }
+
+    // Aggressive inlining to move the branch prediction up the stack
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void SetAdded(bool added, T element)
+    {
+        if (added)
+        {
+            Add(element);
+        }
+        else
+        {
+            Remove(element);
+        }
+    }
 }
 
 public static class FastRemoveListExtensions

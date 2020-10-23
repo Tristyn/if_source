@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 public static class ArrayExtensions
@@ -14,25 +15,21 @@ public static class ArrayExtensions
         return ret;
     }
 
-    public static T[] Remove<T>(this T[] array, T element)
-        where T : class
+    public static T[] Remove<T>(this T[] source, T element)
     {
-        bool found = false;
-        T[] ret = new T[array.Length - 1];
-        for (int i = -1, arrayIndex = 0, len = array.Length; i < len; ++arrayIndex)
+        int index = Array.IndexOf(source, element);
+        if(index == -1)
         {
-            if (array[i] != element)
-            {
-                ret[++i] = array[arrayIndex];
-                found = true;
-                break; // Remove at most one
-            }
+            return source;
         }
-        if (found)
-        {
-            return ret;
-        }
-        return array;
+        T[] dest = new T[source.Length - 1];
+        if (index > 0)
+            Array.Copy(source, 0, dest, 0, index);
+
+        if (index < source.Length - 1)
+            Array.Copy(source, index + 1, dest, index, source.Length - index - 1);
+
+        return dest;
     }
 
     public static T[] Remove<T>(this T[] array, int index)

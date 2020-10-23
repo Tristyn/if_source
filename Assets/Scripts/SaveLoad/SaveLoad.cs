@@ -14,10 +14,10 @@ public sealed class SaveFile
     public TileSelectionManager.Save tileSelection;
     public OverviewCameraController.Save overviewCameraController;
     public Analytics.Save analytics;
-    public MachineGroupAchievements.Save machineGroupProgression;
     public BackgroundMusic.Save backgroundMusic;
     public InterfaceSelectionManager.Save interfaceSelection;
     public MachineGroupAchievements.Save machineGroupAchievements;
+    public MachineUnlockSystem.Save machineUnlocks;
     public ProgressionStore.Save progressionSystem;
     public SpacePlatform.Saves spacePlatforms;
 }
@@ -164,6 +164,7 @@ public static class SaveLoad
         BackgroundMusic.instance.GetSave(out save.backgroundMusic);
         InterfaceSelectionManager.instance.GetSave(out save.interfaceSelection);
         MachineGroupAchievements.instance.GetSave(out save.machineGroupAchievements);
+        MachineUnlockSystem.instance.GetSave(out save.machineUnlocks);
         ProgressionStore.instance.GetSave(out save.progressionSystem);
         SpacePlatform.GetSave(out save.spacePlatforms);
         Init.InvokePostSave();
@@ -185,6 +186,7 @@ public static class SaveLoad
         BackgroundMusic.instance.SetSave(in saveFile.backgroundMusic);
         InterfaceSelectionManager.instance.SetSave(in saveFile.interfaceSelection);
         MachineGroupAchievements.instance.SetSave(in saveFile.machineGroupAchievements);
+        MachineUnlockSystem.instance.SetSave(in saveFile.machineUnlocks);
         ProgressionStore.instance.SetSave(in saveFile.progressionSystem);
         SpacePlatform.SetSave(in saveFile.spacePlatforms);
         Init.InvokePostLoad();

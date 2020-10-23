@@ -18,7 +18,8 @@ public class ProgressionInfo : ScriptableObject
 
     public long moneyReward;
     public long xpReward;
-    public MachineInfo[] machineUnlockRewards;
+    public MachineInfo[] machineRewards;
+    public MachineGroupInfo[] machineGroupRewards;
 
 #if UNITY_EDITOR
     void OnValidate()
@@ -41,10 +42,9 @@ public class ProgressionInfo : ScriptableObject
 
     public void ValidateProgressionId()
     {
-        if (progressionId == 0)
+        ScriptableObjectMasterList masterList = ScriptableObjectMasterList.LoadAsset();
+        if (masterList.progressionInfos.Count(progressionInfo => progressionInfo.progressionId == progressionId) > 1)
         {
-            ScriptableObjectMasterList masterList = ScriptableObjectMasterList.LoadAsset();
-            masterList.nextProgressionId++;
             progressionId = masterList.nextProgressionId++;
             EditorUtility.SetDirty(this);
             EditorUtility.SetDirty(masterList);

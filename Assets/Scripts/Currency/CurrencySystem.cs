@@ -86,7 +86,7 @@ public sealed class CurrencySystem : Singleton<CurrencySystem>
             return true;
         }
 
-        return save.money >= machineInfo.cost;
+        return machineInfo.cost <= 0 || save.money >= machineInfo.cost;
     }
 
     public void BuyConveyors(int count)
@@ -125,7 +125,7 @@ public sealed class CurrencySystem : Singleton<CurrencySystem>
         }
 
         long value = conveyorCost * count;
-        return save.money >= value;
+        return value <= 0 || save.money >= value;
     }
 
     public void MachineSellerSellItem(ItemInfo itemInfo, int count, Vector3 position)
@@ -229,7 +229,7 @@ public sealed class CurrencySystem : Singleton<CurrencySystem>
         }
 
         long value = itemInfo.value * count;
-        return save.money >= value;
+        return value <= 0 || save.money >= value;
     }
 
     public void SetMoney(long value)

@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
 public sealed class Updater : MonoBehaviour
 {
-
     void Awake()
     {
         Init.Bind += Bind;
@@ -18,7 +18,7 @@ public sealed class Updater : MonoBehaviour
         Updates.overviewCameraController = OverviewCameraController.instance;
         Updates.cameraShake = CameraShake.instance;
 
-        Updates.puzzleeGoals = PuzzleGoals.instance;
+        Updates.puzzleGoals = PuzzleGoals.instance;
     }
 
     void Update()
@@ -48,7 +48,7 @@ public sealed class Updater : MonoBehaviour
         Updates.machineSellers.DoFixedUpdate();
         Updates.machineAssemblers.DoFixedUpdate();
         Updates.machinePlacers.DoFixedUpdate();
-
-        Updates.puzzleeGoals.DoFixedUpdate();
+        Updates.uiSelectMachineButtons.DoFixedUpdate();
+        Updates.puzzleGoals.DoFixedUpdate();
     }
 }

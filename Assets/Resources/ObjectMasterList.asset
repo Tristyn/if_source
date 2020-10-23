@@ -35,9 +35,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2bc360861550b284fb06d826fd5b2104, type: 2}
   - {fileID: 11400000, guid: 54b3e32d3e67bae4e883d11652a5d0bf, type: 2}
   machines:
-  - {fileID: 11400000, guid: ffa214700dc0c6e4ba0ced2de9e0da08, type: 2}
-  - {fileID: 11400000, guid: 3c7e56af39ff89c4da32c45706e9d12b, type: 2}
-  - {fileID: 11400000, guid: 240c652c16e9202449cbfeadd0284160, type: 2}
   - {fileID: 11400000, guid: aea2c434040552f44870289786567433, type: 2}
   - {fileID: 11400000, guid: e84ad5dc4791285468aaecc3890d7e39, type: 2}
   - {fileID: 11400000, guid: 28e5c0dd190bfd1478a0b3542f56cb38, type: 2}
@@ -77,4 +74,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b63e9fb2fc0447c4a8d30ea30e1b87f1, type: 2}
   progressionInfos:
   - {fileID: 11400000, guid: e107b294ee0455a4fb273c204dcf3cf2, type: 2}
-  nextProgressionId: 2
+  - {fileID: 11400000, guid: 5e84b6623ff903c44b5b8f120d684abd, type: 2}
+  - {fileID: 11400000, guid: 3a53e9d95ef97084c9b43446913b0a3f, type: 2}
+  - {fileID: 11400000, guid: a044ef7d6a0aafa4fbd5826977dd7917, type: 2}
+  - {fileID: 11400000, guid: 8c3ac84a8077c3647bcaaff6ab323499, type: 2}
+  - {fileID: 11400000, guid: 2e53a577fdbee6e4ba13798143f64bc0, type: 2}
+  - {fileID: 11400000, guid: 923c8df9b5c3ffc498e70f2237220b9b, type: 2}
+  nextProgressionId: 8

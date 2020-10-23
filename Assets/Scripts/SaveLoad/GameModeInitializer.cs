@@ -5,8 +5,8 @@ public static class GameModeInitializer
     public static void InitializeFreePlay()
     {
         InitializeCommon();
-        CurrencySystem.instance.SetMoney(500);
         CurrencySystem.instance.SetItemsCostMoney(true);
+        ProgressionSystem.instance.ApplyStartingProgressions();
 
         Bounds3Int[] bounds = new[] { new Bounds3Int(new Vector3Int(-10, 0, -10), new Vector3Int(9, 0, 9)) };
         SpacePlatform spacePlatform = new SpacePlatform();
@@ -17,6 +17,7 @@ public static class GameModeInitializer
     {
         InitializeCommon();
         CurrencySystem.instance.SetItemsCostMoney(false);
+        MachineUnlockSystem.instance.UnlockAll();
 
         Bounds3Int[] bounds = new[] { new Bounds3Int(new Vector3Int(-10, 0, -10), new Vector3Int(9, 0, 9)) };
         SpacePlatform spacePlatform = new SpacePlatform();
@@ -28,6 +29,7 @@ public static class GameModeInitializer
     {
         InitializeCommon();
         CurrencySystem.instance.SetItemsCostMoney(false);
+        ProgressionSystem.instance.ApplyStartingProgressions();
         PuzzleGoals.instance.BeginCampaign();
     }
 

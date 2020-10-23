@@ -63,6 +63,7 @@ public sealed class MachineSystem : Singleton<MachineSystem>
         }
         if (CanCreateMachine(machineInfo, bounds))
         {
+            CurrencySystem.instance.BuildMachine(machineInfo);
             return DoCreateMachine(machineInfo, bounds);
         }
         return null;
@@ -70,13 +71,11 @@ public sealed class MachineSystem : Singleton<MachineSystem>
 
     Machine DoCreateMachine(MachineInfo machineInfo, Bounds3Int bounds)
     {
-        CurrencySystem.instance.BuildMachine(machineInfo);
-
         GameObject gameObject = new GameObject(machineInfo.machineName);
         Machine machine = gameObject.AddComponent<Machine>();
         machine.bounds = bounds;
         machine.machineInfo = machineInfo;
-        
+
         Add(machine);
 
         machine.Initialize();
@@ -94,8 +93,8 @@ public sealed class MachineSystem : Singleton<MachineSystem>
 
         bool machinesMetaDataExists = machinesMetaData.TryGetValue(machineInfo, out MachineMetaData machineMetaData);
         machineMetaData.numInstances++;
-        if(machinesMetaDataExists)
-        { 
+        if (machinesMetaDataExists)
+        {
             machinesMetaData[machineInfo] = machineMetaData;
         }
         else
@@ -184,7 +183,6 @@ public sealed class MachineSystem : Singleton<MachineSystem>
             {
                 Debug.LogWarning($"Failed to find MachineInfo {saveMachine.machineName} while loading machine.");
             }
-
         }
         save = default;
     }

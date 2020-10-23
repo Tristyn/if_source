@@ -10,13 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe95ef0f3ad0eae4189f702496c35132, type: 3}
-  m_Name: Pinky
+  m_Name: Iron
   m_EditorClassIdentifier: 
-  progressionName: 
-  progressionId: 1
+  progressionName: Iron
+  progressionId: 3
   machineUnlockConditions: []
   moneyCondition: 0
   levelCondition: 0
-  moneyReward: 0
+  moneyReward: 500
   xpReward: 0
-  machineUnlockRewards: []
+  machineRewards: []
+  machineGroupRewards:
+  - {fileID: 11400000, guid: 3add531d1e39952409d19a520b3e078d, type: 2}

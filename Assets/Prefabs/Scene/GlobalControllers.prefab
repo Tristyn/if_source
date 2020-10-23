@@ -114,6 +114,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e4f35853d08531418b45252b40f3a86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startingProgressions:
+  - {fileID: 11400000, guid: e107b294ee0455a4fb273c204dcf3cf2, type: 2}
 --- !u!114 &3423972203933121459
 MonoBehaviour:
   m_ObjectHideFlags: 0

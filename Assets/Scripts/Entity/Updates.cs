@@ -9,6 +9,7 @@ public static class Updates
     public static AutoSaveLoad autoSaveLoad;
 
     public static FastRemoveList<UILinkConveyorButton> linkConveyorButtons = NewUpdateList<UILinkConveyorButton>(16);
+    public static FastRemoveList<UISelectMachineButton> uiSelectMachineButtons = NewUpdateList<UISelectMachineButton>(32);
     public static FastRemoveList<MachineDropper> machineDroppers = NewUpdateList<MachineDropper>(1);
 
     public static OverviewCameraController overviewCameraController;
@@ -19,7 +20,7 @@ public static class Updates
     public static FastRemoveList<MachineSeller> machineSellers = NewUpdateList<MachineSeller>(16);
     public static FastRemoveList<MachineAssembler> machineAssemblers = NewUpdateList<MachineAssembler>(16);
     public static FastRemoveList<MachinePlacer> machinePlacers = NewUpdateList<MachinePlacer>(32);
-    public static PuzzleGoals puzzleeGoals;
+    public static PuzzleGoals puzzleGoals;
 
     static Dictionary<Type, object> componentToUpdateList = new Dictionary<Type, object>();
     static Dictionary<Type, object> componentToFixedUpdateList = new Dictionary<Type, object>();

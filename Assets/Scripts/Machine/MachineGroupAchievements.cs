@@ -29,13 +29,15 @@ public sealed class MachineGroupAchievements : Singleton<MachineGroupAchievement
     protected override void Awake()
     {
         base.Awake();
-        Events.machineCreated += OnMachineCreated;
+        Events.machineUnlocked += OnMachineUnlocked;
+        Events.machineCreated += OnMachineCreated;        
     }
 
     protected override void OnDestroy()
     {
         base.OnDestroy();
         Events.machineCreated -= OnMachineCreated;
+        Events.machineUnlocked -= OnMachineUnlocked;
     }
 
 
@@ -74,9 +76,9 @@ public sealed class MachineGroupAchievements : Singleton<MachineGroupAchievement
         }
     }
 
-    public void OnMachineUnlocked(MachineGroupInfo machineGroup)
+    void OnMachineUnlocked(MachineInfo machineInfo)
     {
-        Achieve(machineGroup, MachineGroupAchievementCategory.Unlock);
+        Achieve(machineInfo.machineGroup, MachineGroupAchievementCategory.Unlock);
     }
 
     public void OnMachineCreated(Machine machine)

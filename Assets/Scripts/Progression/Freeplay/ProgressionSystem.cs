@@ -7,13 +7,16 @@ public class ProgressionSystem : Singleton<ProgressionSystem>
     long lastLevel;
 
     public ProgressionScanner progressionScanner = new ProgressionScanner();
+    public List<ProgressionInfo> startingProgressions;
 
     protected override void Awake()
     {
         base.Awake();
 
         Init.Configure += Configure;
+        Init.Bind += Bind;
         Init.LoadComplete += LoadComplete;
+        Events.machineUnlocked += OnMachineUnlocked;
     }
 
     protected override void OnDestroy()
@@ -21,6 +24,7 @@ public class ProgressionSystem : Singleton<ProgressionSystem>
         base.OnDestroy();
 
         Init.LoadComplete -= LoadComplete;
+        Events.machineUnlocked -= OnMachineUnlocked;
         if (CurrencySystem.instance)
         {
             CurrencySystem.instance.moneyChanged.RemoveListener(OnMoneyChanged);
@@ -31,6 +35,12 @@ public class ProgressionSystem : Singleton<ProgressionSystem>
     void Configure()
     {
         progressionScanner.Configure();
+    }
+
+    void Bind()
+    {
+        CurrencySystem.instance.moneyChanged.AddListener(OnMoneyChanged);
+        CurrencySystem.instance.levelChanged.AddListener(OnLevelChanged);
     }
 
     void LoadComplete()
@@ -55,7 +65,7 @@ public class ProgressionSystem : Singleton<ProgressionSystem>
         }
     }
 
-    public void OnMachineUnlocked(MachineInfo machineInfo)
+    void OnMachineUnlocked(MachineInfo machineInfo)
     {
         List<ProgressionInfo> progressionInfos = progressionScanner.RequiringUnlockedMachine(machineInfo);
         ProgressionApplyer.ApplyRewards(progressionInfos);
@@ -79,10 +89,15 @@ public class ProgressionSystem : Singleton<ProgressionSystem>
         long level = CurrencySystem.instance.save.level;
         if (lastLevel < level)
         {
-            List<ProgressionInfo> progressionInfos = progressionScanner.RequiringMoneyInRange(lastLevel, level);
+            List<ProgressionInfo> progressionInfos = progressionScanner.RequiringLevelInRange(lastLevel, level);
             ProgressionApplyer.ApplyRewards(progressionInfos);
             ListPool<ProgressionInfo>.Release(progressionInfos);
         }
         lastLevel = level;
+    }
+
+    public void ApplyStartingProgressions()
+    {
+        ProgressionApplyer.ApplyRewards(startingProgressions);
     }
 }

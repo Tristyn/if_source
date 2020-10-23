@@ -134,9 +134,12 @@ MonoBehaviour:
   spriteAssembler: {fileID: 21300000, guid: 3f78debdbbfd94a458d672df59036553, type: 3}
   spriteConveyor: {fileID: 21300000, guid: 684a7123d68dbf640a5f5a0419e9bbf6, type: 3}
   selectMachineClip: {fileID: 8300000, guid: 97ada0451a5a9de459894136852395f4, type: 3}
+  backgroundImage: {fileID: 1900787790664568872}
   machineImage: {fileID: 1900787789997805425}
   machineCategory: {fileID: 1900787791533129254}
   machineName: {fileID: 8991901936009709014}
+  buildableBackgroundColor: {r: 1, g: 1, b: 1, a: 1}
+  unbuildableBackgroundColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
   isConveyor: 0
   machineInfo: {fileID: 0}
 --- !u!222 &1900787790664568873

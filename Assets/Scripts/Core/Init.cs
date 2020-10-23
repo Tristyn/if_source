@@ -1,18 +1,26 @@
 ﻿using UnityEngine;
 using System;
-using UnityEngine.Assertions;
 
 public sealed class Init : MonoBehaviour
 {
+    enum InitStep
+    {
+        None = 0,
+        Configure = 1,
+        Bind = 2,
+        StartupLoad = 3,
+        Complete = 4
+    }
+
     public static bool initialized = false;
-    static bool initializing = false;
+    static InitStep initStep;
 
     /// <summary>
     /// Last minute configuration before bind is called
     /// </summary>
     public static event Action Configure
     {
-        add => AddListener(ref configure, value);
+        add => AddListener(ref configure, value, InitStep.Configure);
         remove => configure -= value;
     }
     static event Action configure;
@@ -22,7 +30,7 @@ public sealed class Init : MonoBehaviour
     /// </summary>
     public static event Action Bind
     {
-        add => AddListener(ref bind, value);
+        add => AddListener(ref bind, value, InitStep.Bind);
         remove => bind -= value;
     }
     static event Action bind;
@@ -32,7 +40,7 @@ public sealed class Init : MonoBehaviour
     /// </summary>
     public static event Action StartupLoad
     {
-        add => AddListener(ref startupLoad, value);
+        add => AddListener(ref startupLoad, value, InitStep.StartupLoad);
         remove => startupLoad -= value;
     }
     static event Action startupLoad;
@@ -89,14 +97,25 @@ public sealed class Init : MonoBehaviour
 
 
 
-    static void AddListener(ref Action actions, Action listener)
+    static void AddListener(ref Action actions, Action listener, InitStep initStep)
     {
-        Assert.IsFalse(initializing, "object is registering to Init while Init callbacks are firing.");
-        if (initializing)
+        if (Init.initStep >= initStep)
         {
             listener();
         }
 
+        if (initialized)
+        {
+            listener();
+        }
+        else
+        {
+            actions = actions += listener;
+        }
+    }
+
+    static void AddListener(ref Action actions, Action listener)
+    {
         if (initialized)
         {
             listener();
@@ -115,13 +134,17 @@ public sealed class Init : MonoBehaviour
 
     void Start()
     {
-        initializing = true;
+        initStep = InitStep.Configure;
         configure?.Invoke();
-        bind?.Invoke();
-        startupLoad?.Invoke();
-        initializing = false;
-        initialized = true;
 
+        initStep = InitStep.Bind;
+        bind?.Invoke();
+
+        initStep = InitStep.StartupLoad;
+        startupLoad?.Invoke();
+
+        initStep = InitStep.Complete;
+        initialized = true;
         configure = null;
         bind = null;
         startupLoad = null;
