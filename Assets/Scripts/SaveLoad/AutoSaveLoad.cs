@@ -13,7 +13,7 @@ public sealed class AutoSaveLoad : Singleton<AutoSaveLoad>
         base.Awake();
         nextAutoSaveTime = GameTime.time + autoSaveInterval;
         Init.StartupLoad += StartupLoad;
-        Init.LoadComplete += LoadComplete;
+        SaveLoad.LoadComplete += LoadComplete;
         Application.focusChanged += FocusChanged;
         Application.quitting += Save;
 
@@ -23,7 +23,7 @@ public sealed class AutoSaveLoad : Singleton<AutoSaveLoad>
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        Init.LoadComplete -= LoadComplete;
+        SaveLoad.LoadComplete -= LoadComplete;
         Application.focusChanged -= FocusChanged;
         Application.quitting -= Save;
     }
@@ -86,7 +86,7 @@ public sealed class AutoSaveLoad : Singleton<AutoSaveLoad>
     {
         if (!SaveLoad.Load())
         {
-            SaveLoad.NewSaveGame();
+            GameModeInitializer.InitializeFreePlay();
         }
     }
 }

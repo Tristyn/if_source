@@ -14,7 +14,14 @@ public sealed class CameraShake : Singleton<CameraShake>
     protected override void Awake()
     {
         base.Awake();
-        Harmonic.CalcDampedSpringMotionParams(out spring, TimeHelper.fixedTimeStep, angularFrequency, dampingRatio);
+        Harmonic.CalcDampedSpringMotionParams(out spring, GameTime.fixedTimeStep, angularFrequency, dampingRatio);
+        Events.MachineLanded += MachineLanded;
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        Events.MachineLanded -= MachineLanded;
     }
 
     public void DoUpdate()
@@ -28,7 +35,6 @@ public sealed class CameraShake : Singleton<CameraShake>
             position_local = zero;
             velocity_local = zero;
             transform.localPosition = zero;
-            enabled = false;
         }
         else
         {
@@ -36,9 +42,8 @@ public sealed class CameraShake : Singleton<CameraShake>
         }
     }
 
-    public void MachineLanded()
+    void MachineLanded(Machine machine)
     {
         velocity_local.y += dropMomentum;
-        enabled = true;
     }
 }

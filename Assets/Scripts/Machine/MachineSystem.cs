@@ -20,7 +20,6 @@ public sealed class MachineSystem : Singleton<MachineSystem>
     [NonSerialized]
     public Dictionary<MachineInfo, MachineMetaData> machinesMetaData = new Dictionary<MachineInfo, MachineMetaData>();
 
-
     [Serializable]
     public struct Save
     {
@@ -33,20 +32,20 @@ public sealed class MachineSystem : Singleton<MachineSystem>
     {
         base.Awake();
         machineSpatialHash.Initialize();
-        Init.PreSave += PreSave;
-        Init.PostSave += PostSave;
-        Init.PreLoad += PreLoad;
-        Init.PostLoad += PostLoad;
-        Events.machineDeleted += OnMachineDeleted;
+        SaveLoad.PreSave += PreSave;
+        SaveLoad.PostSave += PostSave;
+        SaveLoad.PreLoad += PreLoad;
+        SaveLoad.PostLoad += PostLoad;
+        Events.MachineDeleted += OnMachineDeleted;
     }
 
     protected override void OnDestroy()
     {
-        Init.PreSave -= PreSave;
-        Init.PostSave -= PostSave;
-        Init.PreLoad -= PreLoad;
-        Init.PostLoad -= PostLoad;
-        Events.machineDeleted -= OnMachineDeleted;
+        SaveLoad.PreSave -= PreSave;
+        SaveLoad.PostSave -= PostSave;
+        SaveLoad.PreLoad -= PreLoad;
+        SaveLoad.PostLoad -= PostLoad;
+        Events.MachineDeleted -= OnMachineDeleted;
     }
 
     public bool CanCreateMachine(MachineInfo machineInfo, Bounds3Int bounds)
@@ -79,7 +78,7 @@ public sealed class MachineSystem : Singleton<MachineSystem>
         Add(machine);
 
         machine.Initialize();
-        Events.machineCreated?.Invoke(machine);
+        Events.MachineCreated?.Invoke(machine);
 
         return machine;
     }
@@ -185,11 +184,6 @@ public sealed class MachineSystem : Singleton<MachineSystem>
             }
         }
         save = default;
-    }
-
-    public void MachineLanded()
-    {
-        CameraShake.instance.MachineLanded();
     }
 
     void OnDrawGizmosSelected()

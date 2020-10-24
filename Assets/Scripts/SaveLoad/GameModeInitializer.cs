@@ -13,6 +13,7 @@ public static class GameModeInitializer
         spacePlatform.save.bounds = bounds;
         spacePlatform.Initialize();
     }
+
     public static void InitializeSandbox()
     {
         InitializeCommon();
@@ -35,8 +36,9 @@ public static class GameModeInitializer
 
     static void InitializeCommon()
     {
+        SaveLoad.NewSaveGame();
+        MenuController.instance.SetState(MenuState.Closed);
         GameTime.StartOfTime();
-        OverviewCameraController.instance.SetZoomIncrement(int.MaxValue);
-        OverviewCameraController.instance.Rotate(90f);
+        OverviewCameraController.instance.SetEnabled(true);
     }
 }

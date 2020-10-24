@@ -9,6 +9,7 @@ public sealed class MachineDropper : MonoBehaviour, IUpdate
     public Vector3 initialVelocity = new Vector3(0, -18f, 0);
 
     ParticleSystem smokeParticleSystem;
+    Machine machine;
     Transform machineTransform;
     Vector3 velocity;
     bool landed;
@@ -46,10 +47,11 @@ public sealed class MachineDropper : MonoBehaviour, IUpdate
         }
     }
 
-    public void Drop(in Bounds3Int machineBounds, Transform machineTransform)
+    public void Drop(Machine machine)
     {
-        this.machineTransform = machineTransform;
-        machineDropSmoke.SetBounds(in machineBounds);
+        this.machine = machine;
+        machineTransform = machine.instance.transform;
+        machineDropSmoke.SetBounds(machine.bounds);
         velocity = initialVelocity;
 
         Vector3 position_local = machineTransform.localPosition;
@@ -62,7 +64,7 @@ public sealed class MachineDropper : MonoBehaviour, IUpdate
 
     void Land()
     {
-        MachineSystem.instance.MachineLanded();
+        Events.MachineLanded?.Invoke(machine);
         machineDropSmoke.Landed();
     }
 
@@ -70,6 +72,7 @@ public sealed class MachineDropper : MonoBehaviour, IUpdate
     {
         Updates.machineDroppers.Remove(this);
         ObjectPooler.instance.Recycle(this);
+        machine = null;
         machineTransform = null;
     }
 }

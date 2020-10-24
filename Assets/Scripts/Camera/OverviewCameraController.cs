@@ -34,38 +34,30 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
 
     public Save save;
 
+    [Serializable]
     public struct Save
     {
         public CameraState targetCameraState;
         public CameraState interpolatingCameraState;
         public int zoomIncrement;
+        public bool enabled;
     }
 
     protected override void Awake()
     {
         base.Awake();
-        Init.PostLoad += PostLoad;
+        SaveLoad.PostLoad += PostLoad;
     }
 
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        Init.PostLoad -= PostLoad;
-    }
-
-    void OnEnable()
-    {
-        save.targetCameraState.SetFromTransform(transform);
-        save.interpolatingCameraState.SetFromTransform(transform);
-        currentPositionLerpTime = positionLerpTime;
-        currentRotationLerpTime = rotationLerpTime;
+        SaveLoad.PostLoad -= PostLoad;
     }
 
     void PostLoad()
     {
-        SetZoomIncrement(save.zoomIncrement);
-        save.targetCameraState.UpdateTransform(transform);
-        save.interpolatingCameraState = save.targetCameraState;
+        SetEnabled(save.enabled);
     }
 
     Vector3 GetKeyboardTranslationDirection()
@@ -122,10 +114,7 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
 
     public void SetRotation(float angle)
     {
-        Vector3 eulerRotation = new Vector3(0, angle, 0);
-
-        save.interpolatingCameraState.eulerAngles = eulerRotation;
-        save.targetCameraState.eulerAngles = eulerRotation;
+        save.targetCameraState.eulerAngles.y = angle;
     }
 
     public void Rotate(float angle)
@@ -150,6 +139,34 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
         save.targetCameraState.eulerAngles.x = zoomIncrements[this.save.zoomIncrement].pitch;
     }
 
+    public void SnapToTargetState()
+    {
+        save.interpolatingCameraState = save.targetCameraState;
+        save.interpolatingCameraState.UpdateTransform(transform);
+    }
+
+    public void SetInitialState()
+    {
+        SetZoomIncrement(int.MaxValue);
+        SetRotation(90f);
+        MoveTo(new Vector3(0, 0, 0));
+        SnapToTargetState();
+    }
+
+    public void SetEnabled(bool enabled)
+    {
+        save.enabled = enabled;
+        if (enabled)
+        {
+            SetZoomIncrement(save.zoomIncrement);
+            save.targetCameraState.UpdateTransform(transform);
+        }
+        else
+        {
+            SetInitialState();
+        }
+    }
+
     public void DoUpdate()
     {
         // Exit Sample
@@ -159,6 +176,11 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #endif
+        }
+
+        if (!save.enabled)
+        {
+            return;
         }
 
         if (Input.GetKeyDown(KeyCode.Q))

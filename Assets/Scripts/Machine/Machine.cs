@@ -186,7 +186,7 @@ public sealed class Machine : MonoBehaviour
 
     public void Delete()
     {
-        Events.machineDeleted?.Invoke(this);
+        Events.MachineDeleted?.Invoke(this);
 
         if (machinePurchaser)
         {
@@ -227,7 +227,7 @@ public sealed class Machine : MonoBehaviour
     public void Drop()
     {
         MachineDropper machineDropper = ObjectPooler.instance.Get<MachineDropper>();
-        machineDropper.Drop(bounds, instance.transform);
+        machineDropper.Drop(this);
         AudioSystem.instance.PlayOneShot(MachineSystem.instance.createMachineClip, AudioCategory.Effect);
     }
 

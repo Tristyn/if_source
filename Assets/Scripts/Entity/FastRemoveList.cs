@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-public class FastRemoveList<T>
+public sealed class FastRemoveList<T>
 {
     public T[] array;
     public Dictionary<T, int> keys;

@@ -30,14 +30,14 @@ public sealed class UISelectMachineButton : MonoBehaviour, IFixedUpdate
     void Awake()
     {
         uiBehaviours = GetComponentsInChildren<UIBehaviour>();
-        Init.LoadComplete += LoadComplete;
-        Events.machineUnlocked += OnMachineUnlocked;
+        SaveLoad.LoadComplete += LoadComplete;
+        Events.MachineUnlocked += OnMachineUnlocked;
     }
 
     void OnDestroy()
     {
-        Init.LoadComplete -= LoadComplete;
-        Events.machineUnlocked -= OnMachineUnlocked;
+        SaveLoad.LoadComplete -= LoadComplete;
+        Events.MachineUnlocked -= OnMachineUnlocked;
     }
     private void OnEnable()
     {
@@ -134,13 +134,13 @@ public sealed class UISelectMachineButton : MonoBehaviour, IFixedUpdate
             long cost = isConveyor
                 ? currencySystem.conveyorCost
                 : machineInfo.cost;
-            if (money >= cost)
+            if (currencySystem.save.itemsCostMoney && money < cost)
             {
-                backgroundColor = buildableBackgroundColor;
+                backgroundColor = unbuildableBackgroundColor;
             }
             else
             {
-                backgroundColor = unbuildableBackgroundColor;
+                backgroundColor = buildableBackgroundColor;
             }
             backgroundImage.color = backgroundColor;
         }

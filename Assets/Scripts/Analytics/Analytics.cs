@@ -37,15 +37,15 @@ public sealed class Analytics : Singleton<Analytics>
         save.uiEventCounts = new long[EnumUtil<UiEventId>.valuesLength];
         GameAnalytics.Initialize();
         ConsoleLogger.PipeConsoleToGameAnalytics();
-        Init.PreSave += PreSave;
-        Init.PostLoad += PostLoad;
+        SaveLoad.PreSave += PreSave;
+        SaveLoad.PostLoad += PostLoad;
     }
 
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        Init.PreSave -= PreSave;
-        Init.PostLoad -= PostLoad;
+        SaveLoad.PreSave -= PreSave;
+        SaveLoad.PostLoad -= PostLoad;
     }
 
     void PreSave()

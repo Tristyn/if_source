@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine.Rendering;
 
-public class ProgressionScanner
+public sealed class ProgressionScanner
 {
     Dictionary<MachineInfo, List<ProgressionInfo>> machineConditions = new Dictionary<MachineInfo, List<ProgressionInfo>>();
     OpenSortedList<long, List<ProgressionInfo>> moneyConditions = new OpenSortedList<long, List<ProgressionInfo>>();

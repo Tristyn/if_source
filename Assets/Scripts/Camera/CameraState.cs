@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
+[Serializable]
 public struct CameraState
 {
     public Vector3 eulerAngles; // Vector3(pitch, yaw, roll)

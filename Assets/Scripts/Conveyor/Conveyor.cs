@@ -61,7 +61,7 @@ public sealed class Conveyor : MonoBehaviour, IFixedUpdate
     public const float minItemDistance = 0.5000001f;
     public const float queueDistance = 1f;
     public const float itemSpeed = 2f;
-    public const float fixedItemSpeed = itemSpeed / TimeHelper.fixedFrameRate;
+    public const float fixedItemSpeed = itemSpeed / GameTime.fixedFrameRate;
 
     public Save save;
 

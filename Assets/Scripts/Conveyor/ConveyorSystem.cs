@@ -27,19 +27,19 @@ public sealed class ConveyorSystem : Singleton<ConveyorSystem>
     protected override void Awake()
     {
         base.Awake();
-        Init.PreSave += PreSave;
-        Init.PostSave += PostSave;
-        Init.PreLoad += PreLoad;
-        Init.PostLoad += PostLoad;
+        SaveLoad.PreSave += PreSave;
+        SaveLoad.PostSave += PostSave;
+        SaveLoad.PreLoad += PreLoad;
+        SaveLoad.PostLoad += PostLoad;
     }
 
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        Init.PreSave -= PreSave;
-        Init.PostSave -= PostSave;
-        Init.PreLoad -= PreLoad;
-        Init.PostLoad -= PostLoad;
+        SaveLoad.PreSave -= PreSave;
+        SaveLoad.PostSave -= PostSave;
+        SaveLoad.PreLoad -= PreLoad;
+        SaveLoad.PostLoad -= PostLoad;
     }
 
     void PreSave()
@@ -68,7 +68,11 @@ public sealed class ConveyorSystem : Singleton<ConveyorSystem>
         conveyors.Values.CopyTo(conveyorClones, 0);
         for (int i = 0, len = conveyorClones.Length; i < len; ++i)
         {
-            conveyorClones[i].Recycle();
+            Conveyor conveyor = conveyorClones[i];
+            if (conveyors.ContainsKey(conveyor.save.position_local))
+            {
+                conveyor.Recycle();
+            }
         }
     }
 

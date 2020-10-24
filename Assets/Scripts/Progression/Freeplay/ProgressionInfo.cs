@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ProgressionInfo", menuName = "Progression Info", order = 30)]
-public class ProgressionInfo : ScriptableObject
+public sealed class ProgressionInfo : ScriptableObject
 {
     public string progressionName;
     [ReadOnly]

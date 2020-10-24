@@ -29,7 +29,7 @@ namespace MultiBuild
     }
 
     [Serializable]
-    public class Target
+    public sealed class Target
     {
         public string outputFolder;
         public TargetType targetType;

@@ -36,13 +36,13 @@ public sealed class CurrencySystem : Singleton<CurrencySystem>
     protected override void Awake()
     {
         base.Awake();
-        Init.LoadComplete += LoadComplete;
+        SaveLoad.LoadComplete += LoadComplete;
     }
 
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        Init.LoadComplete -= LoadComplete;
+        SaveLoad.LoadComplete -= LoadComplete;
     }
 
     void LoadComplete()

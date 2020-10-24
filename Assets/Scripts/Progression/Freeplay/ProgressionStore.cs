@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class ProgressionStore : Singleton<ProgressionStore>
+public sealed class ProgressionStore : Singleton<ProgressionStore>
 {
     public struct Save
     {

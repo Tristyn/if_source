@@ -4,7 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using UnityEngine;
 
-public class ConsoleLogger
+public sealed class ConsoleLogger
 {
     static ConcurrentDictionary<string, object> loggedStackTraces = new ConcurrentDictionary<string, object>();
 

@@ -27,15 +27,11 @@ public static class HashSetExtensions
             return Array.Empty<T>();
         }
 
-        int i = 0;
         T[] ret = new T[count];
-        foreach (T element in set)
-        {
-            ret[i] = element;
-            ++i;
-        }
+        set.CopyTo(ret);
         return ret;
     }
+
     public static List<T> ToList<T>(this HashSet<T> set)
     {
         List<T> list = ListPool<T>.Get();

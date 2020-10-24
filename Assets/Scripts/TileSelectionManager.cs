@@ -32,16 +32,16 @@ public sealed class TileSelectionManager : Singleton<TileSelectionManager>
     {
         base.Awake();
         demolishButton.gameObject.SetActive(false);
-        Init.PreSave += PreSave;
-        Init.PreLoad += PreLoad;
-        Init.LoadComplete += LoadComplete;
+        SaveLoad.PreSave += PreSave;
+        SaveLoad.PreLoad += PreLoad;
+        SaveLoad.LoadComplete += LoadComplete;
     }
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        Init.PreSave -= PreSave;
-        Init.PreLoad -= PreLoad;
-        Init.LoadComplete -= LoadComplete;
+        SaveLoad.PreSave -= PreSave;
+        SaveLoad.PreLoad -= PreLoad;
+        SaveLoad.LoadComplete -= LoadComplete;
     }
 
     void PreSave()

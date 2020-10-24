@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine.Rendering;
 
-public class ProgressionSystem : Singleton<ProgressionSystem>
+public sealed class ProgressionSystem : Singleton<ProgressionSystem>
 {
     long lastMoney;
     long lastLevel;
@@ -15,16 +15,16 @@ public class ProgressionSystem : Singleton<ProgressionSystem>
 
         Init.Configure += Configure;
         Init.Bind += Bind;
-        Init.LoadComplete += LoadComplete;
-        Events.machineUnlocked += OnMachineUnlocked;
+        SaveLoad.LoadComplete += LoadComplete;
+        Events.MachineUnlocked += OnMachineUnlocked;
     }
 
     protected override void OnDestroy()
     {
         base.OnDestroy();
 
-        Init.LoadComplete -= LoadComplete;
-        Events.machineUnlocked -= OnMachineUnlocked;
+        SaveLoad.LoadComplete -= LoadComplete;
+        Events.MachineUnlocked -= OnMachineUnlocked;
         if (CurrencySystem.instance)
         {
             CurrencySystem.instance.moneyChanged.RemoveListener(OnMoneyChanged);

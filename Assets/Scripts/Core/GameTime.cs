@@ -15,6 +15,9 @@ public static class GameTime
     public static float unscaledDeltaTime;
     public static Save save;
 
+    public const float fixedTimeStep = 0.02f;
+    public const float fixedFrameRate = 1f / fixedTimeStep;
+
     public static float time
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

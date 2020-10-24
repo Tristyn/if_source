@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewGoal", menuName = "Goal", order = 30)]
-public class GoalInfo : ScriptableObject
+public sealed class GoalInfo : ScriptableObject
 {
     public bool restrictLand;
     public bool createAddon;

@@ -29,15 +29,15 @@ public sealed class MachineGroupAchievements : Singleton<MachineGroupAchievement
     protected override void Awake()
     {
         base.Awake();
-        Events.machineUnlocked += OnMachineUnlocked;
-        Events.machineCreated += OnMachineCreated;        
+        Events.MachineUnlocked += OnMachineUnlocked;
+        Events.MachineCreated += OnMachineCreated;        
     }
 
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        Events.machineCreated -= OnMachineCreated;
-        Events.machineUnlocked -= OnMachineUnlocked;
+        Events.MachineCreated -= OnMachineCreated;
+        Events.MachineUnlocked -= OnMachineUnlocked;
     }
 
 

@@ -41,7 +41,7 @@ public sealed class SpacePlatform
 
     public static void SetSave(in Saves save)
     {
-        foreach (var spacePlatform in spacePlatforms)
+        foreach (var spacePlatform in spacePlatforms.ToArray())
         {
             spacePlatform.Delete();
         }

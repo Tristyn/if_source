@@ -11,11 +11,9 @@ public sealed class UILinkConveyorButton : MonoBehaviour, IUpdate
     public Vector3Int position;
     public Vector3Int sourcePosition;
 
-    Button button;
-
     void Awake()
     {
-        button = GetComponent<Button>();
+        Button button = GetComponent<Button>();
         button.onClick.AddListener(OnClick);
     }
 

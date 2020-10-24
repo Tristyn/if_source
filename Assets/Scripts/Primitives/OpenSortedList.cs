@@ -72,7 +72,7 @@ using System.Collections;
 [Serializable()]
 #endif
 [System.Runtime.InteropServices.ComVisible(false)]
-public class OpenSortedList<TKey, TValue> :
+public sealed class OpenSortedList<TKey, TValue> :
     IDictionary<TKey, TValue>, IDictionary, IReadOnlyDictionary<TKey, TValue>
 {
     public TKey[] keys;

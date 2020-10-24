@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MachineUnlockSystem : Singleton<MachineUnlockSystem>
+public sealed class MachineUnlockSystem : Singleton<MachineUnlockSystem>
 {
     [NonSerialized]
     public HashSet<MachineInfo> unlocked = new HashSet<MachineInfo>();
@@ -50,7 +50,7 @@ public class MachineUnlockSystem : Singleton<MachineUnlockSystem>
         if (!unlocked.Contains(machineInfo))
         {
             unlocked.Add(machineInfo);
-            Events.machineUnlocked?.Invoke(machineInfo);
+            Events.MachineUnlocked?.Invoke(machineInfo);
         }
     }
 

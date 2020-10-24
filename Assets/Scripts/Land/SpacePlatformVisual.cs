@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class SpacePlatformVisual
+public sealed class SpacePlatformVisual
 {
     public Color color = Color.white;
     public Floor[] floors;

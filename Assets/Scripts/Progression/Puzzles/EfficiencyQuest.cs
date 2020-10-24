@@ -11,12 +11,12 @@ public sealed class EfficiencyQuest
 	
 	public void Initialize()
     {
-		Events.machineCreated += OnMachineCreated;
+		Events.MachineCreated += OnMachineCreated;
     }
 
 	public void Delete()
     {
-		Events.machineCreated -= OnMachineCreated;
+		Events.MachineCreated -= OnMachineCreated;
     }
 
 	void OnMachineCreated(Machine machine)
