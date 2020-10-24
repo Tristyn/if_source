@@ -39,7 +39,6 @@ public sealed class UILinkConveyorButton : MonoBehaviour, IUpdate
 
     void OnClick()
     {
-        bool exists = ConveyorSystem.instance.conveyors.ContainsKey(position);
         Conveyor conveyor = ConveyorSystem.instance.GetOrCreateConveyor(sourcePosition, position, ConveyorCreateFlags.SelectConveyor | ConveyorCreateFlags.PanRelative);
         ConveyorSystem.instance.conveyors.TryGetValue(sourcePosition, out Conveyor sourceConveyor);
         if ((conveyor && conveyor.machine) || (sourceConveyor && sourceConveyor.machine))
