@@ -8,6 +8,7 @@ using UnityEditor.Build.Reporting;
 using UnityEngine;
 using System.IO.Compression;
 using UnityEditor.Callbacks;
+using UnityEditor.Build.Player;
 
 namespace MultiBuild
 {
@@ -291,6 +292,8 @@ namespace MultiBuild
             BuildOptions opts = BuildOptions.None;
             if (settings.developmentBuild)
                 opts |= BuildOptions.Development;
+            if (o.target == BuildTarget.Android)
+                opts |= BuildOptions.AutoRunPlayer;
             o.options = opts;
 
             return o;

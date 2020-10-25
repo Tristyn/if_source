@@ -75,7 +75,7 @@ public static class Mathx
 
     public static void PopulateRange(int[] array, int start)
     {
-        for(int i = 0, len = array.Length; i < len; ++i)
+        for (int i = 0, len = array.Length; i < len; ++i)
         {
             array[i] = start;
             ++start;

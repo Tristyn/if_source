@@ -69,19 +69,19 @@ public sealed class TouchPan : MonoBehaviour
             {
                 if (touch.now.phase == TouchPhase.Moved || touch.now.phase == TouchPhase.Ended)
                 {
-                    if (PansContain(touch.now.fingerId, out int panIndex) )
+                    if (PansContain(touch.now.fingerId, out int panIndex))
                     {
                         Pan pan = pans[panIndex];
                         if (pan.panningBegan)
                         {
                             CameraPan(touch.now.deltaPosition);
                         }
-                        else if(Picker.instance.GetPickerTile(touch.now.position, PickMask.Floor, out Vector3Int pickerPosition) && pickerPosition != pan.startingTile)
+                        else if (Picker.instance.GetPickerTile(touch.now.position, PickMask.Floor, out Vector3Int pickerPosition) && pickerPosition != pan.startingTile)
                         {
                             pan.panningBegan = true;
                             pans[panIndex] = pan;
                             Vector2 deltaPosition = touch.now.position - pan.startingPixelCoordinate;
-                            if(Application.platform == RuntimePlatform.WebGLPlayer)
+                            if (Application.platform == RuntimePlatform.WebGLPlayer)
                             {
                                 // coordinates are inverse on WebGL
                                 deltaPosition = -deltaPosition;
@@ -108,9 +108,9 @@ public sealed class TouchPan : MonoBehaviour
 
     bool PansContain(int fingerId, out int panIndex)
     {
-        for(int i =0, len = pans.Count; i < len; ++i)
+        for (int i = 0, len = pans.Count; i < len; ++i)
         {
-            if(pans[i].fingerId == fingerId)
+            if (pans[i].fingerId == fingerId)
             {
                 panIndex = i;
                 return true;

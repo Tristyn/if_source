@@ -6,7 +6,7 @@ public static class HashSetExtensions
 {
     public static void AddList<T>(this HashSet<T> set, List<T> list)
     {
-        for(int i = 0, len = list.Count; i < len; ++i)
+        for (int i = 0, len = list.Count; i < len; ++i)
         {
             set.Add(list[i]);
         }

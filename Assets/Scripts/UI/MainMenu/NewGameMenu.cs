@@ -11,7 +11,7 @@ public sealed class NewGameMenu : MonoBehaviour
         Events.MenuStateChanged += MenuStateChanged;
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
         Events.MenuStateChanged -= MenuStateChanged;
     }

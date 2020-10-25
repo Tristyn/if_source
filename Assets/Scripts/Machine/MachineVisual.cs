@@ -40,7 +40,12 @@ public sealed class MachineVisual : MonoBehaviour
                 Renderer machineRenderer = machineRenderers[i];
                 if (colorMachineMaterials)
                 {
-                    machineRenderer.material.color = machineInfo.spriteColor;
+                    Color machineColor = machineInfo.spriteColor;
+                    if (machineInfo.sellItem.itemInfo)
+                    {
+                        machineColor *= new Color(1.5f, 0.7f, 0.7f, 1f);
+                    }
+                    machineRenderer.material.color = machineColor;
                 }
                 if (tileMachineMaterials)
                 {

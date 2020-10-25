@@ -12,7 +12,7 @@ public static class SaveLoadClipboard
     public static void LoadFromClipboard()
     {
         string json = GUIUtility.systemCopyBuffer;
-        if (!SaveLoad.Load())
+        if (!SaveLoad.LoadFromJson(json))
         {
             Toast.ShowToast("Error while loading.");
         }

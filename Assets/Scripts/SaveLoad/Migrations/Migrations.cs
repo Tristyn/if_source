@@ -18,7 +18,7 @@ public static class Migrations
     public static void Migrate(SaveFile saveFile)
     {
         int i = GetMigrationIndex(saveFile.version);
-        for(int len = migrations.Length; i < len; ++i)
+        for (int len = migrations.Length; i < len; ++i)
         {
             migrations[i].action(saveFile);
             saveFile.version = migrations[i].version;

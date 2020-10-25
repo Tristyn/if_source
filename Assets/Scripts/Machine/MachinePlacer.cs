@@ -60,9 +60,13 @@ public sealed class MachinePlacer : MonoBehaviour, IFixedUpdate
         }
 
         MachineConveyorLink[] conveyorLinks = machine.conveyorLinks;
-        int lastOutputIndex = Mathf.Min(save.lastOutputIndex, conveyorLinks.Length - 1);
-        for (int i = lastOutputIndex + 1, len = conveyorLinks.Length; i < len; ++i)
+        int start = Mathf.Min(save.lastOutputIndex + 1, conveyorLinks.Length);
+        for (int i = start, iter = 0, len = conveyorLinks.Length; iter < len; ++i, ++iter)
         {
+            if (i == len)
+            {
+                i = 0;
+            }
             MachineConveyorLink conveyorLink = conveyorLinks[i];
             if (conveyorLink.isOutput && conveyorLink.innerConveyor.PlaceItem(itemInfo, conveyorLink.machineDirection))
             {
@@ -74,19 +78,5 @@ public sealed class MachinePlacer : MonoBehaviour, IFixedUpdate
                 }
             }
         }
-        for (int i = 0, len = lastOutputIndex + 1; i < len; ++i)
-        {
-            MachineConveyorLink conveyorLink = conveyorLinks[i];
-            if (conveyorLink.isOutput && conveyorLink.innerConveyor.PlaceItem(itemInfo, conveyorLink.machineDirection))
-            {
-                save.lastOutputIndex = i;
-                --slot.count;
-                if (slot.empty)
-                {
-                    return;
-                }
-            }
-        }
-        return;
     }
 }

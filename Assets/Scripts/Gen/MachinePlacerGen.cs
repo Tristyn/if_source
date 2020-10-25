@@ -15,13 +15,13 @@ public static class MachinePlacerGen
         zPositions.Shuffle();
         int y = boundingBox.min.y;
 
-        for(int i = 0, len = xPositions.Length; i < len; ++i)
+        for (int i = 0, len = xPositions.Length; i < len; ++i)
         {
-            for(int j = 0, jlen = zPositions.Length; j < jlen; ++j)
+            for (int j = 0, jlen = zPositions.Length; j < jlen; ++j)
             {
                 Vector3Int position = new Vector3Int(xPositions[i], y, zPositions[j]);
                 Bounds3Int bounds = Bounds3Int.Create(position, machineInfo.size);
-                if(MachineSystem.instance.CanCreateMachine(machineInfo, bounds))
+                if (MachineSystem.instance.CanCreateMachine(machineInfo, bounds))
                 {
                     return bounds;
                 }

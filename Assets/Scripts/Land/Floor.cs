@@ -13,10 +13,10 @@ public sealed class Floor : MonoBehaviour
         transform.localPosition = position_local;
         transform.localScale = scale;
 
-        if(color != Color.white)
+        if (color != Color.white)
         {
             Renderer[] renderers = GetComponentsInChildren<Renderer>();
-            for(int i = 0,len = renderers.Length; i < len; ++i)
+            for (int i = 0, len = renderers.Length; i < len; ++i)
             {
                 renderers[i].material.color *= color;
             }
