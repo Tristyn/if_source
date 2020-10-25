@@ -40,7 +40,10 @@ public sealed class BackgroundMusic : Singleton<BackgroundMusic>
                 return;
             }
         }
-        PlayTrack(startupMusic, 0f);
+        if (!audioSource.isPlaying)
+        {
+            PlayTrack(startupMusic, 0f);
+        }
     }
 
     void NextTrack()
