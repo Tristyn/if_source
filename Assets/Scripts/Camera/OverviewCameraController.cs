@@ -6,6 +6,7 @@ public struct ZoomIncrement
 {
     public float height;
     public float pitch;
+    public float viewDiameter;
 }
 
 public sealed class OverviewCameraController : Singleton<OverviewCameraController>
@@ -22,6 +23,10 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
     public float rotationLerpTime = 0.01f;
     float currentRotationLerpTime;
 
+    [Tooltip("Time it takes to interpolate camera field of view 99% of the way to the target."), Range(0.001f, 1f)]
+    public float viewDiameterLerpTime = 0.01f;
+    float currentViewDiameterLerpTime;
+
     public float distanceWhenRotating;
 
     public float zoomHeightIncrement = 2f;
@@ -33,6 +38,9 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
     public ZoomIncrement[] zoomIncrements;
 
     public Save save;
+    
+    Camera mainCamera;
+
 
     [Serializable]
     public struct Save
@@ -46,6 +54,10 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
     protected override void Awake()
     {
         base.Awake();
+        Init.Bind += () =>
+        {
+            mainCamera = MainCamera.instance;
+        };
         SaveLoad.PostLoad += PostLoad;
     }
 
@@ -135,14 +147,17 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
     {
         save.zoomIncrement = Mathf.Clamp(zoomIncrement, 0, zoomIncrements.Length - 1);
 
-        save.targetCameraState.position.y = zoomIncrements[this.save.zoomIncrement].height;
-        save.targetCameraState.eulerAngles.x = zoomIncrements[this.save.zoomIncrement].pitch;
+        ref ZoomIncrement zoom = ref zoomIncrements[this.save.zoomIncrement];
+        save.targetCameraState.position.y = zoom.height;
+        save.targetCameraState.eulerAngles.x = zoom.pitch;
+        save.targetCameraState.viewDiameter = zoom.viewDiameter;
     }
 
     public void SnapToTargetState()
     {
         save.interpolatingCameraState = save.targetCameraState;
         save.interpolatingCameraState.UpdateTransform(transform);
+        mainCamera.fieldOfView = GetFov(in save.interpolatingCameraState, mainCamera.aspect);
     }
 
     public void SetInitialState()
@@ -151,6 +166,27 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
         SetRotation(90f);
         MoveTo(new Vector3(0, 0, 0));
         SnapToTargetState();
+    }
+
+    float GetFov(in CameraState cameraState, float aspect)
+    {
+        Plane groundPlane = new Plane(new Vector3(0, 1, 0), 0.8f);
+        Ray cameraRay = cameraState.CameraCenterToRay();
+        if(!groundPlane.Raycast(cameraRay, out float distanceToGround))
+        {
+            distanceToGround = 15f;
+        }
+        
+        // Calculate based on the smaller of frustum width and height
+        float viewDiameter = cameraState.viewDiameter;
+        if (aspect < 1)
+        {
+            // Landscape screen, calculate vertical frustum
+            viewDiameter /= aspect;
+        }
+
+        float fov = Mathx.FovAtDistanceAndFrustumLength(distanceToGround, viewDiameter);
+        return fov;
     }
 
     public void SetEnabled(bool enabled)
@@ -218,13 +254,16 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
 
         currentPositionLerpTime = Mathf.Lerp(currentPositionLerpTime, positionLerpTime, GameTime.deltaTime);
         currentRotationLerpTime = Mathf.Lerp(currentRotationLerpTime, rotationLerpTime, GameTime.deltaTime);
+        currentViewDiameterLerpTime = Mathf.Lerp(currentViewDiameterLerpTime, viewDiameterLerpTime, GameTime.deltaTime);
 
         // Framerate-independent interpolation
         // Calculate the lerp amount, such that we get 99% of the way to our target in the specified time
         var positionLerpPct = 1f - Mathf.Exp(Mathf.Log(1f - 0.99f) / currentPositionLerpTime * GameTime.deltaTime);
         var rotationLerpPct = 1f - Mathf.Exp(Mathf.Log(1f - 0.99f) / currentRotationLerpTime * GameTime.deltaTime);
-        save.interpolatingCameraState.LerpTowards(save.targetCameraState, positionLerpPct, rotationLerpPct);
+        var viewDiameterLerpPct = 1f - Mathf.Exp(Mathf.Log(1f - 0.99f) / currentViewDiameterLerpTime * GameTime.deltaTime);
+        save.interpolatingCameraState.LerpTowards(save.targetCameraState, positionLerpPct, rotationLerpPct, viewDiameterLerpPct);
 
         save.interpolatingCameraState.UpdateTransform(transform);
+        mainCamera.fieldOfView = GetFov(in save.interpolatingCameraState, mainCamera.aspect);
     }
 }

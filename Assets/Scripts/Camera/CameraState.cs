@@ -6,6 +6,7 @@ public struct CameraState
 {
     public Vector3 eulerAngles; // Vector3(pitch, yaw, roll)
     public Vector3 position;
+    public float viewDiameter;
 
     public void SetFromTransform(Transform t)
     {
@@ -25,10 +26,11 @@ public struct CameraState
         position += translation;
     }
 
-    public void LerpTowards(CameraState target, float positionLerpPct, float rotationLerpPct)
+    public void LerpTowards(CameraState target, float positionLerpPct, float rotationLerpPct, float viewDiameterLerpPct)
     {
         eulerAngles = Vector3.Lerp(eulerAngles, target.eulerAngles, rotationLerpPct);
         position = Vector3.Lerp(position, target.position, positionLerpPct);
+        viewDiameter = Mathf.Lerp(viewDiameter, target.viewDiameter, viewDiameterLerpPct);
     }
 
     public void UpdateTransform(Transform t)
@@ -41,5 +43,10 @@ public struct CameraState
     {
         t.localEulerAngles = eulerAngles;
         t.localPosition = position;
+    }
+
+    public Ray CameraCenterToRay()
+    {
+        return new Ray(position, Quaternion.Euler(eulerAngles) * Vector3.forward); 
     }
 }

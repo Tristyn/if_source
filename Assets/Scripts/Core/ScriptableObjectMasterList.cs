@@ -115,7 +115,10 @@ public sealed class ScriptableObjectMasterList : ScriptableObject
             AssetDatabase.FindAssets("ObjectMasterList t:ScriptableObjectMasterList", new[] { "Assets/Resources" })
             .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
             .SingleOrDefault());
-        masterList.OnValidate();
+        if (masterList)
+        {
+            masterList.OnValidate();
+        }
         return masterList;
     }
 #endif

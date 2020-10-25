@@ -81,4 +81,22 @@ public static class Mathx
             ++start;
         }
     }
+
+    /// <summary>
+    /// Calculate the frustum length at a given distance from the camera.
+    /// Supports calculating for horizontal or vertical fov given horiz or vertical frustum.
+    /// </summary>
+    public static float FrustumLengthAtDistance(float distance, float fieldOfView)
+    {
+        return 2.0f * distance * Mathf.Tan(fieldOfView * 0.5f * Mathf.Deg2Rad);
+    }
+
+    /// <summary>
+    /// Calculate the FOV needed to get a given frustum height at a given distance.
+    /// Supports calculating for horizontal or vertical fov given horiz or vertical frustum.
+    /// </summary>
+    public static float FovAtDistanceAndFrustumLength(float distance, float frustumLength)
+    {
+        return 2.0f * Mathf.Atan(frustumLength * 0.5f / distance) * Mathf.Rad2Deg;
+    }
 }

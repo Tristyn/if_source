@@ -47,6 +47,7 @@ MonoBehaviour:
   panSpeed: 5
   positionLerpTime: 0.3
   rotationLerpTime: 0.4
+  viewDiameterLerpTime: 0.3
   distanceWhenRotating: 3
   zoomHeightIncrement: 2
   zoomHeightMin: 2.5
@@ -54,31 +55,44 @@ MonoBehaviour:
   pitch: 35
   zoomInPitch: 30
   zoomIncrements:
-  - height: 2.5
+  - height: 3
     pitch: 32
-  - height: 3.25
+    viewDiameter: 6
+  - height: 3.5
     pitch: 40
+    viewDiameter: 6.5
   - height: 4.25
     pitch: 47
+    viewDiameter: 7
   - height: 5.5
     pitch: 54
+    viewDiameter: 8
   - height: 7
     pitch: 61
+    viewDiameter: 9
   - height: 8.5
     pitch: 68
+    viewDiameter: 10
   - height: 10
     pitch: 75
+    viewDiameter: 11
   - height: 11.5
+    pitch: 75
+    viewDiameter: 12
+  - height: 30
     pitch: 80
+    viewDiameter: 16
   save:
     targetCameraState:
-      eulerAngles: {x: 0, y: 0, z: 0}
-      position: {x: 0, y: 0, z: 0}
+      eulerAngles: {x: 68, y: 90, z: 0}
+      position: {x: -1.1663389, y: 8.5, z: 1.6659766}
+      viewDiameter: 10
     interpolatingCameraState:
-      eulerAngles: {x: 0, y: 0, z: 0}
-      position: {x: 0, y: 0, z: 0}
-    zoomIncrement: 0
-    enabled: 0
+      eulerAngles: {x: 68.000114, y: 90, z: 0}
+      position: {x: -1.1663389, y: 8.500002, z: 1.6659766}
+      viewDiameter: 10.000002
+    zoomIncrement: 5
+    enabled: 1
 --- !u!1 &771754889708726371
 GameObject:
   m_ObjectHideFlags: 0
@@ -200,6 +214,7 @@ MonoBehaviour:
   m_StopNaN: 0
   m_Dithering: 0
   m_ClearDepth: 1
+  m_AllowXRRendering: 1
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2

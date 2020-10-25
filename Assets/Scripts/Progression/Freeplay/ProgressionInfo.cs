@@ -43,7 +43,7 @@ public sealed class ProgressionInfo : ScriptableObject
     public void ValidateProgressionId()
     {
         ScriptableObjectMasterList masterList = ScriptableObjectMasterList.LoadAsset();
-        if (masterList.progressionInfos.Count(progressionInfo => progressionInfo.progressionId == progressionId) > 1)
+        if (masterList && masterList.progressionInfos.Count(progressionInfo => progressionInfo.progressionId == progressionId) > 1)
         {
             progressionId = masterList.nextProgressionId++;
             EditorUtility.SetDirty(this);
