@@ -13,20 +13,6 @@ public sealed class BackgroundMusic : Singleton<BackgroundMusic>
         public float time;
     }
 
-    protected override void Awake()
-    {
-        base.Awake();
-        Init.Bind += () =>
-        {
-            audioSource = AudioSystem.instance.GetAudioSource(AudioCategory.BackgroundMusic);
-            audioSource.clip = startupMusic;
-            audioSource.time = 0f;
-#if !UNITY_EDITOR
-            audioSource.Play();
-#endif
-        };
-    }
-
     public void DoUpdate()
     {
         if (!audioSource.isPlaying)
@@ -50,15 +36,11 @@ public sealed class BackgroundMusic : Singleton<BackgroundMusic>
         {
             if (clipName == music[i].name)
             {
-                audioSource.clip = music[i];
-                audioSource.time = save.time;
-#if !UNITY_EDITOR
-                audioSource.Play();
-#endif
+                PlayTrack(music[i], save.time);
                 return;
             }
         }
-        NextTrack();
+        PlayTrack(startupMusic, 0f);
     }
 
     void NextTrack()
@@ -68,6 +50,11 @@ public sealed class BackgroundMusic : Singleton<BackgroundMusic>
         {
             clip = music[Random.Range(0, music.Length - 1)];
         } while (audioSource.clip == clip && music.Length > 1);
+        PlayTrack(clip, 0f);
+    }
+
+    void PlayTrack(AudioClip clip, float time)
+    {
         audioSource.clip = clip;
         audioSource.time = 0f;
 #if !UNITY_EDITOR
