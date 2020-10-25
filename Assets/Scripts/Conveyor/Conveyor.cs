@@ -633,7 +633,7 @@ public sealed class Conveyor : MonoBehaviour, IFixedUpdate
 
                 float lookAheadItemDistance = headDistance;
 
-                for (int j = queueHead + 1, jiter = 0, jlen = queue.Count, queueArrayLen = queueArray.Length; jiter < jlen; ++j, ++jiter)
+                for (int j = queueHead + 1, jiter = 1, jlen = queue.Count, queueArrayLen = queueArray.Length; jiter < jlen; ++j, ++jiter)
                 {
                     if (j == queueArrayLen)
                     {
