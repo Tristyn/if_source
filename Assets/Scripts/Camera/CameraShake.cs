@@ -14,7 +14,7 @@ public sealed class CameraShake : Singleton<CameraShake>
     protected override void Awake()
     {
         base.Awake();
-        Harmonic.CalcDampedSpringMotionParams(out spring, GameTime.fixedTimeStep, angularFrequency, dampingRatio);
+        Harmonic.CalcDampedSpringMotionParams(out spring, GameTime.fixedDeltaTime, angularFrequency, dampingRatio);
         Events.MachineLanded += MachineLanded;
     }
 
@@ -24,17 +24,18 @@ public sealed class CameraShake : Singleton<CameraShake>
         Events.MachineLanded -= MachineLanded;
     }
 
+    public void DoFixedUpdate()
+    {
+        Vector3 targetPosition_local = new Vector3();
+        Harmonic.UpdateDampedSpringMotion(ref position_local, ref velocity_local, in targetPosition_local, in spring);
+    }
+
     public void DoUpdate()
     {
-        Vector3 targetPosition_local = Vector3.zero;
-        Harmonic.UpdateDampedSpringMotion(ref position_local, ref velocity_local, in targetPosition_local, in spring);
         if (position_local.Abs().AllLessThan(cutoffAmount) &&
             velocity_local.Abs().AllLessThan(cutoffAmount))
         {
-            Vector3 zero = Vector3.zero;
-            position_local = zero;
-            velocity_local = zero;
-            transform.localPosition = zero;
+            transform.localPosition = new Vector3();
         }
         else
         {

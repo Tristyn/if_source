@@ -11,12 +11,11 @@ public static class GameTime
     }
 
     public static float deltaTime;
-    public static float fixedDeltaTime;
     public static float unscaledDeltaTime;
     public static Save save;
 
-    public const float fixedTimeStep = 0.02f;
-    public const float fixedFrameRate = 1f / fixedTimeStep;
+    public const float fixedDeltaTime = 0.01666668f;
+    public const float fixedFrameRate = 1f / fixedDeltaTime;
 
     public static float time
     {
@@ -52,9 +51,7 @@ public static class GameTime
 
     public static void DoFixedUpdate()
     {
-        float fixedDeltaTime = Time.fixedDeltaTime;
         float unscaledDeltaTime = Time.unscaledDeltaTime;
-        GameTime.fixedDeltaTime = fixedDeltaTime;
         save.fixedTime += fixedDeltaTime;
         GameTime.unscaledDeltaTime = unscaledDeltaTime;
         save.unscaledTime += unscaledDeltaTime;

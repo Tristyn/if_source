@@ -148,15 +148,14 @@ public sealed class Conveyor : MonoBehaviour, IFixedUpdate
                         ConveyorItem.Save[] saveItems = new ConveyorItem.Save[jlen];
                         saveOutputQueues[i] = saveItems;
                         ConveyorItem[] queueArray = outputQueue.array;
-                        for (int j = outputQueue.head, jiter = 0; jiter < jlen; ++j, ++jiter)
+                        for (int j = outputQueue.head, jiter = 0, queueArrayLen=queueArray.Length; jiter < jlen; ++j, ++jiter)
                         {
-                            if (j==jlen)
+                            if (j==queueArrayLen)
                             {
                                 j = 0;
                             }
                             queueArray[j].GetSave(out saveItems[jiter]);
                         }
-                        continue;
                     }
                 }
                 saveOutputQueues[i] = Array.Empty<ConveyorItem.Save>();

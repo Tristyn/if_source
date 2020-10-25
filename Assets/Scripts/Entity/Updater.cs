@@ -50,5 +50,6 @@ public sealed class Updater : MonoBehaviour
         Updates.machinePlacers.DoFixedUpdate();
         Updates.uiSelectMachineButtons.DoFixedUpdate();
         Updates.puzzleGoals.DoFixedUpdate();
+        Updates.cameraShake.DoFixedUpdate();
     }
 }

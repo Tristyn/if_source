@@ -70,7 +70,15 @@ MonoBehaviour:
     pitch: 75
   - height: 11.5
     pitch: 80
-  zoomIncrement: 9
+  save:
+    targetCameraState:
+      eulerAngles: {x: 0, y: 0, z: 0}
+      position: {x: 0, y: 0, z: 0}
+    interpolatingCameraState:
+      eulerAngles: {x: 0, y: 0, z: 0}
+      position: {x: 0, y: 0, z: 0}
+    zoomIncrement: 0
+    enabled: 0
 --- !u!1 &771754889708726371
 GameObject:
   m_ObjectHideFlags: 0
@@ -550,7 +558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2b175cb33c91164b8594cb20a9d094d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angularFrequency: 5
-  dampingRatio: 0.2
-  dropMomentum: -10
+  angularFrequency: 22
+  dampingRatio: 0.25
+  dropMomentum: -36
   cutoffAmount: 0.005
