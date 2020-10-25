@@ -163,16 +163,19 @@ public sealed class TileSelectionManager : Singleton<TileSelectionManager>
         {
             selectionHighlighter = ObjectPooler.instance.Get<SelectionHighlighter>();
             selectionHighlighter.Initialize(state.bounds);
-            foreach ((Vector3Int outerTile, Vector3Int innerTile) in state.bounds.EnumeratePerimeter())
+            if (TouchInput.inputMode == InputMode.Touch)
             {
-                if (ConveyorSystem.instance.CanLink(innerTile, outerTile))
+                foreach ((Vector3Int outerTile, Vector3Int innerTile) in state.bounds.EnumeratePerimeter())
                 {
-                    UILinkConveyorButton conveyorButton = ObjectPooler.instance.Get<UILinkConveyorButton>();
-                    conveyorButton.position = outerTile;
-                    conveyorButton.sourcePosition = innerTile;
-                    conveyorButton.transform.SetParent(canvas.transform, false);
-                    conveyorButton.Initialize();
-                    conveyorButtons.Add(conveyorButton);
+                    if (ConveyorSystem.instance.CanLink(innerTile, outerTile))
+                    {
+                        UILinkConveyorButton conveyorButton = ObjectPooler.instance.Get<UILinkConveyorButton>();
+                        conveyorButton.position = outerTile;
+                        conveyorButton.sourcePosition = innerTile;
+                        conveyorButton.transform.SetParent(canvas.transform, false);
+                        conveyorButton.Initialize();
+                        conveyorButtons.Add(conveyorButton);
+                    }
                 }
             }
         }

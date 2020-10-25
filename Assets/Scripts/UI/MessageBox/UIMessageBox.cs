@@ -156,14 +156,14 @@ public sealed class UIMessageBox : MonoBehaviour
         const int width = 200;
         const int height = 30;
         const int spacing = 10;
-
+        
         Rect msgRect = new Rect(
             border,
             border + spacing,
             m_windowRect.width - border * 2,
             m_windowRect.height - border * 2 - height - spacing);
         GUI.Label(msgRect, msg);
-
+        
         float allButtonsHeight = (height + border) * actions.Length;
         float allButtonsStartY = (m_windowRect.height - allButtonsHeight) / 2;
         float currentY = allButtonsStartY;

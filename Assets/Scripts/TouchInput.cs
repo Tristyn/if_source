@@ -20,6 +20,12 @@ public struct TouchInfo
     public Touch now;
 }
 
+public enum InputMode
+{
+    Mouse,
+    Touch
+}
+
 public sealed class TouchInput : Singleton<TouchInput>
 {
     /// <summary>
@@ -27,6 +33,7 @@ public sealed class TouchInput : Singleton<TouchInput>
     /// mobile browsers will use the simulated mouse.
     /// </summary>
     public static bool supported = Application.isMobilePlatform;
+    public static InputMode inputMode;
 
     public Action<TouchInfo[]> Touch = touches => { };
 
@@ -39,6 +46,7 @@ public sealed class TouchInput : Singleton<TouchInput>
 
     protected override void Awake()
     {
+        
         base.Awake();
         Input.simulateMouseWithTouches = false;
         enabled = supported;

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Steel Seller
   m_EditorClassIdentifier: 
   machineGroup: {fileID: 11400000, guid: 240a827e32a14e84f8b867d4ac1ea632, type: 2}
-  cost: 3750
+  cost: 2500
   placeInterval: 1
   size: {x: 2, y: 1, z: 2}
   _prefab: {fileID: 0}

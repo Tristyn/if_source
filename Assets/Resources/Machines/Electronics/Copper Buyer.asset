@@ -19,7 +19,7 @@ MonoBehaviour:
   _prefab: {fileID: 0}
   sprite: {fileID: 21300000, guid: 7d934cb7e6ce1424db4bd1108ada779d, type: 3}
   purchaseItem:
-    itemInfo: {fileID: 11400000, guid: 438657a2f46b1d645a1182b14f12e36a, type: 2}
+    itemInfo: {fileID: 11400000, guid: 490b28b43c454544696ea25353641da5, type: 2}
     count: 1
   sellItem:
     itemInfo: {fileID: 0}

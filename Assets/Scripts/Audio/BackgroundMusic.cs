@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Profiling;
 
 public sealed class BackgroundMusic : Singleton<BackgroundMusic>
 {
@@ -32,9 +33,13 @@ public sealed class BackgroundMusic : Singleton<BackgroundMusic>
 
     public void GetSave(out Save save)
     {
-        AudioClip clip = audioSource.clip;
+        AudioClip clip = null;
+        if (audioSource)
+        {
+            clip = audioSource.clip;
+        }
         save.musicName = clip ? clip.name : "";
-        save.time = audioSource.time;
+        save.time = audioSource ? audioSource.time : 0;
     }
 
     public void SetSave(in Save save)

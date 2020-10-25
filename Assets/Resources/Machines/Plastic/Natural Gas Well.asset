@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Natural Gas Well
   m_EditorClassIdentifier: 
   machineGroup: {fileID: 11400000, guid: c070fcbfa582d4248b88bc317b17071f, type: 2}
-  cost: 15000
+  cost: 50000
   placeInterval: 1
   size: {x: 2, y: 1, z: 1}
   _prefab: {fileID: 0}

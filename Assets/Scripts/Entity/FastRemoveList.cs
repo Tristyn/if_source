@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 public sealed class FastRemoveList<T>
 {
     public T[] array;
     public Dictionary<T, int> keys;
     public int size;
+
+    public static string entityName = typeof(T).Name + " List";
 
     public FastRemoveList()
     {
@@ -93,19 +96,23 @@ public static class FastRemoveListExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void DoFixedUpdate<T>(this FastRemoveList<T> list) where T : IFixedUpdate
     {
+        Profiler.BeginSample(FastRemoveList<T>.entityName);
         T[] components = list.array;
         for (int i = 0, len = list.size; i < len; ++i)
         {
             components[i].DoFixedUpdate();
         }
+        Profiler.EndSample();
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void DoUpdate<T>(this FastRemoveList<T> list) where T : IUpdate
     {
+        Profiler.BeginSample(FastRemoveList<T>.entityName);
         T[] components = list.array;
         for (int i = 0, len = list.size; i < len; ++i)
         {
             components[i].DoUpdate();
         }
+        Profiler.EndSample();
     }
 }

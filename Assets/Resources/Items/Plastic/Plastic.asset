@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6015631bf989c647b0fafdc45cdac5c, type: 3}
   m_Name: Plastic
   m_EditorClassIdentifier: 
-  value: 5000
+  value: 1100
   color: {r: 1, g: 0.55436695, b: 0.28773582, a: 1}
   prefab: {fileID: 175188181554914003, guid: 22c08dcb62ca21747a865b67f45d7fec, type: 3}

@@ -29,9 +29,9 @@ MonoBehaviour:
   - itemInfo: {fileID: 11400000, guid: e9e65fbade3c1fe43aab1b05e5b7fb42, type: 2}
     count: 1
   - itemInfo: {fileID: 11400000, guid: 438657a2f46b1d645a1182b14f12e36a, type: 2}
-    count: 1
+    count: 2
   - itemInfo: {fileID: 11400000, guid: 8c730e02779e25b40aa809432d4e5243, type: 2}
     count: 4
   assembleOutput:
     itemInfo: {fileID: 11400000, guid: babd6721bb7aa164c8e18dedac6e4bef, type: 2}
-    count: 3
+    count: 1

@@ -62,6 +62,7 @@ public sealed class Picker : Singleton<Picker>
         InterfaceState interfaceState = InterfaceSelectionManager.instance.state;
         if (Input.GetKeyDown(KeyCode.Mouse0) && !TouchInput.IsPointerConsumedByUI())
         {
+            TouchInput.inputMode = InputMode.Mouse;
             if (GetPickerTile(Input.mousePosition, PickMask.Construct, out pickerTile))
             {
                 mouseDragging = true;
@@ -85,6 +86,7 @@ public sealed class Picker : Singleton<Picker>
         }
         if (Input.GetKey(KeyCode.Mouse0) && mouseDragging)
         {
+            TouchInput.inputMode = InputMode.Mouse;
             if (GetPickerTile(Input.mousePosition, PickMask.Construct, out pickerTile) && pickerTile != lastMouseDragPosition)
             {
                 Conveyor conveyor = null;
@@ -102,6 +104,7 @@ public sealed class Picker : Singleton<Picker>
         }
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
+            TouchInput.inputMode = InputMode.Mouse;
             if (!mouseDraggingConveyor && interfaceState.mode == InterfaceMode.Machine && !TouchInput.IsPointerConsumedByUI())
             {
                 if (GetPickerPosition(Input.mousePosition, PickMask.Construct, out pickerPosition))
@@ -112,7 +115,6 @@ public sealed class Picker : Singleton<Picker>
                     {
                         machine.Drop();
                         TileSelectionManager.instance.SetSelection(machine);
-                        InterfaceSelectionManager.instance.SetSelectionConveyor();
                     }
                 }
             }
@@ -123,6 +125,7 @@ public sealed class Picker : Singleton<Picker>
         if (interfaceState.mode == InterfaceMode.Machine &&
             GetPickerPosition(Input.mousePosition, PickMask.Construct, out pickerPosition))
         {
+            TouchInput.inputMode = InputMode.Mouse;
             machineCreationVisualizer.Visualize(interfaceState.machineInfo, pickerPosition);
             machineCreationVisualizer.SetVisible(true);
         }
@@ -131,8 +134,9 @@ public sealed class Picker : Singleton<Picker>
             machineCreationVisualizer.SetVisible(false);
         }
 
-        if (Input.GetKey(KeyCode.Mouse2) && !TouchInput.IsPointerConsumedByUI())
+        if (Input.GetKey(KeyCode.Mouse1) && !TouchInput.IsPointerConsumedByUI())
         {
+            TouchInput.inputMode = InputMode.Mouse;
             if (GetPickerTile(Input.mousePosition, PickMask.Demolish, out pickerTile))
             {
                 Machine machine = MachineSystem.instance.GetMachine(pickerTile);
@@ -162,6 +166,7 @@ public sealed class Picker : Singleton<Picker>
         {
             if (touch.now.phase == TouchPhase.Began && GetPickerTile(touch.now.position, PickMask.Construct, out Vector3Int pickerTile))
             {
+                TouchInput.inputMode = InputMode.Touch;
                 touchPicks.Add(new TouchPick
                 {
                     fingerId = touch.now.fingerId,
