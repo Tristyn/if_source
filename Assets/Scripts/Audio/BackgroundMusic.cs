@@ -13,6 +13,15 @@ public sealed class BackgroundMusic : Singleton<BackgroundMusic>
         public float time;
     }
 
+    protected override void Awake()
+    {
+        base.Awake();
+        Init.Bind += () =>
+        {
+            audioSource = AudioSystem.instance.GetAudioSource(AudioCategory.BackgroundMusic);
+        };
+    }
+
     public void DoUpdate()
     {
         if (!audioSource.isPlaying)
