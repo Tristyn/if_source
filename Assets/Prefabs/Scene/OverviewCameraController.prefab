@@ -80,8 +80,17 @@ MonoBehaviour:
     pitch: 75
     viewDiameter: 12
   - height: 30
-    pitch: 80
-    viewDiameter: 16
+    pitch: 75
+    viewDiameter: 13
+  - height: 50
+    pitch: 75
+    viewDiameter: 15
+  - height: 50
+    pitch: 75
+    viewDiameter: 18
+  - height: 50
+    pitch: 75
+    viewDiameter: 20
   save:
     targetCameraState:
       eulerAngles: {x: 68, y: 90, z: 0}

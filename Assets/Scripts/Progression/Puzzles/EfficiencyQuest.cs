@@ -40,6 +40,6 @@ public sealed class EfficiencyQuest
         {
             progress += targetMachines[i].machineEfficiency.efficiency;
         }
-        return 100 * progress / (goalInfo.goalEfficiency * goalInfo.numMachines);
+        return progress / (goalInfo.goalEfficiency * goalInfo.numMachines);
     }
 }

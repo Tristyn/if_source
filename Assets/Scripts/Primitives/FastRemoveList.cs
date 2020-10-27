@@ -4,24 +4,22 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-public sealed class FastRemoveList<T>
+public struct FastRemoveList<T>
 {
     public T[] array;
     public Dictionary<T, int> keys;
     public int size;
 
-    public static string entityName = typeof(T).Name + " List";
-
-    public FastRemoveList()
-    {
-        array = Array.Empty<T>();
-        keys = new Dictionary<T, int>();
-    }
+    public static string entityUpdate = typeof(T).Name + " Update";
+    public static string entitiesUpdate = typeof(T).Name + " Update List";
+    public static string entityFixedUpdate= typeof(T).Name + " Fixed Update";
+    public static string entitiesFixedUpdate = typeof(T).Name + " Fixed Update List";
 
     public FastRemoveList(int capacity)
     {
         array = new T[capacity];
         keys = new Dictionary<T, int>(capacity);
+        size = 0;
     }
 
     /// <summary>
@@ -46,6 +44,11 @@ public sealed class FastRemoveList<T>
         return false;
     }
 
+    public bool Contains(T element)
+    {
+        return keys.ContainsKey(element);
+    }
+
     public int TryGetIndex(T element)
     {
         if (keys.TryGetValue(element, out int index))
@@ -56,9 +59,9 @@ public sealed class FastRemoveList<T>
     }
 
     /// <summary>
-    /// Removes the element, returns if the element existed in the list.
+    /// Removes the element.
     /// </summary>
-    public bool Remove(T element)
+    public void Remove(T element)
     {
         if (keys.TryGetValue(element, out int index))
         {
@@ -71,9 +74,7 @@ public sealed class FastRemoveList<T>
                 keys[lastElement] = index;
             }
             array[size] = default;
-            return true;
         }
-        return false;
     }
 
     // Aggressive inlining to move the branch prediction up the stack
@@ -89,6 +90,16 @@ public sealed class FastRemoveList<T>
             Remove(element);
         }
     }
+
+    public void Clear()
+    {
+        for(int i = 0, len = size; i < len; ++i)
+        {
+            array[i] = default;
+        }
+        keys.Clear();
+        size = 0;
+    }
 }
 
 public static class FastRemoveListExtensions
@@ -96,22 +107,26 @@ public static class FastRemoveListExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void DoFixedUpdate<T>(this FastRemoveList<T> list) where T : IFixedUpdate
     {
-        Profiler.BeginSample(FastRemoveList<T>.entityName);
+        Profiler.BeginSample(FastRemoveList<T>.entitiesFixedUpdate);
         T[] components = list.array;
         for (int i = 0, len = list.size; i < len; ++i)
         {
+            Profiler.BeginSample(FastRemoveList<T>.entityFixedUpdate);
             components[i].DoFixedUpdate();
+            Profiler.EndSample();
         }
         Profiler.EndSample();
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void DoUpdate<T>(this FastRemoveList<T> list) where T : IUpdate
     {
-        Profiler.BeginSample(FastRemoveList<T>.entityName);
+        Profiler.BeginSample(FastRemoveList<T>.entitiesUpdate);
         T[] components = list.array;
         for (int i = 0, len = list.size; i < len; ++i)
         {
+            Profiler.BeginSample(FastRemoveList<T>.entityUpdate);
             components[i].DoUpdate();
+            Profiler.EndSample();
         }
         Profiler.EndSample();
     }

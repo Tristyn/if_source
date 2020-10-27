@@ -6,6 +6,7 @@ public static class JsonConfiguration
 {
     public static void Configure()
     {
+        AotMethods.Ensure();
         JsonSerializerSettings settings = new JsonSerializerSettings()
         {
             DefaultValueHandling = DefaultValueHandling.Populate,

@@ -2,19 +2,27 @@
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public sealed class TileSelectionState
+public enum SelectionMode
 {
-    public Bounds3Int bounds;
-    public Conveyor conveyor;
+    None = 0,
+    Conveyor = 1,
+    Machine = 2
+}
+
+public sealed class SelectionState
+{
+    public SelectionMode selectionMode;
+    public MachineInfo machineInfo;
     public Machine machine;
+    public Conveyor conveyor;
+    public Bounds3Int bounds;
 
     public bool isSelected => conveyor || machine;
 }
 
 public sealed class TileSelectionManager : Singleton<TileSelectionManager>
 {
-    public TileSelectionState state = new TileSelectionState();
-    public UIDemolishButton demolishButton;
+    public SelectionState selectionState = new SelectionState();
     public Canvas canvas;
 
     private List<UILinkConveyorButton> conveyorButtons = new List<UILinkConveyorButton>(16);
@@ -31,7 +39,6 @@ public sealed class TileSelectionManager : Singleton<TileSelectionManager>
     protected override void Awake()
     {
         base.Awake();
-        demolishButton.gameObject.SetActive(false);
         SaveLoad.PreSave += PreSave;
         SaveLoad.PreLoad += PreLoad;
         SaveLoad.LoadComplete += LoadComplete;
@@ -46,18 +53,18 @@ public sealed class TileSelectionManager : Singleton<TileSelectionManager>
 
     void PreSave()
     {
-        if (state.machine)
+        if (selectionState.machine)
         {
             save = new Save
             {
-                machinePosition = state.machine.bounds.min,
+                machinePosition = selectionState.machine.bounds.min,
             };
         }
-        else if (state.conveyor)
+        else if (selectionState.conveyor)
         {
             save = new Save
             {
-                conveyorPosition = state.conveyor.save.position_local
+                conveyorPosition = selectionState.conveyor.save.position_local
             };
         }
         else
@@ -79,7 +86,7 @@ public sealed class TileSelectionManager : Singleton<TileSelectionManager>
             Assert.IsNotNull(machine);
             SetSelection(machine);
         }
-        else if (state.conveyor)
+        else if (selectionState.conveyor)
         {
             ConveyorSystem.instance.conveyors.TryGetValue(save.machinePosition.Value, out Conveyor conveyor);
             Assert.IsNotNull(conveyor);
@@ -93,7 +100,7 @@ public sealed class TileSelectionManager : Singleton<TileSelectionManager>
 
     public void SetSelection()
     {
-        state = new TileSelectionState();
+        selectionState = new SelectionState();
         UpdateSelection();
     }
 
@@ -117,16 +124,20 @@ public sealed class TileSelectionManager : Singleton<TileSelectionManager>
     {
         if (selection.machine)
         {
-            state = new TileSelectionState
+            selectionState = new SelectionState
             {
+                selectionMode = SelectionMode.Machine,
                 machine = selection.machine,
+                machineInfo = selection.machine.machineInfo,
+                conveyor = selection,
                 bounds = selection.machine.bounds
             };
         }
         else
         {
-            state = new TileSelectionState
+            selectionState = new SelectionState
             {
+                selectionMode = SelectionMode.Conveyor,
                 conveyor = selection,
                 bounds = selection.save.position_local.ToBounds()
             };
@@ -136,10 +147,12 @@ public sealed class TileSelectionManager : Singleton<TileSelectionManager>
 
     public void SetSelection(Machine selection)
     {
-        state = new TileSelectionState
+        selectionState = new SelectionState
         {
+            selectionMode = selection ? SelectionMode.Machine : SelectionMode.None,
+            machineInfo = selection ? selection.machineInfo : null,
             machine = selection,
-            bounds = selection.bounds
+            bounds = selection ? selection.bounds : default
         };
         UpdateSelection();
     }
@@ -157,15 +170,13 @@ public sealed class TileSelectionManager : Singleton<TileSelectionManager>
             selectionHighlighter = null;
         }
 
-        demolishButton.demolishTile = state.bounds.min;
-        demolishButton.gameObject.SetActive(state.isSelected);
-        if (state.isSelected)
+        if (selectionState.isSelected)
         {
             selectionHighlighter = ObjectPooler.instance.Get<SelectionHighlighter>();
-            selectionHighlighter.Initialize(state.bounds);
+            selectionHighlighter.Initialize(selectionState.bounds);
             if (TouchInput.inputMode == InputMode.Touch)
             {
-                foreach ((Vector3Int outerTile, Vector3Int innerTile) in state.bounds.EnumeratePerimeter())
+                foreach ((Vector3Int outerTile, Vector3Int innerTile) in selectionState.bounds.EnumeratePerimeter())
                 {
                     if (ConveyorSystem.instance.CanLink(innerTile, outerTile))
                     {
@@ -179,13 +190,14 @@ public sealed class TileSelectionManager : Singleton<TileSelectionManager>
                 }
             }
         }
+        Events.TileSelectionChanged?.Invoke(selectionState);
     }
 
     public void TrySelectAnyInput(bool pan)
     {
-        if (state.machine)
+        if (selectionState.machine)
         {
-            Conveyor[] conveyors = state.machine.conveyors;
+            Conveyor[] conveyors = selectionState.machine.conveyors;
             for (int i = 0, len = conveyors.Length; i < len; ++i)
             {
                 Conveyor conveyor = conveyors[i];
@@ -202,14 +214,14 @@ public sealed class TileSelectionManager : Singleton<TileSelectionManager>
                 }
             }
         }
-        else if (state.conveyor)
+        else if (selectionState.conveyor)
         {
-            Conveyor input = TryGetAnyInput(state.conveyor);
+            Conveyor input = TryGetAnyInput(selectionState.conveyor);
             if (input)
             {
                 if (pan)
                 {
-                    Vector3 deltaPosition = input.save.position_local - state.conveyor.save.position_local;
+                    Vector3 deltaPosition = input.save.position_local - selectionState.conveyor.save.position_local;
                     OverviewCameraController.instance.MoveWorld(deltaPosition);
                 }
                 SetSelection(input);

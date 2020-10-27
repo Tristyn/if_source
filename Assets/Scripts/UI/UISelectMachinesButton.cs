@@ -14,6 +14,12 @@ public sealed class UISelectMachinesButton : MonoBehaviour
     void Awake()
     {
         Init.Bind += OnBind;
+        Events.InterfaceSelectionChanged += OnSelectionChanged;
+    }
+
+    void OnDestroy()
+    {
+        Events.InterfaceSelectionChanged -= OnSelectionChanged;
     }
 
     void OnBind()
@@ -73,24 +79,22 @@ public sealed class UISelectMachinesButton : MonoBehaviour
         }
     }
 
-    public void OnSelectionChanged()
+    void OnSelectionChanged(SelectionState selectionState)
     {
-        InterfaceState selectionState = InterfaceSelectionManager.instance.state;
-        current.isConveyor = selectionState.mode == InterfaceMode.Conveyor;
+        current.isConveyor = selectionState.selectionMode == SelectionMode.Conveyor;
         current.machineInfo = selectionState.machineInfo;
         current.Initialize();
     }
 
     public void OnCurrentClicked()
     {
+        PlayExpandListAudio();
         if (expanded)
         {
-            current.PlaySelectMachineAudio();
             CollapseList();
         }
         else
         {
-            PlayExpandListAudio();
             ExpandList();
         }
     }

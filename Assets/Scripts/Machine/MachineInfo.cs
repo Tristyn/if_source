@@ -16,6 +16,8 @@ public struct AssembleSlot
 public sealed class MachineInfo : ScriptableObject
 {
     public string machineName => name;
+    string _machineNameLower;
+    public string machineNameLower => string.IsNullOrEmpty(_machineNameLower) ? _machineNameLower = machineName.ToLower() : _machineNameLower;
     public MachineGroupInfo machineGroup;
     public long cost;
     public float placeInterval = 1;
@@ -47,6 +49,8 @@ public sealed class MachineInfo : ScriptableObject
             return Color.white;
         }
     }
+    string _spriteColorHex;
+    public string spriteColorHex => string.IsNullOrEmpty(_spriteColorHex) ? _spriteColorHex = ColorUtility.ToHtmlStringRGB(spriteColor) : _spriteColorHex;
 
     public AssembleSlot purchaseItem;
     public AssembleSlot sellItem;

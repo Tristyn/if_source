@@ -38,7 +38,7 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
     public ZoomIncrement[] zoomIncrements;
 
     public Save save;
-    
+
     Camera mainCamera;
 
 
@@ -146,11 +146,33 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
     public void SetZoomIncrement(int zoomIncrement)
     {
         save.zoomIncrement = Mathf.Clamp(zoomIncrement, 0, zoomIncrements.Length - 1);
-
         ref ZoomIncrement zoom = ref zoomIncrements[this.save.zoomIncrement];
-        save.targetCameraState.position.y = zoom.height;
-        save.targetCameraState.eulerAngles.x = zoom.pitch;
-        save.targetCameraState.viewDiameter = zoom.viewDiameter;
+
+        Ray cameraRay = save.targetCameraState.CameraCenterToRay();
+
+        CameraState newCameraState = save.targetCameraState;
+        newCameraState.position.y = zoom.height;
+        newCameraState.eulerAngles.x = zoom.pitch;
+        newCameraState.viewDiameter = zoom.viewDiameter;
+
+
+        // Keep the reference point (the ground at camera center) the same by adjusting the target position
+        Plane groundPlane = new Plane(new Vector3(0, 1, 0), 0);
+        if (groundPlane.Raycast(cameraRay, out float enter) || enter != 0)
+        {
+            Vector3 groundIntersection = cameraRay.GetPoint(enter);
+            Plane cameraAltitudePlane = new Plane(new Vector3(0, -1, 0), newCameraState.position.y);
+            Ray fromGroundRay = newCameraState.CameraCenterToRay();
+            fromGroundRay.origin = groundIntersection;
+
+            if(cameraAltitudePlane.Raycast(fromGroundRay, out enter) || enter != 0)
+            {
+                Vector3 cameraAltitudeIntersection = fromGroundRay.GetPoint(enter);
+                newCameraState.position = cameraAltitudeIntersection;
+            }
+        }
+
+        save.targetCameraState = newCameraState;
     }
 
     public void SnapToTargetState()
@@ -172,11 +194,11 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
     {
         Plane groundPlane = new Plane(new Vector3(0, 1, 0), 0.8f);
         Ray cameraRay = cameraState.CameraCenterToRay();
-        if(!groundPlane.Raycast(cameraRay, out float distanceToGround))
+        if (!groundPlane.Raycast(cameraRay, out float distanceToGround))
         {
             distanceToGround = 15f;
         }
-        
+
         // Calculate based on the smaller of frustum width and height
         float viewDiameter = cameraState.viewDiameter;
         if (aspect < 1)

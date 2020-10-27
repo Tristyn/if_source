@@ -64,7 +64,6 @@ public sealed class Init : MonoBehaviour
 
     private void Awake()
     {
-        AotMethods.Ensure();
         JsonConfiguration.Configure();
     }
 

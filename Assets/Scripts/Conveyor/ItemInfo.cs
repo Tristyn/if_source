@@ -8,8 +8,12 @@ using UnityEngine;
 public sealed class ItemInfo : ScriptableObject
 {
     public string itemName => name;
+    string _itemNameLower;
+    public string itemNameLower => string.IsNullOrEmpty(_itemNameLower) ? _itemNameLower = itemName.ToLower() : _itemNameLower;
     public long value;
     public Color color = Color.white;
+    string _colorHex = null;
+    public string colorHex => string.IsNullOrEmpty(_colorHex) ? _colorHex = ColorUtility.ToHtmlStringRGB(color) : _colorHex;
     public Item prefab;
 
 #if UNITY_EDITOR

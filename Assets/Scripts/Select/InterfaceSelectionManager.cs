@@ -1,37 +1,24 @@
 ﻿using UnityEngine;
 
-public enum InterfaceMode
-{
-    Conveyor, Machine
-}
-
-public struct InterfaceState
-{
-    public InterfaceMode mode;
-    public MachineInfo machineInfo;
-
-}
-
 public sealed class InterfaceSelectionManager : Singleton<InterfaceSelectionManager>
 {
-    public InterfaceState state;
-    public UISelectMachinesButton selectMachinesButton;
+    public SelectionState state = new SelectionState();
 
     public struct Save
     {
-        public InterfaceMode mode;
+        public SelectionMode selectionMode;
         public string machineName;
     }
 
     public void GetSave(out Save save)
     {
-        save.mode = state.mode;
+        save.selectionMode = state.selectionMode;
         save.machineName = state.machineInfo ? state.machineInfo.machineName : null;
     }
 
     public void SetSave(in Save save)
     {
-        if (save.mode == InterfaceMode.Conveyor)
+        if (save.selectionMode == SelectionMode.Conveyor)
         {
             SetSelectionConveyor();
         }
@@ -52,26 +39,30 @@ public sealed class InterfaceSelectionManager : Singleton<InterfaceSelectionMana
 
     public void SetSelection(MachineInfo machineInfo)
     {
-        state = new InterfaceState
+        state = new SelectionState
         {
-            mode = InterfaceMode.Machine,
+            selectionMode = SelectionMode.Machine,
             machineInfo = machineInfo
         };
-        UpdateSelection();
+
+        Events.InterfaceSelectionChanged?.Invoke(state);
     }
 
     public void SetSelectionConveyor()
     {
-        state = new InterfaceState
+        state = new SelectionState
         {
-            mode = InterfaceMode.Conveyor
+            selectionMode = SelectionMode.Conveyor
         };
-        UpdateSelection();
+        Events.InterfaceSelectionChanged?.Invoke(state);
     }
 
-    void UpdateSelection()
+    public void SetSelectionNone()
     {
-        selectMachinesButton.CollapseList();
-        selectMachinesButton.OnSelectionChanged();
+        state = new SelectionState
+        {
+            selectionMode = SelectionMode.None
+        };
+        Events.InterfaceSelectionChanged?.Invoke(state);
     }
 }

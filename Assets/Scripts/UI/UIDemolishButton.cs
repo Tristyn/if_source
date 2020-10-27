@@ -1,36 +1,55 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public sealed class UIDemolishButton : MonoBehaviour
 {
-    public Vector3Int demolishTile;
+    Vector3Int? demolishTile;
+    UIBehaviour[] uiBehaviours;
 
     void Awake()
     {
         Button button = GetComponent<Button>();
         button.onClick.AddListener(OnClick);
+        uiBehaviours = GetComponentsInChildren<UIBehaviour>();
+        uiBehaviours.SetEnabled(demolishTile.HasValue);
+        Events.TileSelectionChanged += TileSelectionChanged;
+    }
+
+    void OnDestroy()
+    {
+        Events.TileSelectionChanged -= TileSelectionChanged;
+    }
+
+    void TileSelectionChanged(SelectionState selectionState)
+    {
+        demolishTile = selectionState.isSelected ? selectionState.bounds.min : (Vector3Int?)null;
+        uiBehaviours.SetEnabled(selectionState.isSelected);
     }
 
     void OnClick()
     {
-        Machine machine = MachineSystem.instance.GetMachine(demolishTile);
-        if (machine)
+        if (demolishTile.HasValue)
         {
-            if (TileSelectionManager.instance.state.machine == machine)
+            Machine machine = MachineSystem.instance.GetMachine(demolishTile.Value);
+            if (machine)
             {
-                TileSelectionManager.instance.TrySelectAnyInput(true);
+                if (TileSelectionManager.instance.selectionState.machine == machine)
+                {
+                    TileSelectionManager.instance.TrySelectAnyInput(true);
+                }
+                machine.Demolish();
+                Analytics.instance.NewUiEvent(UiEventId.ButtonDemolish, 1);
             }
-            machine.Demolish();
-            Analytics.instance.NewUiEvent(UiEventId.ButtonDemolish, 1);
-        }
-        else if (ConveyorSystem.instance.conveyors.TryGetValue(demolishTile, out Conveyor conveyor))
-        {
-            if (TileSelectionManager.instance.state.conveyor == conveyor)
+            else if (ConveyorSystem.instance.conveyors.TryGetValue(demolishTile.Value, out Conveyor conveyor))
             {
-                TileSelectionManager.instance.TrySelectAnyInput(true);
+                if (TileSelectionManager.instance.selectionState.conveyor == conveyor)
+                {
+                    TileSelectionManager.instance.TrySelectAnyInput(true);
+                }
+                conveyor.Demolish();
+                Analytics.instance.NewUiEvent(UiEventId.ButtonDemolish, 1);
             }
-            conveyor.Demolish();
-            Analytics.instance.NewUiEvent(UiEventId.ButtonDemolish, 1);
         }
     }
 

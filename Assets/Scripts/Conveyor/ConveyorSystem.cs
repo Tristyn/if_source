@@ -122,8 +122,8 @@ public sealed class ConveyorSystem : Singleton<ConveyorSystem>
             return false;
         }
         int numConveyors = 0;
-        numConveyors += conveyors.ContainsKey(from) ? 1 : 0;
-        numConveyors += conveyors.ContainsKey(to) ? 1 : 0;
+        numConveyors += conveyors.ContainsKey(from) ? 0 : 1;
+        numConveyors += conveyors.ContainsKey(to) ? 0 : 1;
 
         if (!CurrencySystem.instance.CanBuyConveyor(numConveyors))
         {

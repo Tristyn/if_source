@@ -108,10 +108,7 @@ public sealed class UISelectMachineButton : MonoBehaviour, IFixedUpdate
         set
         {
             _visible = value;
-            for (int i = 0, len = uiBehaviours.Length; i < len; ++i)
-            {
-                uiBehaviours[i].enabled = value;
-            }
+            uiBehaviours.SetEnabled(value);
             Updates.uiSelectMachineButtons.SetAdded(isActiveEnabledAndVisible, this);
             SetBackgroundColor();
         }
@@ -146,11 +143,6 @@ public sealed class UISelectMachineButton : MonoBehaviour, IFixedUpdate
         }
     }
 
-    void SetUI()
-    {
-
-    }
-
     public void OnClick()
     {
         PlaySelectMachineAudio();
@@ -164,6 +156,23 @@ public sealed class UISelectMachineButton : MonoBehaviour, IFixedUpdate
         }
 
         Analytics.instance.NewUiEvent(UiEventId.ButtonSelectMachine, 1);
+    }
+
+    public void OnPointerEnter()
+    {
+        Events.SelectMachineButtonHovered?.Invoke(new SelectionState
+        {
+            selectionMode = isConveyor ? SelectionMode.Conveyor : SelectionMode.Machine,
+            machineInfo = isConveyor ? null : machineInfo
+        });
+    }
+
+    public void OnPointerExit()
+    {
+        Events.SelectMachineButtonHovered?.Invoke(new SelectionState
+        {
+            selectionMode = SelectionMode.None
+        });
     }
 
     public void PlaySelectMachineAudio()
