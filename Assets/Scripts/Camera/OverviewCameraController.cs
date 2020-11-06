@@ -186,7 +186,7 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
     {
         SetZoomIncrement(int.MaxValue);
         SetRotation(90f);
-        MoveTo(new Vector3(0, 0, 0));
+        MoveTo(new Vector3(-12.75f, 0, 0));
         SnapToTargetState();
     }
 

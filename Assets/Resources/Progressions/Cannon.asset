@@ -15,7 +15,7 @@ MonoBehaviour:
   progressionName: Cannon
   progressionId: 4
   machineUnlockConditions: []
-  moneyCondition: 5000
+  moneyCondition: 12000
   levelCondition: 0
   moneyReward: 0
   xpReward: 0

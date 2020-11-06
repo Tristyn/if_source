@@ -4,6 +4,7 @@ using UnityEditor;
 using System.Linq;
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 [Serializable]
 public struct AssembleSlot
@@ -20,6 +21,8 @@ public sealed class MachineInfo : ScriptableObject
     public string machineNameLower => string.IsNullOrEmpty(_machineNameLower) ? _machineNameLower = machineName.ToLower() : _machineNameLower;
     public MachineGroupInfo machineGroup;
     public long cost;
+    [ReadOnly]
+    public float profit;
     public float placeInterval = 1;
     public Vector3Int size = new Vector3Int(2, 1, 2);
 #pragma warning disable 0649
@@ -88,13 +91,15 @@ public sealed class MachineInfo : ScriptableObject
         }
 
         ScriptableObjectMasterList masterList = ScriptableObjectMasterList.LoadAsset();
-        if (masterList)
+        if (!masterList)
         {
-            if (!masterList.machines.Any(machine => machine.machineName == machineName))
-            {
-                masterList.machines = masterList.machines.Append(this);
-                EditorUtility.SetDirty(masterList);
-            }
+            return;
+        }
+
+        if (!masterList.machines.Any(machine => machine.machineName == machineName))
+        {
+            masterList.machines = masterList.machines.Append(this);
+            EditorUtility.SetDirty(masterList);
         }
 
         if (machineGroup)
@@ -139,6 +144,10 @@ public sealed class MachineInfo : ScriptableObject
                 }
             }
         }
+
+        MachineInfo[] machineInfos = masterList.machines;
+        MachineAnalysis.CalculateProfit(machineInfos, new HashSet<MachineInfo>());
+        machineInfos.SetDirty();
 
         EditorUtility.SetDirty(this);
     }

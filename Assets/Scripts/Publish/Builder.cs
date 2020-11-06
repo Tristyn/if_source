@@ -292,8 +292,6 @@ namespace MultiBuild
             BuildOptions opts = BuildOptions.None;
             if (settings.developmentBuild)
                 opts |= BuildOptions.Development;
-            if (o.target == BuildTarget.Android)
-                opts |= BuildOptions.AutoRunPlayer;
             o.options = opts;
 
             return o;

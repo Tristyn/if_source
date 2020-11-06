@@ -584,5 +584,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   angularFrequency: 22
   dampingRatio: 0.25
-  dropMomentum: -36
+  dropMomentum: -10
   cutoffAmount: 0.005

@@ -15,7 +15,7 @@ MonoBehaviour:
   progressionName: Tank
   progressionId: 7
   machineUnlockConditions: []
-  moneyCondition: 9000000
+  moneyCondition: 5000000
   levelCondition: 0
   moneyReward: 0
   xpReward: 0

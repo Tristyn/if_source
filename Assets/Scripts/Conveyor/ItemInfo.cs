@@ -1,4 +1,5 @@
 ﻿#if UNITY_EDITOR
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 #endif
@@ -41,6 +42,10 @@ public sealed class ItemInfo : ScriptableObject
         {
             masterList.items = masterList.items.Append(this);
         }
+
+        MachineInfo[] machineInfos = masterList.machines;
+        MachineAnalysis.CalculateProfit(machineInfos, new HashSet<MachineInfo>());
+        machineInfos.SetDirty();
 
         EditorUtility.SetDirty(this);
         EditorUtility.SetDirty(masterList);

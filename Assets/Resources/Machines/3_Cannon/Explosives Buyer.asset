@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 811f7a2833dd0c84f8db182d081270c1, type: 3}
+  m_Name: Explosives Buyer
+  m_EditorClassIdentifier: 
+  machineGroup: {fileID: 11400000, guid: 7fd41f644c56fc949a1d2155432e9f5d, type: 2}
+  cost: 6000
+  profit: 0
+  placeInterval: 1
+  size: {x: 1, y: 1, z: 2}
+  _prefab: {fileID: 0}
+  sprite: {fileID: 21300000, guid: 7d934cb7e6ce1424db4bd1108ada779d, type: 3}
+  purchaseItem:
+    itemInfo: {fileID: 11400000, guid: 982703a58648ca7498818083029cf422, type: 2}
+    count: 2
+  sellItem:
+    itemInfo: {fileID: 0}
+    count: 0
+  assembler: 0
+  assembleInputs: []
+  assembleOutput:
+    itemInfo: {fileID: 0}
+    count: 0

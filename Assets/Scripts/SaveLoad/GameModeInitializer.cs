@@ -8,7 +8,7 @@ public static class GameModeInitializer
         CurrencySystem.instance.SetItemsCostMoney(true);
         ProgressionSystem.instance.ApplyStartingProgressions();
 
-        Bounds3Int[] bounds = new[] { new Bounds3Int(new Vector3Int(-8, 0, -6), new Vector3Int(7, 0, 5)) };
+        Bounds3Int[] bounds = new[] { new Bounds3Int(new Vector3Int(-6, 0, -8), new Vector3Int(5, 0, 7)) };
         SpacePlatform spacePlatform = new SpacePlatform();
         spacePlatform.save.bounds = bounds;
         spacePlatform.Initialize();

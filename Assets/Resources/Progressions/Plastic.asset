@@ -15,7 +15,7 @@ MonoBehaviour:
   progressionName: Plastic
   progressionId: 2
   machineUnlockConditions: []
-  moneyCondition: 20000
+  moneyCondition: 50000
   levelCondition: 0
   moneyReward: 0
   xpReward: 0
