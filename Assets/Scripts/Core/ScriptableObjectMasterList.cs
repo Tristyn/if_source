@@ -14,6 +14,7 @@ public sealed class ScriptableObjectMasterList : ScriptableObject
     public MachineVisual machineVisualDefault;
     public MachineGroupInfo[] machineGroups;
     public ProgressionInfo[] progressionInfos;
+    public CatalogItemInfo[] catalogItemInfos;
     [ReadOnly]
     public int nextProgressionId;
 
@@ -31,6 +32,7 @@ public sealed class ScriptableObjectMasterList : ScriptableObject
         machines = machines.Where(machine => machine).ToArray();
         machineGroups = machineGroups.Where(machineGroup => machineGroup).ToArray();
         progressionInfos = progressionInfos.Where(progressionInfo => progressionInfo).ToArray();
+        catalogItemInfos = catalogItemInfos.Where(catalogItemInfo => catalogItemInfo).ToArray();
         EditorUtility.SetDirty(this);
     }
 #endif
@@ -99,11 +101,25 @@ public sealed class ScriptableObjectMasterList : ScriptableObject
         return null;
     }
 
-    public MachineGroupInfo GetMachineGroup(string name)
+    public MachineGroupInfo GetMachineGroupInfo(string name)
     {
         if (machineGroupsDict.TryGetValue(name, out MachineGroupInfo machineGroup))
         {
             return machineGroup;
+        }
+        return null;
+    }
+    public CatalogItemInfo GetCatalogItemInfo(string itemId, string catalogVersion, uint quantity)
+    {
+        for (int i = 0, len = catalogItemInfos.Length; i < len; ++i)
+        {
+            CatalogItemInfo catalogItemInfo = catalogItemInfos[i];
+            if (catalogItemInfo.catalogVersion == catalogVersion &&
+                catalogItemInfo.itemId == itemId &&
+                catalogItemInfo.quantity == quantity)
+            {
+                return catalogItemInfo;
+            }
         }
         return null;
     }

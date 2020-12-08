@@ -1,4 +1,3 @@
-#if UNITY_EDITOR
 using UnityEngine;
 using System.Collections;
 
@@ -63,4 +62,3 @@ namespace GameAnalyticsSDK
 		}
 	}
 }
-#endif

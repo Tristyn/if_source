@@ -255,6 +255,7 @@ namespace GameAnalyticsSDK
             else
             {
                 GameAnalytics._hasInitializeBeenCalled = true;
+                Debug.LogWarning("GameAnalytics: Unsupported platform (events will not be sent in editor; or missing platform in settings): " + Application.platform);
             }
         }
 
@@ -671,12 +672,6 @@ namespace GameAnalyticsSDK
             return GA_Wrapper.GetABTestingVariantId();
         }
 
-        // ----------------------- MOPUB AD IMPRESSIONS ---------------------- //
-        public static void SubscribeMoPubImpressions()
-        {
-            GA_Wrapper.SubscribeMoPubImpressions();
-        }
-
         public static void StartTimer(string key)
         {
             GA_Wrapper.StartTimer(key);
@@ -695,6 +690,18 @@ namespace GameAnalyticsSDK
         public static long StopTimer(string key)
         {
             return GA_Wrapper.StopTimer(key);
+        }
+
+        // ----------------------- MOPUB AD IMPRESSIONS ---------------------- //
+        public static void SubscribeMoPubImpressions()
+        {
+            GA_Wrapper.SubscribeMoPubImpressions();
+        }
+
+        // ----------------------- FYBER AD IMPRESSIONS ---------------------- //
+        public static void SubscribeFyberImpressions()
+        {
+            GA_Wrapper.SubscribeFyberImpressions();
         }
 
         private static string GetUnityVersion()

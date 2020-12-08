@@ -17,11 +17,11 @@ public class UIMainMenuOpener : MonoBehaviour
 
     void MenuStateChanged(MenuState menuState)
     {
-        gameObject.SetActive(menuState == MenuState.Closed);
+        gameObject.SetActive(menuState == MenuState.None);
     }
 
     void OnClick()
     {
-        MenuController.instance.SetState(MenuState.MainMenu);
+        MenuController.instance.Push(MenuState.MainMenu);
     }
 }

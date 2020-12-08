@@ -44,7 +44,6 @@ public static class SaveLoad
         public string path => Path.Combine(directory, fileName + fileExtension);
     }
 
-
     /// <summary>
     /// Called before building a save file.
     /// </summary>
@@ -69,7 +68,6 @@ public static class SaveLoad
     /// Called after all loading is complete and systems are updated and can interact.
     /// </summary>
     public static event Action LoadComplete;
-
 
     static void BackupCorruptSave(string path)
     {
@@ -115,6 +113,7 @@ public static class SaveLoad
             {
                 File.Move(tempFilePath, path);
             }
+            ProfileLoader.Save();
 #if UNITY_WEBGL && !UNITY_EDITOR
 #pragma warning disable CS0618 // Type or member is obsolete
             // Required to flush the WebGL file cache to IndexedDB. This will annoyingly log the command
@@ -135,6 +134,7 @@ public static class SaveLoad
             saveOptions = new SaveOptions();
         }
 
+        ProfileLoader.Load();
         string path = saveOptions.path;
         if (File.Exists(path))
         {
@@ -165,6 +165,12 @@ public static class SaveLoad
         }
     }
 
+    public static string BuildSaveJson(SaveOptions saveOptions)
+    {
+        SaveFile saveFile = BuildSave();
+        return JsonConvert.SerializeObject(saveFile, saveOptions.formatting);
+    }
+
     static SaveFile BuildSave()
     {
         PreSave?.Invoke();
@@ -188,12 +194,6 @@ public static class SaveLoad
         PostSave?.Invoke();
 
         return save;
-    }
-
-    public static string BuildSaveJson(SaveOptions saveOptions)
-    {
-        SaveFile saveFile = BuildSave();
-        return JsonConvert.SerializeObject(saveFile, saveOptions.formatting);
     }
 
     static void Load(SaveFile saveFile)

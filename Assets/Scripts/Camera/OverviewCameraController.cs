@@ -75,21 +75,24 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
     Vector3 GetKeyboardTranslationDirection()
     {
         Vector3 direction = new Vector3();
-        if (Input.GetKey(KeyCode.W))
+        if (!TouchInput.IsKeyboardConsumedByUI())
         {
-            direction += Vector3.forward;
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            direction += Vector3.back;
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-            direction += Vector3.left;
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            direction += Vector3.right;
+            if (Input.GetKey(KeyCode.W))
+            {
+                direction += Vector3.forward;
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                direction += Vector3.back;
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                direction += Vector3.left;
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                direction += Vector3.right;
+            }
         }
         return direction;
     }
@@ -228,7 +231,7 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
     public void DoUpdate()
     {
         // Exit Sample
-        if (Input.GetKey(KeyCode.Escape))
+        if (Input.GetKey(KeyCode.Escape) && !TouchInput.IsKeyboardConsumedByUI())
         {
             Application.Quit();
 #if UNITY_EDITOR
@@ -241,19 +244,19 @@ public sealed class OverviewCameraController : Singleton<OverviewCameraControlle
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q) && !TouchInput.IsKeyboardConsumedByUI())
         {
             Rotate(90f);
         }
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E) && !TouchInput.IsKeyboardConsumedByUI())
         {
             Rotate(-90f);
         }
-        if (Input.GetKeyDown(KeyCode.T))
+        if (Input.GetKeyDown(KeyCode.T) && !TouchInput.IsKeyboardConsumedByUI())
         {
             SetZoomIncrement(save.zoomIncrement + 1);
         }
-        if (Input.GetKeyDown(KeyCode.G))
+        if (Input.GetKeyDown(KeyCode.G) && !TouchInput.IsKeyboardConsumedByUI())
         {
             SetZoomIncrement(save.zoomIncrement - 1);
         }

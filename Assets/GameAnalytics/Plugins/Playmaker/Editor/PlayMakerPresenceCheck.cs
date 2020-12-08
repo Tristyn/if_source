@@ -1,5 +1,4 @@
-﻿#if UNITY_EDITOR
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using System;
 
@@ -80,4 +79,3 @@ public class PlayMakerPresenceCheck : AssetPostprocessor{
 
 	}
 }
-#endif

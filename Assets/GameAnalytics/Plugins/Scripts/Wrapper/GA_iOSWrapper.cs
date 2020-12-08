@@ -84,7 +84,7 @@ namespace GameAnalyticsSDK.Wrapper
         private static extern void addAdEvent(int adAction, int adType, string adSdkName, string adPlacement);
 
         [DllImport ("__Internal")]
-        private static extern void addImpressionEvent(string adNetworkName, string impressionData);
+        private static extern void addImpressionEvent(string adNetworkName, string adNetworkVersion, string impressionData);
 
         [DllImport ("__Internal")]
         private static extern void setEnabledInfoLog(bool enabled);
@@ -135,16 +135,38 @@ namespace GameAnalyticsSDK.Wrapper
         [DllImport ("__Internal")]
         private static extern long stopTimer(string key);
 
+#if gameanalytics_mopub_enabled
+        [DllImport("__Internal")]
+        private static extern string _moPubGetSDKVersion();
+#endif
+
         private static void subscribeMoPubImpressions()
         {
-            GAMopubIntegration.ListenForImpressions(ImpressionHandler);
+            GAMopubIntegration.ListenForImpressions(MopubImpressionHandler);
         }
 
-        private static void ImpressionHandler(string json)
+        private static void MopubImpressionHandler(string json)
         {
             if(!string.IsNullOrEmpty(json))
             {
-                addImpressionEvent("mopub", json);
+#if gameanalytics_mopub_enabled
+                addImpressionEvent("mopub", _moPubGetSDKVersion(), json);
+#endif
+            }
+        }
+
+        private static void subscribeFyberImpressions()
+        {
+            GAMopubIntegration.ListenForImpressions(FyberImpressionHandler);
+        }
+
+        private static void FyberImpressionHandler(string json)
+        {
+            if(!string.IsNullOrEmpty(json))
+            {
+#if gameanalytics_fyber_enabled
+                addImpressionEvent("fyber", Fyber.FairBid.Version, json);
+#endif
             }
         }
 #endif

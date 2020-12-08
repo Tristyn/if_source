@@ -70,7 +70,7 @@ public sealed class MachineGroupAchievements : Singleton<MachineGroupAchievement
                     Array.Copy(category.categories, categories, Mathf.Min(numCategories, categories.Length));
                 }
 
-                MachineGroupInfo machineGroup = ScriptableObjects.instance.GetMachineGroup(category.machineGroupName);
+                MachineGroupInfo machineGroup = ScriptableObjects.instance.GetMachineGroupInfo(category.machineGroupName);
                 achievements.Add(machineGroup, categories);
             }
         }

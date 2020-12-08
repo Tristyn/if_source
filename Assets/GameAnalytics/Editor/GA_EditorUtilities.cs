@@ -1,5 +1,4 @@
-﻿#if UNITY_EDITOR
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System;
 using System.Collections.Generic;
@@ -75,4 +74,3 @@ namespace GameAnalyticsSDK.Editor
 		Linux
 	}
 }
-#endif

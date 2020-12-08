@@ -2,9 +2,6 @@
 using System;
 using UnityEngine.Events;
 
-// example:
-// UIMessageBox.MessageBox("error", "Sorry but you're S.O.L", () => { Application.Quit() });
-
 public sealed class UIMessageBoxAction
 {
     public string text;
@@ -30,17 +27,17 @@ public sealed class UIMessageBox : MonoBehaviour
             new UIMessageBoxAction
             {
                 text="Resume",
-                action = () => MenuController.instance.SetState(MenuState.Closed)
+                action = () => MenuController.instance.Pop(MenuState.MainMenu)
             },
             new UIMessageBoxAction
             {
                 text="New Game",
-                action = () => MenuController.instance.SetState(MenuState.NewGameMenu)
+                action = () => MenuController.instance.Push(MenuState.NewGameMenu)
             },
             new UIMessageBoxAction
             {
                 text="Export",
-                action = () => MenuController.instance.SetState(MenuState.SavesMenu)
+                action = () => MenuController.instance.Push(MenuState.SavesMenu)
             }
         });
     }
@@ -68,7 +65,7 @@ public sealed class UIMessageBox : MonoBehaviour
             new UIMessageBoxAction
             {
                 text="Back",
-                action = () => MenuController.instance.SetState(MenuState.MainMenu)
+                action = () => MenuController.instance.Pop(MenuState.NewGameMenu)
             }
         });
     }
@@ -89,7 +86,7 @@ public sealed class UIMessageBox : MonoBehaviour
             new UIMessageBoxAction
             {
                 text="Back",
-                action = () => MenuController.instance.SetState(MenuState.MainMenu)
+                action = () => MenuController.instance.Pop(MenuState.SavesMenu)
             }
         });
     }

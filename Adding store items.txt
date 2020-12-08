@@ -1,0 +1,11 @@
+To add a new store item:
+
+Add the catalog item: 
+In unity go to Window > Playfab > Editor Extensions > Game Manager > Economy > IAP1.0 > New Item
+Alternatively duplicate an existing item. Fill out the item details. The item class determines how the game will apply the item to the game, each type of item coresponds to a class. The RM currency is USD. '899 RM' is $8.99.
+
+Add the matching catalog item Scriptable Object:
+In Unities project menu go to Resources > CatalogItems. Right click the folder and select Create > Catalog Item. Ensure the Item ID, quanity and catalog version match the playfab website.
+
+Add the button to the store page.
+Locate the Store menu prefab. Add a new UI button to the prefab or duplicate an existing one. Fill out the details including name and price of the item here. Find the 'Button' component and add a 'Purchase Button' component to the same gameobject and set the Catalog item info to the scriptable object you created earlier.

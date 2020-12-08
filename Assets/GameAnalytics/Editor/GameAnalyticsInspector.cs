@@ -1,4 +1,3 @@
-#if UNITY_EDITOR
 /// <summary>
 /// The inspector for the GA prefab.
 /// </summary>
@@ -65,4 +64,3 @@ namespace GameAnalyticsSDK.Editor
 		}
 	}
 }
-#endif

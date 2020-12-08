@@ -80,4 +80,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8c3ac84a8077c3647bcaaff6ab323499, type: 2}
   - {fileID: 11400000, guid: 2e53a577fdbee6e4ba13798143f64bc0, type: 2}
   - {fileID: 11400000, guid: 923c8df9b5c3ffc498e70f2237220b9b, type: 2}
+  catalogItemInfos:
+  - {fileID: 11400000, guid: 340eb048775bf024bbc603935e408f46, type: 2}
+  - {fileID: 11400000, guid: 4070ca698a471e14da18c90570f538d6, type: 2}
   nextProgressionId: 8

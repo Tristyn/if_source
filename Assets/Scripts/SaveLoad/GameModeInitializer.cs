@@ -37,7 +37,6 @@ public static class GameModeInitializer
     static void InitializeCommon()
     {
         SaveLoad.NewSaveGame();
-        MenuController.instance.SetState(MenuState.Closed);
         GameTime.StartOfTime();
         OverviewCameraController.instance.SetEnabled(true);
     }

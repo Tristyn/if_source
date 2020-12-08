@@ -1,4 +1,3 @@
-#if UNITY_EDITOR
 using UnityEditor;
 
 namespace GameAnalyticsSDK.Editor
@@ -497,4 +496,3 @@ namespace GameAnalyticsSDK.Editor
         }
     }
 }
-#endif

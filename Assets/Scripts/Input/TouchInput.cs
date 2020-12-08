@@ -46,7 +46,6 @@ public sealed class TouchInput : Singleton<TouchInput>
 
     protected override void Awake()
     {
-        
         base.Awake();
         Input.simulateMouseWithTouches = false;
         enabled = supported;
@@ -258,6 +257,12 @@ public sealed class TouchInput : Singleton<TouchInput>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsPointerConsumedByUI()
     {
-        return EventSystem.current.IsPointerOverGameObject() || GUIUtility.hotControl != 0;
+        return EventSystem.current.IsPointerOverGameObject() || GUIUtility.hotControl != 0 || MenuController.instance.menuState != MenuState.None;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsKeyboardConsumedByUI()
+    {
+        return EventSystem.current.currentSelectedGameObject || GUIUtility.hotControl != 0 || MenuController.instance.menuState != MenuState.None;
     }
 }
