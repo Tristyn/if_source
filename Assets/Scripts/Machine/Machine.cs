@@ -139,10 +139,10 @@ public sealed class Machine : MonoBehaviour
         save.bounds = bounds;
         save.machineName = machineInfo.machineName;
         inventory.GetSave(out save.inventory);
-        save.machineAssembler = machineAssembler?.save ?? default;
-        save.machinePlacer = machinePlacer?.save ?? default;
-        save.machinePurchaser = machinePurchaser?.save ?? default;
-        save.machineSeller = machineSeller?.save ?? default;
+        save.machineAssembler = machineAssembler ? machineAssembler.save : default;
+        save.machinePlacer = machinePlacer ? machinePlacer.save : default;
+        save.machinePurchaser = machinePurchaser ? machinePurchaser.save : default;
+        save.machineSeller = machineSeller ? machineSeller.save : default;
     }
 
     public void SetSave(in Save save)

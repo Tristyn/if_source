@@ -14,4 +14,5 @@ public static class Events
 
     public static Action<MenuState> MenuStateChanged;
     public static Action<LoginState> LoginChanged;
+    public static Action LoginMenuClosed;
 }

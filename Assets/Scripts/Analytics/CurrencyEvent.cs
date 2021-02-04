@@ -10,7 +10,9 @@ public enum CurrencyEventType : byte
     MachineSellerRevenue,
     MachinePurchaserFees,
     ItemRefunded,
-    ProgressionReward
+    ProgressionReward,
+    ItemPurchased,
+    ItemSold,
 }
 
 public struct CurrencyEvent

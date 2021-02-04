@@ -786,6 +786,7 @@ GameObject:
   - component: {fileID: 5093614796983452874}
   - component: {fileID: 6636446887557710643}
   - component: {fileID: 1023823474}
+  - component: {fileID: 182405474799328343}
   m_Layer: 0
   m_Name: Monetization
   m_TagString: Untagged
@@ -829,5 +830,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3c8d70a97ec70f54dbdb9803caed0fb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &182405474799328343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6599879415219791879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cff604fc598ba554381f8ffb6100bafa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

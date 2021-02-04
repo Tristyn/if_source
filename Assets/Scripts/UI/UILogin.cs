@@ -25,6 +25,7 @@ public class UILogin : MonoBehaviour
     {
         Events.LoginChanged += OnLoginChanged;
         buttonContinue.onClick.AddListener(OnContinueClicked);
+        buttonCancel.onClick.AddListener(OnCancelClicked);
         uibehaviours = gameObject.GetComponentsInChildren<UIBehaviour>();
         SetVisible(false);
     }
@@ -33,6 +34,7 @@ public class UILogin : MonoBehaviour
     {
         Events.LoginChanged -= OnLoginChanged;
         buttonContinue.onClick.RemoveListener(OnContinueClicked);
+        buttonCancel.onClick.RemoveListener(OnCancelClicked);
     }
 
     public void SetVisible(bool visible)
@@ -42,7 +44,11 @@ public class UILogin : MonoBehaviour
         if (visible)
         {
             inputEmailAddress.text = PlayFabLogin.instance.profile.EmailAddress;
-            OnLoginChanged(PlayFabLogin.instance.loginState);
+            SetState(PlayFabLogin.instance.loginState);
+        }
+        else
+        {
+            Events.LoginMenuClosed?.Invoke();
         }
     }
 
@@ -52,25 +58,38 @@ public class UILogin : MonoBehaviour
         PlayFabLogin.instance.Login();
     }
 
+    void OnCancelClicked()
+    {
+        MenuController.instance.Pop(MenuState.LoginMenu);
+    }
+
     void OnLoginChanged(LoginState loginState)
     {
-        switch (loginState.playfabLoginState)
+        SetState(loginState);
+
+        if (loginState.playfabLoginState == PlayfabLoginState.LoggedIn)
         {
-            case PlayfabLoginState.LoggingIn:
-                canContinue = false;
-                break;
-            case PlayfabLoginState.None:
-            case PlayfabLoginState.NoCredentials:
-            case PlayfabLoginState.LoggedOut:
-            case PlayfabLoginState.LoggedIn:
-            case PlayfabLoginState.Error:
-            default:
-                canContinue = true;
-                break;
+            MenuController.instance.Pop(MenuState.LoginMenu);
         }
+    }
+
+    void SetState(LoginState loginState)
+    {
+        canContinue = loginState.playfabLoginState switch
+        {
+            PlayfabLoginState.LoggingIn => false,
+            _ => true,
+        };
+
+        textError.text = loginState.playfabLoginState switch
+        {
+            PlayfabLoginState.Error => loginState.error.ErrorMessage,
+            _ => "",
+        };
 
         switch (loginState.playfabLoginState)
         {
+            case PlayfabLoginState.None:
             case PlayfabLoginState.NoCredentials:
             case PlayfabLoginState.LoggedOut:
             case PlayfabLoginState.Error:
@@ -84,21 +103,6 @@ public class UILogin : MonoBehaviour
             case PlayfabLoginState.LoggedIn:
                 textLoginStatus.text = "● Signed in";
                 textLoginStatus.color = colorSignedIn;
-                break;
-        }
-
-        switch (loginState.playfabLoginState)
-        {
-            case PlayfabLoginState.Error:
-                textError.text = loginState.error.ErrorMessage;
-                break;
-            case PlayfabLoginState.None:
-            case PlayfabLoginState.NoCredentials:
-            case PlayfabLoginState.LoggedOut:
-            case PlayfabLoginState.LoggingIn:
-            case PlayfabLoginState.LoggedIn:
-            default:
-                textError.text = "";
                 break;
         }
     }

@@ -19,12 +19,22 @@ public sealed class SpacePlatform
     {
         public Bounds3Int[] bounds;
         public Color color;
+        public Ownable ownership;
     }
     public Save save;
 
     public SpacePlatform()
     {
         save.color = Color.white;
+    }
+
+    public static SpacePlatform Create(Bounds3Int[] bounds, Color color)
+    {
+        SpacePlatform spacePlatform = new SpacePlatform();
+        spacePlatform.save.bounds = bounds;
+        spacePlatform.save.color = color;
+        spacePlatform.Initialize();
+        return spacePlatform;
     }
 
     public static void GetSave(out Saves save)
@@ -73,6 +83,14 @@ public sealed class SpacePlatform
         visual = new SpacePlatformVisual();
         visual.color = save.color;
         visual.Initialize(save.bounds);
+    }
+
+    public void Buy()
+    {
+        if (save.ownership.offer.CanBuy())
+        {
+            save.ownership.Buy();
+        }
     }
 
     public void Delete()

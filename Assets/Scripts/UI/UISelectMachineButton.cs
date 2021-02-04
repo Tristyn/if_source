@@ -41,13 +41,13 @@ public sealed class UISelectMachineButton : MonoBehaviour, IFixedUpdate
     }
     private void OnEnable()
     {
-        Updates.uiSelectMachineButtons.SetAdded(isActiveEnabledAndVisible, this);
+        Entities.uiSelectMachineButtons.SetAdded(isActiveEnabledAndVisible, this);
         SetBackgroundColor();
     }
 
     void OnDisable()
     {
-        Updates.uiSelectMachineButtons.SetAdded(isActiveEnabledAndVisible, this);
+        Entities.uiSelectMachineButtons.SetAdded(isActiveEnabledAndVisible, this);
         SetBackgroundColor();
     }
 
@@ -109,7 +109,7 @@ public sealed class UISelectMachineButton : MonoBehaviour, IFixedUpdate
         {
             _visible = value;
             uiBehaviours.SetEnabled(value);
-            Updates.uiSelectMachineButtons.SetAdded(isActiveEnabledAndVisible, this);
+            Entities.uiSelectMachineButtons.SetAdded(isActiveEnabledAndVisible, this);
             SetBackgroundColor();
         }
     }

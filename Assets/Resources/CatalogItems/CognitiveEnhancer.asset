@@ -15,4 +15,4 @@ MonoBehaviour:
   itemId: CognitiveEnhancer
   quantity: 1
   catalogVersion: IAP1.0
-  isBoundToAccount: 0
+  isProfileBound: 0

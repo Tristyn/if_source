@@ -15,6 +15,7 @@ namespace GameAnalyticsSDK.Editor
     {
         private static string gameanalytics_mopub = "gameanalytics_mopub_enabled";
         private static string gameanalytics_fyber = "gameanalytics_fyber_enabled";
+        private static string gameanalytics_ironsource = "gameanalytics_ironsource_enabled";
 
 #if UNITY_2018_1_OR_NEWER
         public int callbackOrder
@@ -38,6 +39,7 @@ namespace GameAnalyticsSDK.Editor
         {
             UpdateMoPub();
             UpdateFyber();
+            UpdateIronSource();
         }
 
         private static void UpdateDefines(string entry, bool enabled, BuildTargetGroup[] groups)
@@ -96,6 +98,22 @@ namespace GameAnalyticsSDK.Editor
             }
         }
 
+        /// <summary>
+        /// Sets the scripting define symbol `gameanalytics_ironsource_enabled` to true if Fyber classes are detected within the Unity project
+        /// </summary>
+        private static void UpdateIronSource()
+        {
+            var fyberTypes = new string[] { "IronSourceEvents", "IronSource" };
+            if (TypeExists(fyberTypes))
+            {
+                UpdateDefines(gameanalytics_ironsource, true, new BuildTargetGroup[] { BuildTargetGroup.iOS, BuildTargetGroup.Android });
+            }
+            else
+            {
+                UpdateDefines(gameanalytics_ironsource, false, new BuildTargetGroup[] { BuildTargetGroup.iOS, BuildTargetGroup.Android });
+            }
+        }
+
         private static bool TypeExists(params string[] types)
         {
             if (types == null || types.Length == 0)
@@ -134,7 +152,8 @@ namespace GameAnalyticsSDK.Editor
 
                 proj.AddFileToBuild(target, proj.AddFile("usr/lib/libsqlite3.dylib", "Frameworks/libsqlite3.dylib", UnityEditor.iOS.Xcode.PBXSourceTree.Sdk));
                 proj.AddFileToBuild(target, proj.AddFile("usr/lib/libz.dylib", "Frameworks/libz.dylib", UnityEditor.iOS.Xcode.PBXSourceTree.Sdk));
-                proj.AddFileToBuild(target, proj.AddFile("Frameworks/AdSupport.framework", "Frameworks/AdSupport.framework", UnityEditor.iOS.Xcode.PBXSourceTree.Sdk));
+                proj.AddFrameworkToProject(target, "AdSupport.framework", false);
+                proj.AddFrameworkToProject(target, "AppTrackingTransparency.framework", true);
                 //proj.SetBuildProperty(target, "ENABLE_BITCODE", "YES");
 
                 File.WriteAllText(projPath, proj.WriteToString());

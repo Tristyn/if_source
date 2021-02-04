@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public static class Updates
+public static class Entities
 {
     public static BackgroundMusic backgroundMusic;
     public static TouchInput touchInput;

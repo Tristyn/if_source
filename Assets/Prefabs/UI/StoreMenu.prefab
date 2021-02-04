@@ -915,12 +915,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '<b>Any purchase grants you the donator rank in the discord group.</b>
+  m_text: '<b>The store allows me to continue adding content to game and helps cover
+    hosting costs.</b>
 
-    I
-    really enjoy making games and have been building them in my spare time for years
-    now. The store allows me to continue adding content to game and helps cover hosting
-    costs.'
+    Work in progress, more to come.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

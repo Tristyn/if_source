@@ -6,7 +6,8 @@ using UnityEngine.Events;
 public enum CurrencyType : byte
 {
     Money,
-    Xp
+    Xp,
+    Level,
 }
 
 public sealed class CurrencySystem : Singleton<CurrencySystem>
@@ -17,8 +18,36 @@ public sealed class CurrencySystem : Singleton<CurrencySystem>
         public long money;
         public long xp;
         public long level;
-        public long levelPoints;
+
         public bool itemsCostMoney;
+
+        public long this[CurrencyType type]
+        {
+            get
+            {
+                switch (type)
+                {
+                    case CurrencyType.Money:
+                        return money;
+                    case CurrencyType.Xp:
+                        return xp;
+                    default:
+                        return 0;
+                }
+            }
+            set
+            {
+                switch (type)
+                {
+                    case CurrencyType.Money:
+                        money = value;
+                        break;
+                    case CurrencyType.Xp:
+                        xp = value;
+                        break;
+                }
+            }
+        }
     }
 
     [NonSerialized]
@@ -126,6 +155,56 @@ public sealed class CurrencySystem : Singleton<CurrencySystem>
 
         long value = conveyorCost * count;
         return value <= 0 || save.money >= value;
+    }
+
+    public void Buy(long count, long value, CurrencyType currencyType)
+    {
+        if (save.itemsCostMoney)
+        {
+            value = value * count;
+            save[currencyType] -= value;
+
+            moneyChanged.Invoke();
+
+            CurrencyEvent currencyEvent = new CurrencyEvent(GAResourceFlowType.Sink, currencyType, CurrencyEventType.ItemPurchased, "Item");
+            Analytics.instance.NewCurrencyEvent(currencyEvent, value);
+        }
+    }
+
+    public void Sell(long count, long value, CurrencyType currencyType)
+    {
+        if (save.itemsCostMoney)
+        {
+            value = value * count;
+            save[currencyType] += value;
+
+            switch (currencyType)
+            {
+                case CurrencyType.Money:
+                    moneyChanged.Invoke();
+                    break;
+                case CurrencyType.Xp:
+                    xpChanged.Invoke();
+                    break;
+                case CurrencyType.Level:
+                    levelChanged.Invoke();
+                    break;
+            }
+
+            CurrencyEvent currencyEvent = new CurrencyEvent(GAResourceFlowType.Source, currencyType, CurrencyEventType.ItemSold, "Item");
+            Analytics.instance.NewCurrencyEvent(currencyEvent, value);
+        }
+    }
+
+    public bool CanBuy(long count, long value, CurrencyType currencyType)
+    {
+        if (!save.itemsCostMoney)
+        {
+            return true;
+        }
+
+        value = value * count;
+        return value <= 0 || save[currencyType] >= value;
     }
 
     public void MachineSellerSellItem(ItemInfo itemInfo, int count, Vector3 position)

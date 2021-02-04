@@ -15,6 +15,9 @@ public sealed class ScriptableObjectMasterList : ScriptableObject
     public MachineGroupInfo[] machineGroups;
     public ProgressionInfo[] progressionInfos;
     public CatalogItemInfo[] catalogItemInfos;
+
+    public Vars vars;
+
     [ReadOnly]
     public int nextProgressionId;
 

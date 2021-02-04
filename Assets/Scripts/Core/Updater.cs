@@ -9,46 +9,46 @@ public sealed class Updater : MonoBehaviour
 
     void Bind()
     {
-        Updates.backgroundMusic = BackgroundMusic.instance;
-        Updates.touchInput = TouchInput.instance;
-        Updates.picker = Picker.instance;
-        Updates.autoSaveLoad = AutoSaveLoad.instance;
+        Entities.backgroundMusic = BackgroundMusic.instance;
+        Entities.touchInput = TouchInput.instance;
+        Entities.picker = Picker.instance;
+        Entities.autoSaveLoad = AutoSaveLoad.instance;
 
-        Updates.overviewCameraController = OverviewCameraController.instance;
-        Updates.cameraShake = CameraShake.instance;
+        Entities.overviewCameraController = OverviewCameraController.instance;
+        Entities.cameraShake = CameraShake.instance;
 
-        Updates.puzzleGoals = PuzzleGoals.instance;
+        Entities.puzzleGoals = PuzzleGoals.instance;
     }
 
     void Update()
     {
         GameTime.DoUpdate();
-        Updates.autoSaveLoad.DoUpdate();
+        Entities.autoSaveLoad.DoUpdate();
 
-        Updates.backgroundMusic.DoUpdate();
-        Updates.machineDroppers.DoUpdate();
+        Entities.backgroundMusic.DoUpdate();
+        Entities.machineDroppers.DoUpdate();
 
         // Camera transform stack
-        Updates.overviewCameraController.DoUpdate();
-        Updates.cameraShake.DoUpdate();
+        Entities.overviewCameraController.DoUpdate();
+        Entities.cameraShake.DoUpdate();
 
         // Rely on camera position
-        Updates.linkConveyorButtons.DoUpdate();
-        Updates.picker.DoUpdate();
-        Updates.touchInput.DoUpdate();
+        Entities.linkConveyorButtons.DoUpdate();
+        Entities.picker.DoUpdate();
+        Entities.touchInput.DoUpdate();
     }
 
     void FixedUpdate()
     {
         GameTime.DoFixedUpdate();
 
-        Updates.conveyors.DoFixedUpdate();
-        Updates.machinePurchasers.DoFixedUpdate();
-        Updates.machineSellers.DoFixedUpdate();
-        Updates.machineAssemblers.DoFixedUpdate();
-        Updates.machinePlacers.DoFixedUpdate();
-        Updates.uiSelectMachineButtons.DoFixedUpdate();
-        Updates.puzzleGoals.DoFixedUpdate();
-        Updates.cameraShake.DoFixedUpdate();
+        Entities.conveyors.DoFixedUpdate();
+        Entities.machinePurchasers.DoFixedUpdate();
+        Entities.machineSellers.DoFixedUpdate();
+        Entities.machineAssemblers.DoFixedUpdate();
+        Entities.machinePlacers.DoFixedUpdate();
+        Entities.uiSelectMachineButtons.DoFixedUpdate();
+        Entities.puzzleGoals.DoFixedUpdate();
+        Entities.cameraShake.DoFixedUpdate();
     }
 }

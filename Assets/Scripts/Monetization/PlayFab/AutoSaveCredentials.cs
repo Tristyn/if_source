@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class AutoSaveCredentials : MonoBehaviour
+public sealed class AutoSaveCredentials : MonoBehaviour
 {
     void Awake()
     {

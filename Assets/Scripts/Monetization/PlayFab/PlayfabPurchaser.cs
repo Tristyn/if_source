@@ -10,13 +10,11 @@ public enum PlayfabPurchaserState
     None = 0,
 
     // Design time errors
-    BadFlowError = 1,
     MissingPaymentOptionError = 2,
 
     Started = 3,
     StartedSuccess = 4,
     PayForPurchaseStarted = 5,
-    PayForPurchaseSuccess = 6,
     ConfirmPurchase = 7,
     ConfirmPurchaseSuccess = 8,
 
@@ -27,10 +25,15 @@ public enum PlayfabPurchaserState
 
 public class PlayfabPurchaser
 {
+    public string orderId;
     public PlayfabPurchaserState state;
+    [NonSerialized]
     public StartPurchaseResult startPurchaseResult;
+    [NonSerialized]
     public PayForPurchaseResult payForPurchaseResult;
+    [NonSerialized]
     public ConfirmPurchaseResult confirmPurchaseResult;
+    [NonSerialized]
     public PlayFabError error;
     public CatalogItemInfo[] catalogItemInfos;
 
@@ -45,7 +48,7 @@ public class PlayfabPurchaser
     {
         if (!CanStartPurchase())
         {
-            state = PlayfabPurchaserState.BadFlowError;
+            Debug.LogWarning("Tried starting purchase when state was " + state);
             return;
         }
 
@@ -80,6 +83,7 @@ public class PlayfabPurchaser
         {
             startPurchaseResult = result;
             state = PlayfabPurchaserState.StartedSuccess;
+            orderId = result.OrderId;
             Debug.Log("Start purchase success, order Id" + result.OrderId);
             onResult(result);
         },
@@ -101,7 +105,7 @@ public class PlayfabPurchaser
     {
         if (!CanPayForPurchase())
         {
-            state = PlayfabPurchaserState.BadFlowError;
+            Debug.LogWarning("Tried paying for purchase when state was " + state);
             return;
         }
 
@@ -130,7 +134,8 @@ public class PlayfabPurchaser
         result =>
         {
             payForPurchaseResult = result;
-            state = PlayfabPurchaserState.PayForPurchaseSuccess;
+            state = PlayfabPurchaserState.ConfirmPurchase;
+            orderId = result.OrderId;
             Debug.Log("Pay for purchase success, order Id" + result.OrderId);
             onResult(result);
         },
@@ -145,7 +150,7 @@ public class PlayfabPurchaser
 
     public bool IsAwaitingConfirmationPage()
     {
-        return state == PlayfabPurchaserState.PayForPurchaseSuccess && payForPurchaseResult != null && !string.IsNullOrEmpty(payForPurchaseResult.PurchaseConfirmationPageURL);
+        return state == PlayfabPurchaserState.ConfirmPurchase && payForPurchaseResult != null && !string.IsNullOrEmpty(payForPurchaseResult.PurchaseConfirmationPageURL);
     }
 
     public void OpenConfirmationPage()
@@ -158,7 +163,7 @@ public class PlayfabPurchaser
 
     public bool CanConfirmPurchase()
     {
-        return state == PlayfabPurchaserState.PayForPurchaseSuccess && payForPurchaseResult != null;
+        return state == PlayfabPurchaserState.ConfirmPurchase || state == PlayfabPurchaserState.ConfirmPurchaseError;
     }
 
     public void ConfirmPurchase(Action<ConfirmPurchaseResult> onResult, Action<PlayFabError> onError)
@@ -168,29 +173,31 @@ public class PlayfabPurchaser
             return;
         }
 
-        if (payForPurchaseResult == null)
+        Debug.Log("Confirming purchase, order Id " + orderId);
+        PlayFabClientAPI.ConfirmPurchase(new ConfirmPurchaseRequest
         {
-            state = PlayfabPurchaserState.BadFlowError;
-            return;
-        }
-
-        PlayFabClientAPI.ConfirmPurchase(new ConfirmPurchaseRequest()
-        {
-            OrderId = payForPurchaseResult.OrderId
+            OrderId = orderId
         },
         result =>
         {
             confirmPurchaseResult = result;
             state = PlayfabPurchaserState.ConfirmPurchaseSuccess;
-            Debug.Log("Confirm purchase success, order Id" + result.OrderId);
+            orderId = result.OrderId;
+            Debug.Log("Confirm purchase success, order Id " + result.OrderId);
             onResult(result);
         },
         error =>
         {
             this.error = error;
             state = PlayfabPurchaserState.ConfirmPurchaseError;
-            Debug.Log("Start purchase error\n" + error.GenerateErrorReport());
             onError(error);
         });
+    }
+    
+    public void ResumeConfirmingPurchase(string orderId, Action<ConfirmPurchaseResult> onResult, Action<PlayFabError> onError)
+    {
+        this.orderId = orderId;
+        state = PlayfabPurchaserState.ConfirmPurchase;
+        ConfirmPurchase(onResult, onError);
     }
 }

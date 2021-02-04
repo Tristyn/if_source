@@ -2,7 +2,7 @@ To add a new store item:
 
 Add the catalog item: 
 In unity go to Window > Playfab > Editor Extensions > Game Manager > Economy > IAP1.0 > New Item
-Alternatively duplicate an existing item. Fill out the item details. The item class determines how the game will apply the item to the game, each type of item coresponds to a class. The RM currency is USD. '899 RM' is $8.99.
+Alternatively duplicate an existing item. Fill out the item details. The item class determines how the game will apply the item to the game, each type of item coresponds to a class. The RM currency is USD. '899 RM' is $8.99. 'VC' is virtual currency. 'TC' is test currency.
 
 Add the matching catalog item Scriptable Object:
 In Unities project menu go to Resources > CatalogItems. Right click the folder and select Create > Catalog Item. Ensure the Item ID, quanity and catalog version match the playfab website.

@@ -31,6 +31,11 @@ public sealed class UIMessageBox : MonoBehaviour
             },
             new UIMessageBoxAction
             {
+                text="Store",
+                action = () => MenuController.instance.Push(MenuState.StoreMenu)
+            },
+            new UIMessageBoxAction
+            {
                 text="New Game",
                 action = () => MenuController.instance.Push(MenuState.NewGameMenu)
             },

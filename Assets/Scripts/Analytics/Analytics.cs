@@ -134,7 +134,7 @@ public sealed class Analytics : Singleton<Analytics>
 
     public void NewCurrencyEvent(CurrencyEvent currencyEvent, long amount)
     {
-        if (currencyEventSums.TryGetValue(currencyEvent, out long sum))
+        /*if (currencyEventSums.TryGetValue(currencyEvent, out long sum))
         {
             sum += amount;
             currencyEventSums[currencyEvent] = sum;
@@ -142,7 +142,7 @@ public sealed class Analytics : Singleton<Analytics>
         else
         {
             currencyEventSums.Add(currencyEvent, amount);
-        }
+        }*/
     }
 
     public void NewUiEvent(UiEventId uiEventId, int count)

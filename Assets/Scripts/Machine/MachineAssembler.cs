@@ -28,12 +28,12 @@ public sealed class MachineAssembler : MonoBehaviour, IFixedUpdate
         inputs = machine.machineInfo.assembleInputs;
         output = machine.machineInfo.assembleOutput;
         inventory = machine.inventory;
-        Updates.machineAssemblers.Add(this);
+        Entities.machineAssemblers.Add(this);
     }
 
     public void Delete()
     {
-        Updates.machineAssemblers.Remove(this);
+        Entities.machineAssemblers.Remove(this);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

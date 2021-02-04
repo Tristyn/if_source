@@ -59,7 +59,7 @@ public sealed class MachineDropper : MonoBehaviour, IUpdate
         machineTransform.localPosition = position_local;
 
         landed = false;
-        Updates.machineDroppers.Add(this);
+        Entities.machineDroppers.Add(this);
     }
 
     void Land()
@@ -70,7 +70,7 @@ public sealed class MachineDropper : MonoBehaviour, IUpdate
 
     void Recycle()
     {
-        Updates.machineDroppers.Remove(this);
+        Entities.machineDroppers.Remove(this);
         ObjectPooler.instance.Recycle(this);
         machine = null;
         machineTransform = null;

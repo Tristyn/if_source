@@ -73,9 +73,19 @@ public sealed class ProgressionScanner
         return RequiringValueInRange(moneyConditions, rangeLowExclusive, rangeHighInclusive);
     }
 
+    public List<ProgressionInfo> RequiringMoneyGreaterThan(long valueInclusive)
+    {
+        return RequiringValueGreaterThan(moneyConditions, valueInclusive);
+    }
+
     public List<ProgressionInfo> RequiringLevelInRange(long rangeLowExclusive, long rangeHighInclusive)
     {
         return RequiringValueInRange(levelConditions, rangeLowExclusive, rangeHighInclusive);
+    }
+
+    public List<ProgressionInfo> RequiringLevelGreaterThan(long valueInclusive)
+    {
+        return RequiringValueGreaterThan(levelConditions, valueInclusive);
     }
 
     /// <summary>
@@ -108,6 +118,35 @@ public sealed class ProgressionScanner
         }
 
         for (int i = start; i <= end; ++i)
+        {
+            list.AddList(progressionsList[i]);
+        }
+
+        return list;
+    }
+
+    /// <summary>
+    /// Result list can be returned to the list pool
+    /// </summary>
+    /// <param name="sortedProgressions"></param>
+    /// <param name="rangeLowExclusive"></param>
+    /// <param name="rangeHighInclusive"></param>
+    List<ProgressionInfo> RequiringValueGreaterThan(OpenSortedList<long, List<ProgressionInfo>> sortedProgressions, long valueInclusive)
+    {
+        List<ProgressionInfo> list = ListPool<ProgressionInfo>.Get();
+
+        List<ProgressionInfo>[] progressionsList = sortedProgressions.values;
+        if (progressionsList.Length == 0)
+        {
+            return list;
+        }
+        int start = sortedProgressions.IndexOfKeyGreaterThanOrEqualTo(valueInclusive);
+        if (start == progressionsList.Length)
+        {
+            return list;
+        }
+
+        for (int i = start, len = progressionsList.Length; i <= len; ++i)
         {
             list.AddList(progressionsList[i]);
         }

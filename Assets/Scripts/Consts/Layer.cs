@@ -19,6 +19,7 @@ public static class Layer
     public const int floor = 8;
     public const int conveyor = 9;
     public const int machines = 10;
+    public const int worldClickable = 11;
 
     static LayerMask[] layerMasks = new LayerMask[32];
 

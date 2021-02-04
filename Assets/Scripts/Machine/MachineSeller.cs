@@ -29,12 +29,12 @@ public sealed class MachineSeller : MonoBehaviour, IFixedUpdate
         inventory = machine.inventory;
         machineGroup = machineInfo.machineGroup;
         placeInterval = machineInfo.placeInterval;
-        Updates.machineSellers.Add(this);
+        Entities.machineSellers.Add(this);
     }
 
     public void Delete()
     {
-        Updates.machineSellers.Remove(this);
+        Entities.machineSellers.Remove(this);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

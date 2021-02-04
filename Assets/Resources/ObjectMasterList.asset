@@ -83,4 +83,9 @@ MonoBehaviour:
   catalogItemInfos:
   - {fileID: 11400000, guid: 340eb048775bf024bbc603935e408f46, type: 2}
   - {fileID: 11400000, guid: 4070ca698a471e14da18c90570f538d6, type: 2}
+  - {fileID: 11400000, guid: a07dc479cf34e534b868a5b03b3f9a2a, type: 2}
+  - {fileID: 11400000, guid: c332e2efbba95e348be5baf43c8ddd00, type: 2}
+  - {fileID: 11400000, guid: f9a47030780e3cb4dbec0d607012c8a2, type: 2}
+  - {fileID: 11400000, guid: 46f196afcda456147bb0e4f356f69fe1, type: 2}
+  vars: {fileID: 0}
   nextProgressionId: 8

@@ -1,34 +1,49 @@
 ﻿using PlayFab.ClientModels;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
-public class CatalogManager : Singleton<CatalogManager>
+public sealed class CatalogManager : Singleton<CatalogManager>
 {
-    public struct Save
+    static readonly TimeSpan maxTrackingTime = TimeSpan.FromHours(48);
+
+    protected override void Awake()
     {
-        public List<string> confirmableOrderIds;
-        public List<string> confirmedOrderIds;
+        base.Awake();
+        SaveLoad.LoadComplete += ConfirmAllPurchases;
     }
 
-    public Save save = new Save
+    protected override void OnDestroy()
     {
-        confirmableOrderIds = new List<string>()
-    };
-
-    List<PlayfabPurchaser> purchasers = new List<PlayfabPurchaser>();
+        base.OnDestroy();
+        SaveLoad.LoadComplete -= ConfirmAllPurchases;
+    }
+    
+    private void OnApplicationFocus(bool focus)
+    {
+        if (focus)
+        {
+            ConfirmPurchasesThisSession();
+        }
+    }
 
     public PlayfabPurchaser Purchase(params CatalogItemInfo[] catalogItemInfos)
     {
         var purchaser = new PlayfabPurchaser();
         purchaser.StartPurchase(catalogItemInfos, result => StartPurchaseResult(purchaser), error => Error(purchaser));
-        purchasers.Add(purchaser);
+        return purchaser;
+    }
+
+    public PlayfabPurchaser ResumeConfirmingPurchase(string orderId, Action<PlayfabPurchaser> onResult, Action<PlayfabPurchaser> onError)
+    {
+        var purchaser = new PlayfabPurchaser();
+        purchaser.ResumeConfirmingPurchase(orderId, result => { ConfirmPurchaseResult(purchaser); onResult(purchaser); }, error => { Error(purchaser); onError(purchaser); });
         return purchaser;
     }
 
     void StartPurchaseResult(PlayfabPurchaser purchaser)
     {
-        save.confirmableOrderIds.Add(purchaser.startPurchaseResult.OrderId);
+        PurchaseTracker.instance.Add(purchaser);
         SaveLoad.Save();
 
         purchaser.PayForPurchase(result => PayForPurchaserResult(purchaser), error => Error(purchaser));
@@ -42,8 +57,13 @@ public class CatalogManager : Singleton<CatalogManager>
         }
         else
         {
-            purchaser.ConfirmPurchase(result => ConfirmPurchaseResult(purchaser), error => Error(purchaser));
+            ConfirmPurchase(purchaser);
         }
+    }
+
+    void ConfirmPurchase(PlayfabPurchaser purchaser)
+    {
+        purchaser.ConfirmPurchase(result => ConfirmPurchaseResult(purchaser), error => Error(purchaser));
     }
 
     void ConfirmPurchaseResult(PlayfabPurchaser playfabPurchaser)
@@ -53,36 +73,75 @@ public class CatalogManager : Singleton<CatalogManager>
 
     void Error(PlayfabPurchaser purchaser)
     {
+        if (purchaser.error.ErrorAwaitingPayPalConfirmationPage())
+        {
 
+        }
+        else
+        {
+            Debug.LogError("Unkown purchase error\n" + purchaser.error.GenerateErrorReport());
+        }
     }
 
     public void ApplyConfirmationResult(PlayfabPurchaser purchaser)
     {
         if (purchaser.confirmPurchaseResult != null)
         {
-            purchasers.Remove(purchaser);
-            save.confirmableOrderIds.Remove(purchaser.confirmPurchaseResult.OrderId);
-            if (!save.confirmedOrderIds.Contains(purchaser.confirmPurchaseResult.OrderId))
-            {
-                save.confirmedOrderIds.Add(purchaser.confirmPurchaseResult.OrderId);
+            PurchaseTracker.instance.Remove(purchaser.orderId);
+            ApplyItemsToGame(purchaser.confirmPurchaseResult.Items);
+        }
+    }
 
-                List<ItemInstance> items = purchaser.confirmPurchaseResult.Items;
-                for (int i = 0, len = items.Count; i < len; ++i)
+    void ApplyItemsToGame(List<ItemInstance> items)
+    {
+        for (int i = 0, len = items.Count; i < len; ++i)
+        {
+            ItemInstance item = items[i];
+            Debug.Log("Applying item " + item.ToJson());
+        }
+    }
+
+    public void ConfirmAllPurchases()
+    {
+        List<TrackablePurchase> purchases = PurchaseTracker.instance.TryGetAll();
+
+        if (purchases != null)
+        {
+            Debug.Log("Confirming all purchases.");
+
+            DateTime trackingCutOffUTC = DateTime.UtcNow - maxTrackingTime;
+
+            for (int i = 0, len = purchases.Count; i < len; ++i)
+            {
+                TrackablePurchase purchaseTracker = purchases[i];
+                PlayfabPurchaser purchaser = ResumeConfirmingPurchase(purchaseTracker.orderId, purchaser =>
                 {
-                    ApplyItemToGame(items[i]);
-                }
+
+                },
+                onError =>
+                {
+                    if (purchaseTracker.trackingStartDateUTC < trackingCutOffUTC)
+                    {
+                        Debug.LogWarning("No longer tracking order Id after " + maxTrackingTime.TotalHours + " hours, " + purchaseTracker.orderId);
+                        PurchaseTracker.instance.Remove(purchaseTracker.orderId);
+                    }
+                });
             }
         }
     }
 
-    static void ApplyItemToGame(ItemInstance itemInstance)
+    public void ConfirmPurchasesThisSession()
     {
-        Debug.Log("Applying item " + itemInstance.ToJson());
+        List<TrackablePurchase> purchases = PurchaseTracker.instance.TryGetConfirmableThisSession();
 
-    }
+        if (purchases != null)
+        {
+            Debug.Log("Confirming purchases that began this session.");
 
-    public List<PlayfabPurchaser> GetAwaitingConfirmation()
-    {
-        return purchasers.Where(purchaser => purchaser.state == PlayfabPurchaserState.PayForPurchaseSuccess).ToList();
+            for (int i = 0, len = purchases.Count; i < len; ++i)
+            {
+                ConfirmPurchase(purchases[i].purchaser);
+            }
+        }
     }
 }

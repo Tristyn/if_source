@@ -11,4 +11,14 @@ public static class GameObjectExtensions
             transform.GetChild(i).gameObject.SetAllLayers(layer);
         }
     }
+
+    public static T AddOrGetComponent<T>(this GameObject gameObject) where T : Component
+    {
+        T component = gameObject.GetComponent<T>();
+        if (component != null) // Explicit null check
+        {
+            return component;
+        }
+        return gameObject.AddComponent<T>();
+    }
 }

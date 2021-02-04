@@ -2,6 +2,10 @@
 
 public static class Mathx
 {
+    // Exponential functions for game rules
+    // 
+
+
     /// <summary>
     /// Converts a count of populated bits to it's corresponding bitmask. e.g.
     /// 0 => 0x00000000
@@ -98,5 +102,10 @@ public static class Mathx
     public static float FovAtDistanceAndFrustumLength(float distance, float frustumLength)
     {
         return 2.0f * Mathf.Atan(frustumLength * 0.5f / distance) * Mathf.Rad2Deg;
+    }
+
+    public static long RoundToInt(float val, long rounding)
+    {
+        return Mathf.RoundToInt(val / rounding) * rounding;
     }
 }

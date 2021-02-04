@@ -6,11 +6,11 @@ using UnityEngine.Rendering;
 [Serializable]
 public struct AddonParameters
 {
-    public int minArea;
-    public Vector3Int primarySizeMin;
-    public Vector3Int primarySizeMax;
-    public Vector3Int secondarySizeMin;
-    public Vector3Int secondarySizeMax;
+    public long minArea;
+    public long primarySizeMin;
+    public long primarySizeMax;
+    public long secondarySizeMin;
+    public long secondarySizeMax;
 }
 
 public static class AddonGen
@@ -31,7 +31,9 @@ public static class AddonGen
             using (ListPool<Bounds3Int>.Get(out List<Bounds3Int> stub))
             {
                 stub.Add(new Bounds3Int(0, 0, 0, 1, 1, 1));
-                addonBounds = IterateAddonBounds(stub, addonParameters.primarySizeMin, addonParameters.primarySizeMax, addons);
+                Vector3Int sizeMin = new Vector3Int((int)addonParameters.primarySizeMin, (int)addonParameters.primarySizeMin, (int)addonParameters.primarySizeMin);
+                Vector3Int sizeMax = new Vector3Int((int)addonParameters.primarySizeMax, (int)addonParameters.primarySizeMax, (int)addonParameters.primarySizeMax);
+                addonBounds = IterateAddonBounds(stub, sizeMin, sizeMax, addons);
             }
 
             int area = addonBounds.area;
@@ -39,7 +41,9 @@ public static class AddonGen
 
             while (area < addonParameters.minArea)
             {
-                Bounds3Int subAddon = IterateAddonBounds(addons, addonParameters.secondarySizeMin, addonParameters.secondarySizeMax, addons);
+                Vector3Int sizeMin = new Vector3Int((int)addonParameters.secondarySizeMin, (int)addonParameters.secondarySizeMin, (int)addonParameters.secondarySizeMin);
+                Vector3Int sizeMax = new Vector3Int((int)addonParameters.secondarySizeMax, (int)addonParameters.secondarySizeMax, (int)addonParameters.secondarySizeMax);
+                Bounds3Int subAddon = IterateAddonBounds(addons, sizeMin, sizeMax, addons);
                 area += subAddon.area;
                 addons.Add(subAddon);
             }

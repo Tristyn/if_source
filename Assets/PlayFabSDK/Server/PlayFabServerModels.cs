@@ -1938,6 +1938,7 @@ namespace PlayFab.ServerModels
         DuplicateKeys,
         WasNotCreatedWithCloudRoot,
         LegacyMultiplayerServersDeprecated,
+        VirtualCurrencyCurrentlyUnavailable,
         MatchmakingEntityInvalid,
         MatchmakingPlayerAttributesInvalid,
         MatchmakingQueueNotFound,
@@ -1999,6 +2000,21 @@ namespace PlayFab.ServerModels
         ExportCannotParseQuery,
         ExportControlCommandsNotAllowed,
         ExportQueryMissingTableReference,
+        ExplorerBasicInvalidQueryName,
+        ExplorerBasicInvalidQueryDescription,
+        ExplorerBasicInvalidQueryConditions,
+        ExplorerBasicInvalidQueryStartDate,
+        ExplorerBasicInvalidQueryEndDate,
+        ExplorerBasicInvalidQueryGroupBy,
+        ExplorerBasicInvalidQueryAggregateType,
+        ExplorerBasicInvalidQueryAggregateProperty,
+        ExplorerBasicLoadQueriesError,
+        ExplorerBasicLoadQueryError,
+        ExplorerBasicCreateQueryError,
+        ExplorerBasicDeleteQueryError,
+        ExplorerBasicUpdateQueryError,
+        ExplorerBasicSavedQueriesLimit,
+        ExplorerBasicSavedQueryNotFound,
         TitleNotEnabledForParty,
         PartyVersionNotFound,
         MultiplayerServerBuildReferencedByMatchmakingQueue,
@@ -2024,6 +2040,7 @@ namespace PlayFab.ServerModels
         ExperimentationExclusionGroupInsufficientCapacity,
         ExperimentationExclusionGroupCannotDelete,
         ExperimentationExclusionGroupInvalidTrafficAllocation,
+        ExperimentationExclusionGroupInvalidName,
         MaxActionDepthExceeded,
         TitleNotOnUpdatedPricingPlan,
         SegmentManagementTitleNotInFlight,
@@ -3007,7 +3024,7 @@ namespace PlayFab.ServerModels
     public class GetPlayFabIDsFromPSNAccountIDsRequest : PlayFabRequestCommon
     {
         /// <summary>
-        /// Id of the PSN issuer environment. If null, defaults to 256 (production)
+        /// Id of the PSN issuer environment. If null, defaults to production environment.
         /// </summary>
         public int? IssuerId;
         /// <summary>
@@ -3830,7 +3847,7 @@ namespace PlayFab.ServerModels
         /// </summary>
         public bool? ForceLink;
         /// <summary>
-        /// Id of the PSN issuer environment. If null, defaults to 256 (production)
+        /// Id of the PSN issuer environment. If null, defaults to production environment.
         /// </summary>
         public int? IssuerId;
         /// <summary>

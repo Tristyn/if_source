@@ -4,12 +4,12 @@ using UnityEditor;
 #endif
 
 [CreateAssetMenu(fileName = "NewCatalogItem", menuName = "Catalog Item", order = 30)]
-public class CatalogItemInfo : ScriptableObject
+public sealed class CatalogItemInfo : ScriptableObject
 {
     public string itemId;
     public uint quantity = 1;
     public string catalogVersion = "IAP1.0";
-    public bool isBoundToAccount = false;
+    public bool isProfileBound = false;
 
 #if UNITY_EDITOR
     void OnValidate()

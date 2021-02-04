@@ -25,7 +25,7 @@ public sealed class UILinkConveyorButton : MonoBehaviour, IUpdate
 
     public void Initialize()
     {
-        Updates.linkConveyorButtons.Add(this);
+        Entities.linkConveyorButtons.Add(this);
         UpdatePosition();
     }
 
@@ -51,7 +51,7 @@ public sealed class UILinkConveyorButton : MonoBehaviour, IUpdate
 
     public void Recycle()
     {
-        Updates.linkConveyorButtons.Remove(this);
+        Entities.linkConveyorButtons.Remove(this);
         ObjectPooler.instance.Recycle(this);
     }
 }

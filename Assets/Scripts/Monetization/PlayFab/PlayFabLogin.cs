@@ -1,5 +1,6 @@
 using PlayFab;
 using PlayFab.ClientModels;
+using System;
 using UnityEngine;
 
 public enum PlayfabLoginState
@@ -31,15 +32,7 @@ public class PlayFabLogin : Singleton<PlayFabLogin>
 
     public void Login()
     {
-        if (IsLoggedIn())
-        {
-            if (loginState.playfabLoginState != PlayfabLoginState.LoggedIn)
-            {
-                SetState(PlayfabLoginState.LoggedIn);
-            }
-            return;
-        }
-        if (!HasLoginCredentials())
+        if (!HasCredentials())
         {
             Debug.Log("Can't log in, no credentials");
             if (loginState.playfabLoginState != PlayfabLoginState.NoCredentials)
@@ -91,12 +84,12 @@ public class PlayFabLogin : Singleton<PlayFabLogin>
         PlayFabClientAPI.RegisterPlayFabUser(request, OnRegisterSuccess, OnLoginFailure);
     }
 
-    bool IsLoggedIn()
+    public bool IsLoggedIn()
     {
         return PlayFabClientAPI.IsClientLoggedIn();
     }
 
-    bool HasLoginCredentials()
+    bool HasCredentials()
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
         return true;
@@ -109,7 +102,14 @@ public class PlayFabLogin : Singleton<PlayFabLogin>
     {
         Debug.Log("Credentials set, email is " + emailAddress);
         profile.EmailAddress = emailAddress;
-        profile.PasswordHash = Hasher.Hash(password, emailAddress);
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            profile.PasswordHash = "";
+        }
+        else
+        {
+            profile.PasswordHash = Hasher.Hash(password, emailAddress);
+        }
     }
 
     void OnLoginSuccess(LoginResult result)
