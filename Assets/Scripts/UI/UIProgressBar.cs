@@ -27,13 +27,18 @@ public class UIProgressBar : MonoBehaviour
         goalIndex = 0;
         long money = CurrencySystem.instance.save.money;
         GetGoal(money);
+        UpdateProgressBar();
     }
 
     void OnMoneyChanged()
     {
+        UpdateProgressBar();
+
+    }
+    
+    void UpdateProgressBar()
+    {
         long money = CurrencySystem.instance.save.money;
-
-
         if (money > goal)
         {
             GetGoal(money);

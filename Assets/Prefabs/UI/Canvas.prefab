@@ -15,7 +15,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2434019076027844272
 RectTransform:
   m_ObjectHideFlags: 0
@@ -367,6 +367,7 @@ GameObject:
   - component: {fileID: 8571560994911526608}
   - component: {fileID: 8640689604164733037}
   - component: {fileID: 8349309779183369283}
+  - component: {fileID: 4938479285125668220}
   m_Layer: 5
   m_Name: ProgressBar
   m_TagString: Untagged
@@ -414,7 +415,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c970fb64d4f1fbd42b6e133d5fc0787f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slider: {fileID: 0}
+  slider: {fileID: 609997633820807234}
   displayText: {fileID: 0}
 --- !u!114 &8349309779183369283
 MonoBehaviour:
@@ -446,6 +447,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4938479285125668220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8195828880943963678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12644034e1fb64f4ab099db627968345, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uiSlider: {fileID: 8640689604164733037}
+  last: 0
+  goalIndex: 0
 --- !u!1001 &2158137508562181930
 PrefabInstance:
   m_ObjectHideFlags: 0

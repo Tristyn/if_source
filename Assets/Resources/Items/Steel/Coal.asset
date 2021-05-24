@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6015631bf989c647b0fafdc45cdac5c, type: 3}
   m_Name: Coal
   m_EditorClassIdentifier: 
-  value: 120
+  value: 70
   color: {r: 0.18867922, g: 0.17532927, b: 0.17532927, a: 1}
   prefab: {fileID: 175188181554914003, guid: 22c08dcb62ca21747a865b67f45d7fec, type: 3}

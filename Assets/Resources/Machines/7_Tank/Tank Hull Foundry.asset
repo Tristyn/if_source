@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   machineGroup: {fileID: 11400000, guid: 1476ab63b48b4604ba6778ef6cf48f47, type: 2}
   cost: 8000000
-  profit: 43280
+  profit: 43580
   placeInterval: 1
   size: {x: 3, y: 1, z: 2}
   _prefab: {fileID: 0}

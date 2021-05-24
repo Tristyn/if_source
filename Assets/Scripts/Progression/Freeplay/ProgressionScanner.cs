@@ -141,12 +141,8 @@ public sealed class ProgressionScanner
             return list;
         }
         int start = sortedProgressions.IndexOfKeyGreaterThanOrEqualTo(valueInclusive);
-        if (start == progressionsList.Length)
-        {
-            return list;
-        }
-
-        for (int i = start, len = progressionsList.Length; i <= len; ++i)
+        
+        for (int i = start, len = progressionsList.Length; i < len; ++i)
         {
             list.AddList(progressionsList[i]);
         }
